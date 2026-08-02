@@ -1,0 +1,9 @@
+{
+ "seed0": 20000,
+ "n_instances": 100,
+ "n_modules": 10,
+ "ppvc_mix": "mixed",
+ "n_vehicles": 1,
+ "tau_over_p": 1.0,
+ "generator": "G1-retry inline 2026-07-08"
+}

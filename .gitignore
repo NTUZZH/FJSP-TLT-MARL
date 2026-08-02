@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# local run artifacts. The hyperparameter snapshots under train_log/PPVCT/ are
+# released deliberately: the evaluation scripts read them to rebuild a network
+# before loading its checkpoint.
+*.log
+*.log.jsonl
+train_log/*
+!train_log/PPVCT/
+train_log/PPVCT/*
+!train_log/PPVCT/config_*.json
+results/monitor/
+results/figures/
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store

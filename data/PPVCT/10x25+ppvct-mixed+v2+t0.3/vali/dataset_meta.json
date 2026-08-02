@@ -1,0 +1,10 @@
+{
+ "seed0": 10000,
+ "n_instances": 100,
+ "n_modules": 10,
+ "ppvc_mix": "mixed",
+ "ppvc_factory": "default",
+ "n_vehicles": 2,
+ "tau_over_p": 0.3,
+ "generator": "p1_make_ppvct_data.py v1"
+}

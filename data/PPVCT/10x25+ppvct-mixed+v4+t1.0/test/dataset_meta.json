@@ -1,0 +1,11 @@
+{
+ "seed0": 20000,
+ "n_instances": 100,
+ "n_modules": 10,
+ "ppvc_mix": "mixed",
+ "ppvc_factory": "default",
+ "n_vehicles": 4,
+ "tau_over_p": 1.0,
+ "split": "test-only (zero-shot)",
+ "generator": "p7_make_transfer_data.py v1"
+}

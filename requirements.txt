@@ -1,0 +1,19 @@
+# Dependency set used for every result in the paper.
+# Environment: conda env with Python 3.11.15, Ubuntu 24.04,
+# NVIDIA Blackwell (sm_120) GPU. CPU-only execution also works
+# (evaluation, CP-SAT, PDR, GA and all statistics are CPU jobs).
+#
+# torch must come from the CUDA 12.8 wheel index, NOT plain PyPI:
+#   pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
+# then install the rest:
+#   pip install -r requirements.txt
+#
+# numpy is pinned below 2.0 deliberately: the environment code was written
+# against the numpy 1.x semantics and is not validated on numpy 2.x.
+
+torch==2.11.0+cu128     # install via the cu128 index-url above
+numpy==1.26.4
+scipy==1.17.1           # Wilcoxon / TOST statistics (scripts/stats_tost.py)
+ortools==9.14.6206      # CP-SAT reference model
+matplotlib==3.11.0      # figures (figures_src/, scripts/f3_credit_figure.py)
+tqdm==4.68.2

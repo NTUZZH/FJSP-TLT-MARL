@@ -1,0 +1,65 @@
+NOTICE — Attribution for a derivative work
+==========================================
+
+This repository is a DERIVATIVE WORK. It adapts and extends existing
+open-source research code. The original components remain the property of
+their respective authors and are subject to their original terms. Users must
+comply with those upstream terms and cite the original works.
+
+Primary upstream
+----------------
+DANIEL — "Flexible Job Shop Scheduling via Dual Attention Network Based
+Reinforcement Learning," R. Wang, G. Wang, J. Sun, F. Deng, J. Chen,
+IEEE Transactions on Neural Networks and Learning Systems, 2024,
+DOI: 10.1109/TNNLS.2023.3306421.  Repository: https://github.com/wrqccc/FJSP-DRL
+
+Components in this release adapted from DANIEL:
+  - model/                     dual-attention policy network and PPO
+  - fjsp_env_same_op_nums.py   base flexible job-shop environment
+  - ortools_solver.py          OR-Tools CP-SAT baseline for the base problem
+  - common_utils.py, data_utils.py, params.py   (base scaffolding)
+
+Further upstreams credited by DANIEL
+------------------------------------
+  - L2D                  https://github.com/zcaicaros/L2D
+  - fjsp-drl             https://github.com/songwenas12/fjsp-drl
+  - Google OR-Tools      https://github.com/google/or-tools
+  - pyGAT                https://github.com/Diego999/pyGAT
+
+Original contributions of this repository
+-----------------------------------------
+Everything under transport_marl/, scripts/ and figures_src/, together with
+ppvc_instance_generator.py and the released datasets, checkpoints and result
+files, is original to this work: the transport-coupled environment and its
+single-instance reference simulator, the admissible bound and its telescoped
+team reward, the bound-counterfactual credit baseline, the certified
+action-price channel, the independent feasibility validator, the CP-SAT,
+dispatching-rule and genetic-algorithm references, and the evaluation and
+statistics pipeline.
+
+Licensing status
+----------------
+NO blanket open-source license is applied to this repository, and there is
+deliberately no LICENSE file.
+
+The DANIEL upstream repository (https://github.com/wrqccc/FJSP-DRL) carries NO
+explicit license. Its code therefore remains under the original authors'
+copyright, all rights reserved. Applying a blanket open-source license to this
+repository would mis-state the rights to the DANIEL-derived components listed
+above, so none is applied. Those components are reproduced here for academic
+transparency and reproducibility only, with the derivation recorded here and
+the original works cited in the accompanying manuscript. Anyone wishing to
+reuse them should contact the DANIEL authors for permission.
+
+The original contributions listed above, together with the released datasets,
+checkpoints and result files, are the authors' own work and are likewise
+distributed for academic transparency and reproducibility, with all rights
+reserved pending resolution of the upstream licensing status. They may be read,
+run and verified for the purposes of reviewing and reproducing the accompanying
+manuscript. For any other reuse, redistribution or derivative work, please
+contact the authors.
+
+Nothing in this notice limits the rights you already hold under the separate
+licenses of the third-party packages this code depends on (PyTorch, NumPy,
+SciPy, OR-Tools, Matplotlib), which are obtained from their own distributors
+under their own terms.

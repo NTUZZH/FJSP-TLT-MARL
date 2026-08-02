@@ -1,0 +1,9 @@
+{
+ "generator": "link transport_random_uniform (certified port)",
+ "num_jobs": 15,
+ "num_machines": 10,
+ "n": 20,
+ "seed_base": 920000,
+ "gate": "notes/external_link_semantics.md 2026-07-27",
+ "makespan_correction": "-1.0 (delivery pseudo-op)"
+}

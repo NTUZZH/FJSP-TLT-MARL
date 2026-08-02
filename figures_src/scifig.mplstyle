@@ -1,0 +1,83 @@
+# scifig.mplstyle - clean scientific-figure defaults for matplotlib.
+# Load with:  plt.style.use("assets/scifig.mplstyle")
+# Design intent: neutral structure, minimal chrome, embedded fonts, consistent
+# stroke widths. Design your figure at FINAL print size so text stays legible.
+
+# --- Output ---
+figure.dpi          : 150
+savefig.dpi         : 400
+figure.facecolor    : white
+savefig.facecolor   : white
+savefig.bbox        : tight
+savefig.pad_inches  : 0.02
+savefig.transparent : False
+
+# --- Fonts: Times New Roman with metric-compatible fallbacks ---
+# Real Times New Roman is proprietary and often absent (e.g. many Linux boxes);
+# Liberation Serif and Nimbus Roman are metric-identical free substitutes, so the
+# figure looks the same without it. DejaVu Serif is the always-present last resort.
+font.family         : serif
+font.serif          : Times New Roman, Times, Liberation Serif, Nimbus Roman, Nimbus Roman No9 L, TeX Gyre Termes, DejaVu Serif
+font.sans-serif     : Helvetica, Arial, Liberation Sans, DejaVu Sans
+mathtext.fontset    : stix
+font.size           : 7
+axes.titlesize      : 8
+axes.labelsize      : 7
+xtick.labelsize     : 6
+ytick.labelsize     : 6
+legend.fontsize     : 6
+figure.titlesize    : 9
+
+# --- Embed fonts as TrueType so the vector stays editable (no Type-3) ---
+pdf.fonttype        : 42
+ps.fonttype         : 42
+svg.fonttype        : none
+
+# --- Axes / spines ---
+axes.edgecolor      : 1A1A1A
+axes.linewidth      : 0.6
+axes.spines.top     : False
+axes.spines.right   : False
+axes.grid           : False
+axes.axisbelow      : True
+axes.labelcolor     : 1A1A1A
+axes.titlecolor     : 1A1A1A
+axes.titlelocation  : center
+axes.titlepad       : 4.0
+axes.labelpad       : 3.0
+axes.prop_cycle     : cycler('color', ['0072B2','D55E00','009E73','CC79A7','E69F00','56B4E9','000000','F0E442'])
+
+# --- Ticks ---
+xtick.color         : 1A1A1A
+ytick.color         : 1A1A1A
+xtick.direction     : out
+ytick.direction     : out
+xtick.major.size    : 3.0
+ytick.major.size    : 3.0
+xtick.major.width   : 0.6
+ytick.major.width   : 0.6
+xtick.minor.size    : 1.5
+ytick.minor.size    : 1.5
+xtick.minor.width   : 0.5
+ytick.minor.width   : 0.5
+
+# --- Lines / markers ---
+lines.linewidth     : 1.2
+lines.markersize    : 4
+lines.markeredgewidth : 0.0
+lines.solid_capstyle : round
+
+# --- Grid (only shows when you turn it on per-axes) ---
+grid.color          : BFBFBF
+grid.linewidth      : 0.4
+grid.alpha          : 0.7
+
+# --- Legend ---
+legend.frameon      : False
+legend.handlelength : 1.4
+legend.columnspacing : 1.0
+legend.labelspacing : 0.3
+legend.borderaxespad : 0.4
+
+# --- Errorbars ---
+errorbar.capsize    : 2.0
