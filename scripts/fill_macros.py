@@ -73,19 +73,38 @@ def pdr_best(cell):
     return arr[best], best, len(data)
 
 
+def cpsat_path(cell):
+    """Ledger of the strengthened (v2) CP-SAT references for a cell.
+
+    Source switch, decisions 2026-08-03: the manuscript's CP-SAT reference is
+    the strengthened model (redundant fleet-capacity cumulative, tightened
+    horizon, symmetry breaking; 300 s, 4 search workers), written by
+    scripts/p2_cpsat_refs_v2.py. The unstrengthened v1 references in
+    or_solution/PPVCT/ are kept on disk but are no longer a macro source.
+    """
+    return f'results/cpsat_v2/{pdr_file(cell)}.jsonl'
+
+
 def cpsat_rows(cell):
-    p = f'or_solution/PPVCT/{cell}.jsonl'
+    p = cpsat_path(cell)
     if not os.path.exists(p):
         return None
-    rows = [json.loads(l) for l in open(p) if l.strip()]
-    if len(rows) < 100:
+    seen = {}
+    for l in open(p):
+        if not l.strip():
+            continue
+        r = json.loads(l)
+        if r['ub'] is None or r['lb'] is None:
+            continue          # no incumbent within the budget: not a reference
+        seen[r['instance']] = dict(instance=r['instance'], ms=r['ub'],
+                                   lb=r['lb'], status=r['status'])
+    if len(seen) < 100:
         return None      # incomplete cell: do not report partial means
-    rows.sort(key=lambda r: r['instance'])
-    return rows
+    return [seen[k] for k in sorted(seen)]
 
 
 def ga_result(cell):
-    p = f'results/ga/{pdr_file(cell)}.json'
+    p = f'results/ga_v2/{pdr_file(cell)}.json'
     if not os.path.exists(p):
         return None
     data = json.load(open(p))
@@ -170,14 +189,18 @@ def cell_macros(lines, cell, suff, with_ga=True):
     if cp:
         ub = np.array([r['ms'] for r in cp])
         new(lines, f'qCp{suff}', ms(ub),
-            f'warm-started 300s UB, n={len(cp)}, or_solution/PPVCT/{cell}.jsonl')
+            f'strengthened warm-started 300s UB, n={len(cp)}, {cpsat_path(cell)}')
+        lb = np.array([r['lb'] for r in cp])
+        new(lines, f'CpGap{suff}', f'{(100*(ub-lb)/lb).mean():.1f}\\%',
+            'mean (UB-LB)/LB of the strengthened 300s run')
     else:
         new(lines, f'qCp{suff}', '\\prelim')
+        new(lines, f'CpGap{suff}', '\\prelim')
     if with_ga:
         ga = ga_result(cell)
         if ga is not None:
             new(lines, f'qGa{suff}', ms(ga),
-                f'PDR-seeded GA 60s, n={len(ga)}, results/ga/{pdr_file(cell)}.json')
+                f'PDR-seeded GA v2 60 CPU-s, n={len(ga)}, results/ga_v2/{pdr_file(cell)}.json')
         else:
             new(lines, f'qGa{suff}', '\\prelim')
     ours, k = seed_mean(cell, HEADLINE)
@@ -189,15 +212,18 @@ def cell_macros(lines, cell, suff, with_ga=True):
         new(lines, f'qGap{suff}', f'{gap:+.1f}\\%', 'vs warm CP-SAT UB')
         ga = ga_result(cell) if with_ga else None
         base, bname = (pb[0], f'best-PDR ({pb[1]})') if pb else (None, '')
-        if ga is not None and (base is None or ga.mean() < base.mean()):
-            base, bname = ga, 'GA'
         if base is not None and len(base) == len(ours):
             w = int((ours < base - 1e-6).sum())
             tie = int((np.abs(ours - base) <= 1e-6).sum())
             new(lines, f'qWtl{suff}', f'{w}/{tie}/{len(ours)-w-tie}',
-                f'vs strongest classical baseline: {bname}, paired, seed-mean')
+                f'vs best PDR pair ({bname}), paired, seed-mean')
         else:
             new(lines, f'qWtl{suff}', '\\prelim')
+        if ga is not None and len(ga) == len(ours):
+            w = int((ours < ga - 1e-6).sum())
+            tie = int((np.abs(ours - ga) <= 1e-6).sum())
+            new(lines, f'qWtlGa{suff}', f'{w}/{tie}/{len(ours)-w-tie}',
+                'vs GA v2 60 CPU-s, paired, seed-mean')
     else:
         for fam in ('qOurs', 'qGap', 'qWtl'):
             new(lines, f'{fam}{suff}', '\\prelim')
@@ -208,12 +234,50 @@ def cell_macros(lines, cell, suff, with_ga=True):
         new(lines, f'qSa{suff}', '\\prelim')
 
 
+WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
+         'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen',
+         'fifteen', 'sixteen']
+
+
+def cpsat_summary_macros(lines):
+    """Grid-wide closure of the strengthened CP-SAT references."""
+    lines.append('% Strengthened CP-SAT references, grid-wide closure '
+                 '(results/cpsat_v2/*.jsonl)')
+    nopt = tot = ncells = nzero = 0
+    complete = True
+    for cell, _ in GRID + TRANSFER:
+        cp = cpsat_rows(cell)
+        if cp is None:
+            complete = False
+            continue
+        k = sum(1 for r in cp if r['status'] == 'OPTIMAL')
+        nopt += k
+        tot += len(cp)
+        ncells += 1
+        nzero += (k == 0)
+    if not complete:
+        for nme in ('CpNopt', 'CpNref', 'CpNcellsNoOpt'):
+            new(lines, nme, '\\prelim')
+        return
+    new(lines, 'CpNopt', nopt, f'instances proved optimal, {ncells} cells')
+    new(lines, 'CpNref', tot, 'instances with a strengthened CP-SAT reference')
+    new(lines, 'CpNcellsNoOpt', WORDS[nzero],
+        'cells in which no instance was closed')
+
+
 # ------------------------------------------------------------- G1 (as before)
 def g1_macros(lines):
-    lines.append('% Premise gate G1 (notes/gate_G1.md, notes/gate_G1retry.md)')
+    # Source switch 2026-08-05: the retry (\Gb*) family now reads the 3-seed
+    # POOLED verdict, notes/gate_G1retry_s3.md (per-instance makespans averaged
+    # over seeds 301/302/303 before the test, Option A of gpu_arm_designs 1.7).
+    # The single-seed record notes/gate_G1retry.md is kept unmodified on disk
+    # but is no longer a macro source. Attempt one (\GaOne*) is single-seed and
+    # unchanged.
+    lines.append('% Premise gate G1 (notes/gate_G1.md, '
+                 'notes/gate_G1retry_s3.md = 3-seed pooled retry)')
     for tag, path, cells in (
             ('GaOne', 'notes/gate_G1.md', ('v1+t0.6', 'v2+t0.6')),
-            ('Gb', 'notes/gate_G1retry.md', ('v1+t1.0', 'v2+t1.0'))):
+            ('Gb', 'notes/gate_G1retry_s3.md', ('v1+t1.0', 'v2+t1.0'))):
         rows = gate_rows(path)
         pmax = 0.0
         for cell, word in zip(cells, ('VOne', 'VTwo')):
@@ -395,58 +459,102 @@ def latency_macros(lines):
 
 
 # ---------------------------------------------------------------- L1 external
+def link_seed_scores(stem):
+    """Per-seed released-simulator score records for one L1 arm.
+
+    `stem` is the model name without its -s### suffix; every seed directory
+    present on disk is picked up, so adding a seed repoints the macros with no
+    code edit. The ablation stem link-m1 does not match the guide stem's
+    directories, because the seed suffix must follow the stem immediately.
+    """
+    out = {}
+    pat = f'../external/replays_l1/{stem}-s*/score_vs_released.json'
+    for p in sorted(glob.glob(pat)):
+        m = re.search(r'-s(\d+)/score_vs_released\.json$', p)
+        if m:
+            out[int(m.group(1))] = json.load(open(p))
+    return out
+
+
 def link_macros(lines):
+    # Source switch 2026-08-05 (notes/harvest_2026-08-05.md sec 5): the
+    # headline external arm now pools training seeds 301/302/303 instead of
+    # reporting seed 301 alone. Per-seed statistics are averaged over seeds;
+    # because the released anchor rows are identical across seeds, the seed
+    # mean of each relative difference equals the relative difference of the
+    # per-instance seed means. The Mann-Whitney p is reported as the WORST
+    # seed's, which is the conservative reading of "every seed agrees".
     lines.append('% L1 external (Link et al. benchmark, released simulator; '
-                 'external/replays_l1/*/score_vs_released.json)')
+                 'external/replays_l1/*/score_vs_released.json); per-seed '
+                 'statistics averaged over training seeds, MWU p = worst seed')
     VW = {3: 'Three', 6: 'Six', 9: 'Nine', 12: 'Twelve', 15: 'Fifteen', 18: 'Eighteen'}
-    path = f'../external/replays_l1/15x10+link+link-{HEADLINE.replace("m1-bcb-", "m1-")}-s301/score_vs_released.json'
-    # headline external arm is link-m1-guide; ablation arm link-m1
-    for tag, mdl in (('Lk', '15x10+link+link-m1-guide-s301'),
-                     ('LkAbl', '15x10+link+link-m1-s301')):
-        p = f'../external/replays_l1/{mdl}/score_vs_released.json'
-        if not os.path.exists(p):
-            new(lines, f'{tag}Missing', '\\prelim', f'{p} not found')
+    ANCH = (('joint', 'Joint'), ('best-modular', 'Mod'), ('best-heuristic', 'Heur'))
+    # headline external arm is link-m1-guide (3 seeds); ablation arm link-m1
+    for tag, stem in (('Lk', '15x10+link+link-m1-guide'),
+                      ('LkAbl', '15x10+link+link-m1')):
+        S = link_seed_scores(stem)
+        if not S:
+            new(lines, f'{tag}Missing', '\\prelim',
+                f'../external/replays_l1/{stem}-s*/score_vs_released.json missing')
             continue
-        d = json.load(open(p))
-        for vk, rec in sorted(d.items(), key=lambda kv: int(kv[0][1:])):
+        seeds = sorted(S)
+        cells = sorted(S[seeds[0]], key=lambda k: int(k[1:]))
+        for vk in cells:
             V = int(vk[1:])
             if tag == 'LkAbl' and V != 3:
                 continue           # ablation row: scarce-fleet cell only
             w = VW[V]
-            new(lines, f'{tag}OursV{w}',
-                f'{rec["ours_mean"]:.0f}$\\pm${rec["ours_std"]:.0f}',
-                f'{mdl}, their simulator units, n={rec["n"]}')
-            for akey, asuff in (('joint', 'Joint'), ('best-modular', 'Mod'),
-                                ('best-heuristic', 'Heur')):
-                a = rec['anchors'][akey]
-                new(lines, f'{tag}{asuff}DV{w}', f'{a["rel_diff_pct"]:+.1f}\\%',
-                    f'vs {a["name"]}, MWU p={a["mwu_p"]:.2g}')
+            recs = [S[s][vk] for s in seeds]
+            n = recs[0]['n']
+            # Mean over seeds of the per-seed instance mean; the +- keeps its
+            # instance-to-instance meaning (n per seed), averaged over seeds.
+            om = float(np.mean([r['ours_mean'] for r in recs]))
+            osd = float(np.mean([r['ours_std'] for r in recs]))
+            new(lines, f'{tag}OursV{w}', f'{om:.0f}$\\pm${osd:.0f}',
+                f'{stem}, seeds {seeds}, their simulator units, n={n}/seed')
+            for akey, asuff in ANCH:
+                a = [r['anchors'][akey] for r in recs]
+                assert len({x['name'] for x in a}) == 1, (stem, vk, akey)
+                d = float(np.mean([x['rel_diff_pct'] for x in a]))
+                pw = max(x['mwu_p'] for x in a)
+                new(lines, f'{tag}{asuff}DV{w}', f'{d:+.1f}\\%',
+                    f'vs {a[0]["name"]}, worst-seed MWU p={pw:.2g}')
         if tag == 'Lk':
-            v3 = d.get('v3')
+            v3 = [S[s]['v3'] for s in seeds if 'v3' in S[s]]
             if v3:
-                pmax = max(a['mwu_p'] for a in v3['anchors'].values())
+                pmax = max(x['mwu_p'] for r in v3 for x in r['anchors'].values())
                 new(lines, 'LkVThreePvalMax', texpval(pmax),
-                    'largest MWU p among the three V=3 anchors')
+                    'largest MWU p among the three V=3 anchors, over all seeds')
             # anticipatory-semantics wedge, per V: the released simulator's
             # anticipatory vehicle rule re-times our decision sequences;
-            # wedge = (their-timing mean - our-env-timing mean)/our-env mean
-            for vk, rec in sorted(d.items(), key=lambda kv: int(kv[0][1:])):
+            # wedge = (their-timing mean - our-env-timing mean)/our-env mean,
+            # computed per seed and then averaged over seeds
+            for vk in cells:
                 V = int(vk[1:])
-                env_ms = []
-                for fp in sorted(glob.glob(f'../external/replays_l1/{mdl}/v{V}/replay_*.json')):
-                    env_ms.append(json.load(open(fp))['ours_makespan_link_units'])
-                if env_ms and len(env_ms) == rec['n']:
+                ws, n = [], 0
+                for s in seeds:
+                    rec = S[s][vk]
+                    env_ms = [json.load(open(fp))['ours_makespan_link_units']
+                              for fp in sorted(glob.glob(
+                                  f'../external/replays_l1/{stem}-s{s}/'
+                                  f'v{V}/replay_*.json'))]
+                    if len(env_ms) != rec['n']:
+                        ws = []
+                        break
                     e = float(np.mean(env_ms))
-                    new(lines, f'LkWedgeV{VW[V]}',
-                        f'{100*(rec["ours_mean"]-e)/e:+.1f}\\%',
-                        f'their timing vs our timing of the same schedules, n={len(env_ms)}')
+                    ws.append(100 * (rec['ours_mean'] - e) / e)
+                    n = rec['n']
+                if ws:
+                    new(lines, f'LkWedgeV{VW[V]}', f'{np.mean(ws):+.1f}\\%',
+                        'their timing vs our timing of the same schedules, '
+                        f'seeds {seeds}, n={n}/seed')
 
 
 # -------------------------------------------------------------- certificates
 def certificate_macros(lines):
     lines.append('% Shipped certificate (C - B0)/B0 with C = headline seed-mean '
                  'schedule, B0 = analytic root bound (results/certificate/)')
-    beats = {}
+    have_cp = False
     for cell, suff in GRID + TRANSFER:
         stem = cell if cell.startswith('15x25') else f'10x25+ppvct-mixed+{cell}'
         p = f'results/certificate/{stem}.json'
@@ -460,14 +568,11 @@ def certificate_macros(lines):
         cert = 100 * (ours - b0v) / b0v
         new(lines, f'Cert{suff}', f'{cert.mean():.1f}\\%',
             f'mean per-schedule certificate, {k}-seed C, n={len(ours)}')
-        if cp:
-            lb = np.array([r['lb'] for r in cp])
-            beats[suff] = int((b0v > lb + 1e-6).sum())
-    for suff in ('VOneTSix', 'VOneTTen', 'VTwoTTen'):
-        if suff in beats:
-            new(lines, f'CertBeatLb{suff}', beats[suff],
-                'instances where analytic B0 > warm CP-SAT 300s LB (of 100)')
-    if beats:
+        have_cp = have_cp or bool(cp)
+    # \CertBeatLb* retired 2026-08-03 (decisions): under the strengthened
+    # reference the analytic root bound never exceeds the solver's proven
+    # lower bound, so the claim it carried was withdrawn.
+    if have_cp:
         # admissibility check: B0 <= CP-SAT UB everywhere a reference exists
         viol = tot = 0
         for cell, suff in GRID + TRANSFER:
@@ -505,6 +610,8 @@ def regret_macros(lines):
             f'max over grid ({max(vals, key=vals.get)})')
         new(lines, 'RgMin', f'{min(vals.values()):.1f}',
             f'min over grid ({min(vals, key=vals.get)})')
+        new(lines, 'RgMinAbs', f'{abs(min(vals.values())):.1f}',
+            'absolute value of RgMin')
     else:
         new(lines, 'RgMax', '\\prelim')
         new(lines, 'RgMin', '\\prelim')
@@ -532,6 +639,7 @@ def main():
                  '10x25 v{1,2,3} grid only)')
     for cell, suff in TRANSFER:
         cell_macros(lines, cell, suff, with_ga=False)
+    cpsat_summary_macros(lines)
     g1_macros(lines)
     ladder_macros(lines)
     tost_macros(lines)

@@ -12,6 +12,11 @@ train_log/*
 !train_log/PPVCT/
 train_log/PPVCT/*
 !train_log/PPVCT/config_*.json
+# two exceptions to the *.log rule: the console logs of the certified
+# decision-latency runs, which are the source of the reported per-decision
+# times. Released deliberately so those numbers can be checked.
+!train_log/latency_uncontended2.log
+!train_log/latency_cpu4_2.log
 results/monitor/
 results/figures/
 

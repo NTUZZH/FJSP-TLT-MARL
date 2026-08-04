@@ -31,6 +31,29 @@ checkpoint. Every comparison and every statistic reported in the manuscript can
 therefore be recomputed from this repository without re-solving or re-training
 anything.
 
+One file is still growing at the time of writing: the anytime CP-SAT ledger
+`results/scaleup/cpsat_b/50x25+ppvct-mixed+v2+t0.6.jsonl`, whose 3600 s solves
+are being extended by a running batch. It is released as-is, and the manuscript
+number that reads it (the wall-clock at which CP-SAT first overtakes the policy
+at 50 modules) is recomputed and finalized from the completed ledger before
+submission. Every other result file here is final.
+
+### Artifact inventory
+
+The manuscript's reproducibility footnote names six families. Each one is here:
+
+| Family | Where it lives |
+| --- | --- |
+| Generator | `ppvc_instance_generator.py` and `transport_marl/layout.py` (the station-cell layout and travel-time model), driven by `scripts/p1_make_ppvct_data.py`, `scripts/p7_make_transfer_data.py` and `scripts/x2_scale_make_data.py`; `transport_marl/external_adapter.py` ports the external distribution |
+| Instance data | `data/PPVCT/` (training grid, held-out transfer cells, scale-up cells) and `data/LINK/15x10/` |
+| CP-SAT references | `results/cpsat_v2/` (reported), `results/scaleup/{cpsat,cpsat_b}/` (scale-up, including the anytime ledgers), `or_solution/PPVCT/` (archival); model in `transport_marl/cpsat_transport.py` |
+| Dispatching-rule references | `results/pdr/` and `results/scaleup/pdr/`; rules in `transport_marl/pdr_pairs.py` |
+| GA references | `results/ga_v2/` (reported), `results/ga_v2_budget/` and `results/scaleup/{ga,ga_long,ga_budget}/` (budget sweeps), `results/ga/` (archival); solvers in `transport_marl/ga_transport_v2.py` and `ga_transport.py` |
+| Trained models | `trained_network/PPVCT/` (64 checkpoint files) with the hyperparameter snapshots in `train_log/PPVCT/` that the loaders read to rebuild each network |
+| Evaluation code | `scripts/` (rollouts, baselines, statistics, acceptance tests, scale-up pipeline), `transport_marl/validator_t.py` (independent feasibility checking), `figures_src/` (figures), with the per-instance outputs in `test_results/PPVCT/`, `results/diagnostics/`, `results/certificate/` and `results/scaleup/` |
+| External-benchmark scores | `results/external_l1/{arm}/score_vs_released.json` and `summary.json`, one directory per training seed: our schedules re-timed in the benchmark authors' own simulator, against their released anchors |
+| Decision-latency evidence | `train_log/latency_uncontended2.log` (GPU) and `train_log/latency_cpu4_2.log` (four pinned CPU cores), the console logs of the runs that produced the reported per-decision times |
+
 ---
 
 ## Installation
@@ -61,8 +84,10 @@ they can be rebuilt bit-for-bit from their pinned seeds.
 
 | Dataset | Location | Content |
 | --- | --- | --- |
-| PPVC-T training grid | `data/PPVCT/10x25+ppvct-mixed+v{V}+t{r}/{test,vali}` | 10 modules, fleet size `V` in {1,2,3}, travel intensity `r` in {0.1,0.3,0.6}; 100 test + 100 validation instances per cell |
+| PPVC-T training grid | `data/PPVCT/10x25+ppvct-mixed+v{V}+t{r}/{test,vali}`, `V` in {1,2,3}, `r` in {0.1,0.3,0.6} | 10 modules; 100 test + 100 validation instances per cell |
+| PPVC-T held-out intensity | `data/PPVCT/10x25+ppvct-mixed+v{1,2,3}+t1.0/{test,vali}` | the travel intensity the policy never trains on; 100 test instances per cell |
 | PPVC-T transfer cells | `data/PPVCT/10x25+ppvct-mixed+v4+t{0.6,1.0}`, `data/PPVCT/15x25+ppvct-mixed+v2+t{0.6,1.0}` | held-out fleet size and held-out problem scale, test split only |
+| PPVC-T scale-up cells | `data/PPVCT/{20,30}x25+ppvct-mixed+...`, `data/PPVCT/{50,80}x25+ppvct-mixed+...` (7 cells) | 20, 30, 50 and 80 modules against the 10-module training size; 30 test instances per cell, test split only |
 | Link JSSPT port | `data/LINK/15x10/{test,vali}` | 15 jobs x 10 machines, external anchor distribution, with `PROVENANCE.json` per split |
 
 Regenerate them:
@@ -73,7 +98,15 @@ python scripts/p1_make_ppvct_data.py          # add --smoke for a 3-instance dry
 
 # held-out transfer cells (test split only; never seen in training or validation)
 python scripts/p7_make_transfer_data.py
+
+# scale-up cells, 30 instances each (phase A = 20 and 30 modules, phase B = 50 and 80)
+python scripts/x2_scale_make_data.py --phase A
+python scripts/x2_scale_make_data.py --phase B
 ```
+
+The seven scale-up cells are zero-shot only: training and model selection
+happen at 10 modules, and their test seeds (20000 onward) cannot collide with
+a training seed.
 
 Training instances are drawn on the fly by the trainer and are not stored.
 
@@ -98,6 +131,16 @@ mechanisms are switched independently:
   learned-critic counterfactual comparator, or the single-agent joint policy.
 - `--dist {ppvc,link}` selects the instance distribution; with `link`,
   `--fleet_grid` lists vehicle counts and `--ratio_grid` is ignored.
+- `--guide_price {certified,naive}` selects what the action-price channel
+  carries: the admissible bound-based price (default) or the non-admissible
+  myopic duration control, whose `--guide_price_scale` matches the two
+  channels' mean magnitude so the arm tests admissibility and not feature
+  scale. The channel count, and therefore the parameter count, is the same
+  either way.
+- `--size_mix` round-robins the module count across updates (a batch stays
+  size-uniform), and `--vali_size_mix` sets the sizes of the size-mixed
+  validation set. Checkpoints trained this way are named
+  `mix{sizes}x25+ppvct-mixed+{suffix}-s{seed}.pth`.
 
 ```bash
 # headline policy: bound-counterfactual credit + certified action prices
@@ -115,11 +158,29 @@ python -u scripts/p2_train_mappo.py --model_suffix single-joint --algo single --
 python -u scripts/p2_train_mappo.py --model_suffix e0b-uncontended --fleet_grid 10 \
     --seed 301 --max_updates 1000
 
-# scarce-cell reruns used for the explicit-coupling comparison
+# scarce-cell reruns used for the explicit-coupling comparison (seeds 301, 302, 303).
+# Both arms share the undivided team reward and no price channel; only the fleet
+# the trainer sees, and whether a fixed vehicle rule replaces the vehicle head, differ.
 python -u scripts/p2_train_mappo.py --model_suffix g1r-explicit --fleet_grid 1,2 \
-    --ratio_grid 0.6,1.0 --seed 301 --max_updates 1000
+    --ratio_grid 0.6,1.0 --vali_cells v1+t1.0,v2+t1.0 --vali_every 20 \
+    --seed 301 --max_updates 1000
 python -u scripts/p2_train_mappo.py --model_suffix g1r-e0b --fleet_grid 10 \
-    --ratio_grid 0.6,1.0 --seed 301 --max_updates 1000
+    --ratio_grid 0.6,1.0 --fixed_veh_rule NVF --vali_cells v1+t1.0,v2+t1.0 \
+    --vali_every 20 --seed 301 --max_updates 1000
+
+# non-admissible price control: same channel shape, myopic duration content,
+# mean-matched by the scale calibrated with scripts/x2_calibrate_naive_price.py
+python -u scripts/p2_train_mappo.py --model_suffix m1-bcb-guide-naive --credit m1 \
+    --guide --guide_price naive --guide_price_scale 0.0185 --seed 301 --max_updates 2000
+
+# train-in-regime anchor for the zero-shot travel-intensity column
+python -u scripts/p2_train_mappo.py --model_suffix m1-bcb-guide-t10 --credit m1 --guide \
+    --seed 301 --max_updates 2000 --ratio_grid 1.0
+
+# size-mixture arm used by the scale-up exhibit (10, 15 and 20 modules in training)
+python -u scripts/x2_gate_mix_smoke.py     # 20-update calibration smoke, run first
+python -u scripts/p2_train_mappo.py --model_suffix m1-bcb-guide-mix --credit m1 --guide \
+    --seed 301 --max_updates 2000 --size_mix 10,15,20 --vali_size_mix 10,20
 
 # external anchor (Link JSSPT distribution); checkpoints named 15x10+link+{suffix}-s{seed}
 python -u scripts/p2_train_mappo.py --dist link --model_suffix link-m1 --credit m1 \
@@ -128,13 +189,17 @@ python -u scripts/p2_train_mappo.py --dist link --model_suffix link-m1-guide --c
     --seed 301 --max_updates 2000 --fleet_grid 3,6,9,12,15,18
 ```
 
-Every arm reported in the manuscript was trained on three seeds (301, 302, 303)
-except the ample-fleet and scarce-cell reruns, which use seed 301 only. Run one
-training job at a time: two concurrent jobs on one GPU roughly double each
-other's wall-clock, which corrupts any timing comparison.
+Seed coverage, per arm: the primary-grid arms, the scarce-cell reruns and the
+external `link-m1-guide` arm are trained on three seeds (301, 302, 303); the
+ample-fleet anchor, the external `link-m1` ablation, the non-admissible price
+control and the train-in-regime anchor are single runs on seed 301. The
+size-mixture arm ships seed 301 here; its seeds 302 and 303 were still training
+when this snapshot was taken and are added when they land. Run one training job
+at a time: two concurrent jobs on one GPU roughly double each other's
+wall-clock, which corrupts any timing comparison.
 
-`trained_network/PPVCT/` already holds the 46 checkpoints these commands
-produce, so training can be skipped entirely.
+`trained_network/PPVCT/` already holds the 64 checkpoint files (32 arms, best
+plus final) these commands produce, so training can be skipped entirely.
 
 ---
 
@@ -152,6 +217,25 @@ python -u scripts/eval_ppvct.py --model_name 10x25+ppvct-mixed+e0b-uncontended-s
 python scripts/link_eval.py --model_name 15x10+link+link-m1-s301 --fleets 3,6,9,12,15,18
 ```
 
+`link_eval.py` writes one replay per instance plus a scored summary. The scored
+files are released under `results/external_l1/{arm}/`
+(`score_vs_released.json`, holding our mean, the three released anchors and the
+Mann-Whitney p per fleet size, and `summary.json`); the raw per-instance replay
+JSONs are not, because the command above regenerates them from the released
+checkpoint and the released instances. `scripts/fill_macros.py` reads the
+scored files from `../external/replays_l1/{arm}/`, next to the repository,
+which is where the external benchmark's working copy lives; point it at
+`results/external_l1/` or copy the directory across.
+
+Decision latency is reported from a run that had the device to itself, because
+a contended measurement is not a measurement. The two console logs behind the
+reported times are released as `train_log/latency_uncontended2.log` (GPU) and
+`train_log/latency_cpu4_2.log` (four pinned cores, `OMP_NUM_THREADS=4`); each
+line carries the cell, the instance count, the mean makespan and the mean wall
+time of one batched forward pass. The only edit made to them is that the
+absolute interpreter path in a PyTorch warning line was rewritten to
+`<site-packages>/`; no measured line was touched.
+
 `eval_ppvct.py` writes one array per cell to
 `test_results/PPVCT/{cell}/Result_greedy[-{veh_rule}]+{model}_{cell}.npy`,
 holding the per-instance makespan and per-event decision latency. Every
@@ -162,10 +246,58 @@ Baselines and references (CPU; all are resume-safe per cell):
 
 ```bash
 python scripts/p1_eval_pdr.py                             # 9 dispatching-rule pairs  -> results/pdr/
-python scripts/p3_eval_ga.py all --budget 60 --workers 20 # PDR-seeded GA, 60 s/inst   -> results/ga/
-python -u scripts/p2_cpsat_refs.py v1+t0.6 v2+t0.6        # warm-started CP-SAT, 300 s -> or_solution/PPVCT/
-python scripts/p8_certificate.py                          # solver-free root bound     -> results/certificate/
+python scripts/p8_certificate.py                          # solver-free root bound    -> results/certificate/
+
+# the two reference families the manuscript reports (see the note below)
+python scripts/p3_eval_ga_v2.py all --budget 60 --workers 12    # GA v2, 60 CPU-s/inst -> results/ga_v2/
+python -u scripts/p2_cpsat_refs_v2.py v1+t0.6 v2+t0.6 \
+    --par 3 --workers 4 --time 300                              # strengthened CP-SAT  -> results/cpsat_v2/
+
+# GA search-budget sweep behind the "how much search does the GA need" claim
+python scripts/p3_eval_ga_v2.py v1+t0.6 v1+t1.0 v2+t0.6 v2+t1.0 --budget 5 \
+    --tag '+b5' --outdir results/ga_v2_budget                   # repeat for 1, 15
+python scripts/ga_budget_table.py                               # budget table
+
+# archival first-generation references, kept for provenance, no longer a reported number
+python scripts/p3_eval_ga.py all --budget 60 --workers 20 # PDR-seeded GA v1  -> results/ga/
+python -u scripts/p2_cpsat_refs.py v1+t0.6 v2+t0.6        # CP-SAT v1         -> or_solution/PPVCT/
 ```
+
+Two reference families were superseded during the study, and both generations
+are released. The reported CP-SAT column comes from the **strengthened** model
+in `results/cpsat_v2/` (redundant fleet-capacity cumulative carrying the
+vehicle relaxation, warm-start-tightened horizon, vehicle symmetry breaking;
+300 s, four search workers); `or_solution/PPVCT/` holds the unstrengthened
+first-generation references, which are kept on disk unchanged and are read by
+nothing. The reported GA column comes from `results/ga_v2/`, whose vehicle-side
+encoding contains the three dispatching vehicle rules exactly; `results/ga/`
+holds the first-generation GA. `transport_marl/cpsat_transport.py` reproduces
+either model: `strengthen=False` is the v1 semantics, byte-for-byte, so the
+archival ledgers stay checkable.
+
+Scale-up (zero-shot at 20, 30, 50 and 80 modules; 30 instances per cell). The
+solver jobs are the expensive part and are core-pinned so they cannot starve a
+concurrent trainer:
+
+```bash
+python scripts/x2_scale_pdr.py --workers 10                        # -> results/scaleup/pdr/
+python scripts/x2_scale_cert.py                                    # -> results/scaleup/certificate/
+python scripts/x2_scale_policy.py --model_name 10x25+ppvct-mixed+m1-bcb-guide-s301 \
+    --cells 20x25+ppvct-mixed+v1+t0.6 --device cuda                # -> results/scaleup/policy/
+python scripts/x2_scale_ga.py --cells 20x25+ppvct-mixed+v1+t0.6 --budget 60 --workers 8
+python -u scripts/x2_scale_cpsat.py 20x25+ppvct-mixed+v1+t0.6 \
+    --par 3 --workers 4 --time 300 --cores 8-23                    # -> results/scaleup/cpsat/
+python -u scripts/x2_scale_cpsat.py 50x25+ppvct-mixed+v2+t0.6 --time_limit 3600 \
+    --anytime --out_dir results/scaleup/cpsat_b                    # anytime ledger
+python scripts/x2_scale_report.py                                  # every quoted scale number
+python scripts/x2_scale_report_b.py                                # phase-B cost accounting
+python scripts/x2_scale_table.py                                   # scale table
+```
+
+The GA on the large cells records `startup_cpu` and `search_cpu` separately,
+because at 20 modules and above the fixed cost of starting the search already
+exceeds the budget being varied, and a bare "60 CPU-s" label would understate
+what the baseline costs a user.
 
 Statistical comparisons:
 
@@ -212,12 +344,17 @@ The mapping from files to reported numbers:
 | --- | --- |
 | Policy makespans, per cell and per instance | `test_results/PPVCT/{cell}/Result_greedy*.npy` |
 | Dispatching-rule baselines (9 rule pairs) | `results/pdr/{cell}.json` |
-| Genetic-algorithm baseline (60 s per instance) | `results/ga/{cell}.json` |
-| CP-SAT reference (warm-started, 300 s) | `or_solution/PPVCT/{cell}.jsonl` |
+| Genetic-algorithm baseline (60 CPU-s per instance) | `results/ga_v2/{dataset}.json` |
+| Genetic-algorithm budget sweep (0.25, 1, 5, 15 CPU-s) | `results/ga_v2_budget/{dataset}+b{budget}.json` |
+| CP-SAT reference and its optimality gap `(UB-LB)/LB` | `results/cpsat_v2/{dataset}.jsonl` |
 | Optimality certificates (solver-free root bound) | `results/certificate/{cell}.json` |
 | Coordination and lazy-agent diagnostics | `results/diagnostics/{model}_{cell}_greedy.json` |
+| Scale boundary: policy, GA, CP-SAT and rules at 20 to 80 modules | `results/scaleup/{policy,ga,ga_long,ga_budget,cpsat,cpsat_b,pdr,certificate}/` |
+| External benchmark, scored in its authors' simulator | `results/external_l1/{arm}/score_vs_released.json` |
+| Per-decision latency, GPU and four CPU cores | `train_log/latency_uncontended2.log`, `train_log/latency_cpu4_2.log` |
 | Seed count actually trained per arm | `trained_network/PPVCT/*.pth` |
 | Statistical verdicts (paired tests, equivalence tests) | `notes/*.md`, written by `gate_eval.py`, `g2_final.py` and `e4_final.py` |
+| Archival first-generation references (read by nothing) | `or_solution/PPVCT/{cell}.jsonl`, `results/ga/{cell}.json` |
 
 The statistical comparisons run before `fill_macros.py`: `gate_eval.py`,
 `g2_final.py`, `e4_final.py` and `e4_tost_run.py` each write a verdict block to
@@ -232,6 +369,7 @@ Figures are rendered from the same result files:
 
 ```bash
 python figures_src/make_f3_f4.py           # credit-assignment figure and coupling-regret map
+python figures_src/make_f5_scale.py        # scale boundary, budget sweep and anytime panels
 python scripts/f3_credit_figure.py         # credit-assignment figure, standalone
 python scripts/e3_regret_map.py --explicit 10x25+ppvct-mixed+joint-v1-s301 \
     --penalty 10x25+ppvct-mixed+e0b-uncontended-s301 --penalty_veh_rule NVF
@@ -243,14 +381,18 @@ python scripts/e3_regret_map.py --explicit 10x25+ppvct-mixed+joint-v1-s301 \
 
 | Path | Contents |
 | --- | --- |
-| `transport_marl/` | The method. Batched environment (`fjsp_env_transport.py`), single-instance reference simulator (`sim_single.py`), admissible bound (`bound.py`), counterfactual credit baseline (`bcb.py`), action-price channel (`guide.py`), two-headed network (`model_transport.py`), MAPPO trainer (`mappo.py`), station layout and travel-time model (`layout.py`), independent validator (`validator_t.py`), CP-SAT model (`cpsat_transport.py`), genetic algorithm (`ga_transport.py`), dispatching rules (`pdr_pairs.py`), comparator learners (`coma_baseline.py`, `single_agent.py`), diagnostics (`diagnostics.py`), external-benchmark adapters (`external_adapter.py`) |
-| `scripts/` | Dataset generation, training, evaluation, baselines, statistics, acceptance tests |
+| `transport_marl/` | The method. Batched environment (`fjsp_env_transport.py`), single-instance reference simulator (`sim_single.py`), admissible bound (`bound.py`), counterfactual credit baseline (`bcb.py`), action-price channel (`guide.py`, certified and non-admissible content), two-headed network (`model_transport.py`), MAPPO trainer (`mappo.py`), station layout and travel-time model (`layout.py`), independent validator (`validator_t.py`), CP-SAT model (`cpsat_transport.py`, plain and strengthened), genetic algorithms (`ga_transport.py`, `ga_transport_v2.py`), dispatching rules (`pdr_pairs.py`), comparator learners (`coma_baseline.py`, `single_agent.py`), diagnostics (`diagnostics.py`), external-benchmark adapters (`external_adapter.py`) |
+| `scripts/` | Dataset generation, training, evaluation, baselines, statistics, acceptance tests; the `x2_scale_*` family is the scale-up pipeline |
 | `figures_src/` | Manuscript figures and the shared plotting style |
-| `data/` | PPVC-T and Link instance files (48 MB) |
-| `trained_network/PPVCT/` | 46 checkpoints, 8.4 MB, covering every reported arm and seed |
+| `data/` | PPVC-T and Link instance files (59 MB) |
+| `trained_network/PPVCT/` | 64 checkpoint files (32 arms, best plus final), 12 MB, covering every reported arm and seed |
 | `train_log/PPVCT/` | Per-model hyperparameter snapshots (required to rebuild networks for the released checkpoints) |
-| `or_solution/PPVCT/` | CP-SAT reference solutions, one JSON Lines file per cell |
-| `results/pdr`, `results/ga`, `results/certificate`, `results/diagnostics` | Baseline, certificate and diagnostic result files |
+| `train_log/latency_*2.log` | Console logs of the two uncontended decision-latency runs |
+| `results/external_l1/` | External-benchmark scores, one directory per training seed (raw replays regenerable with `scripts/link_eval.py`) |
+| `results/cpsat_v2/`, `results/ga_v2/`, `results/ga_v2_budget/` | The CP-SAT and GA references the manuscript reports, and the GA budget sweep |
+| `results/scaleup/` | Scale-up evidence at 20 to 80 modules: policy rollouts, GA (60 s, 600 s and the small-budget sweep), CP-SAT (300 s and the 3600 s anytime ledgers), dispatching rules, root bounds |
+| `results/pdr`, `results/certificate`, `results/diagnostics` | Dispatching-rule baselines, certificates and diagnostic result files |
+| `or_solution/PPVCT/`, `results/ga/` | Archival first-generation CP-SAT and GA references, kept unchanged for provenance |
 | `test_results/PPVCT/` | Per-instance evaluation arrays for every released checkpoint |
 | `model/`, `fjsp_env_same_op_nums.py`, `ortools_solver.py`, `common_utils.py`, `data_utils.py`, `params.py` | Base flexible job-shop scaffolding adapted from prior work (see `NOTICE`) |
 | `ppvc_instance_generator.py` | Instance generator for the production-scheduling distribution |

@@ -86,9 +86,9 @@ ARMS = [
 ]
 
 figc, ax1 = plt.subplots(figsize=(3.5, 2.45))
-figc.subplots_adjust(left=0.135, right=0.99, top=0.97, bottom=0.19)
-figb, ax2 = plt.subplots(figsize=(3.5, 2.3))
-figb.subplots_adjust(left=0.125, right=0.99, top=0.97, bottom=0.21)
+figc.subplots_adjust(left=0.135, right=0.965, top=0.97, bottom=0.19)
+figb, ax2 = plt.subplots(figsize=(3.5, 1.98))
+figb.subplots_adjust(left=0.125, right=0.99, top=0.965, bottom=0.225)
 
 clip_hi = 380.0
 for prefix, label, color, ls, lw in ARMS:
@@ -168,7 +168,7 @@ cmap = LinearSegmentedColormap.from_list(
     'regret', [BLUE_F, '#ffffff', ROSE_F])
 norm = TwoSlopeNorm(vcenter=0.0, vmin=-2.0, vmax=np.nanmax(reg))
 
-fig, ax = plt.subplots(figsize=(3.5, 1.95))
+fig, ax = plt.subplots(figsize=(3.5, 1.60))
 fig.subplots_adjust(left=0.13, right=0.97, top=0.97, bottom=0.19)
 ax.imshow(reg, cmap=cmap, norm=norm, aspect='auto')
 for i in range(3):

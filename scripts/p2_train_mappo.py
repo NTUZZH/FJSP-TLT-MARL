@@ -32,6 +32,18 @@ cli.add_argument('--fixed_veh_rule', type=str, default='none',
 cli.add_argument('--guide', action='store_true',
                  help='bound-guided action prior: per-candidate certified '
                       'price tags as an extra channel on both pair grids')
+cli.add_argument('--guide_price', type=str, default='certified',
+                 choices=['certified', 'naive'],
+                 help="content of the guide channel: 'certified' = the "
+                      "admissible Theorem-1 action price Delta_a (default, "
+                      "headline); 'naive' = a non-admissible myopic duration "
+                      "price of matched magnitude (control arm for the "
+                      "admissibility claim). Requires --guide.")
+cli.add_argument('--guide_price_scale', type=float, default=1.0,
+                 help='multiplier on the naive price so that the channel mean '
+                      'matches the certified channel; calibrated pre-launch '
+                      'and recorded in the config snapshot. Ignored when '
+                      '--guide_price certified.')
 cli.add_argument('--dist', type=str, default='ppvc', choices=['ppvc', 'link'],
                  help='instance distribution: ppvc (default) or the certified '
                       'Link JSSPT port (external anchor L1); with link, '
@@ -41,6 +53,17 @@ cli.add_argument('--link_machines', type=int, default=10)
 cli.add_argument('--vali_cells', type=str, default='',
                  help='comma list like v1+t0.6,v2+t0.6; default = grid cells')
 cli.add_argument('--n_modules', type=int, default=10)
+cli.add_argument('--size_mix', type=str, default='',
+                 help="comma list of module counts to round-robin over ACROSS "
+                      "updates, e.g. '10,15,20'. A batch stays size-uniform "
+                      "(SameOpNums env), only the size changes between "
+                      "updates. Empty = fixed --n_modules, and the training "
+                      "path is then untouched.")
+cli.add_argument('--vali_size_mix', type=str, default='',
+                 help='module counts of the size-mixed validation set; empty '
+                      '= the training sizes. Model selection minimises the '
+                      'mean over (size, cell) of makespan / B(s_0), so no '
+                      'single size dominates.')
 cli.add_argument('--vali_every', type=int, default=20)
 args_cli = cli.parse_args()
 sys.argv = [sys.argv[0]]
@@ -79,7 +102,9 @@ def make_env(instances, n_veh, ratio):
         opt.append(np.asarray(meta['op_type'])); mct.append(np.asarray(meta['mch_type']))
         lay.append(layout)
     env = FJSPEnvTransport(len(jls[0]), pts[0].shape[1], use_lag_features=True,
-                           use_guide=args_cli.guide)
+                           use_guide=args_cli.guide,
+                           guide_price=args_cli.guide_price,
+                           guide_price_scale=args_cli.guide_price_scale)
     env.set_initial_data(jls, pts, lags, opt, mct, lay)
     if args_cli.reward == 'full':
         env.attach_bound(TransportBound(env, use_mch=True, use_veh=True))
@@ -146,13 +171,29 @@ def rollout(env, ppo, mem, device, greedy=False, hard_cap_mult=8):
 def main():
     fleets = [int(x) for x in args_cli.fleet_grid.split(',')]
     ratios = [float(x) for x in args_cli.ratio_grid.split(',')]
+    sizes = [int(x) for x in args_cli.size_mix.split(',') if x.strip()]
+    if sizes and args_cli.dist == 'link':
+        raise SystemExit(
+            '--size_mix is meaningless with --dist link: the external Link '
+            'JSSPT generator carries its own problem size (--link_jobs / '
+            '--link_machines) and never calls ppvc_instance_generator. '
+            'Drop --size_mix, or drop --dist link.')
+    if args_cli.guide_price != 'certified' and not args_cli.guide:
+        raise SystemExit(
+            f"--guide_price {args_cli.guide_price} requires --guide: without "
+            f'it there is no price channel at all, and the run would silently '
+            f'be a plain non-guide arm rather than the admissibility control.')
     if args_cli.dist == 'link':
         cells = [(v, None) for v in fleets]     # AGV-count cells only
         model_name = (f'{args_cli.link_jobs}x{args_cli.link_machines}'
                       f'+link+{args_cli.model_suffix}-s{args_cli.seed}')
     else:
         cells = [(v, r) for v in fleets for r in ratios]
-        model_name = f'{args_cli.n_modules}x25+ppvct-mixed+{args_cli.model_suffix}-s{args_cli.seed}'
+        # size tag follows the train.py precedent (train.py:75-76): a mixed
+        # arm gets its own prefix so no existing analysis glob can sweep it in
+        size_tag = ('mix' + '-'.join(str(x) for x in sizes)) if sizes \
+            else str(args_cli.n_modules)
+        model_name = f'{size_tag}x25+ppvct-mixed+{args_cli.model_suffix}-s{args_cli.seed}'
 
     configs.fea_j_input_dim = 14
     configs.fea_m_input_dim = 10
@@ -176,11 +217,14 @@ def main():
     snap.update(dict(model_name=model_name, transport=True,
                      veh_fea_dim=4, veh_pair_dim=6,
                      fleet_grid=fleets, ratio_grid=ratios,
+                     size_mix=sizes, vali_size_mix=args_cli.vali_size_mix,
                      reward=args_cli.reward, seed_train=args_cli.seed,
                      max_updates=args_cli.max_updates,
                      algo=args_cli.algo, credit=args_cli.credit,
                      fixed_veh_rule=args_cli.fixed_veh_rule,
                      guide=args_cli.guide, dist=args_cli.dist,
+                     guide_price=args_cli.guide_price,
+                     guide_price_scale=args_cli.guide_price_scale,
                      link_jobs=args_cli.link_jobs,
                      link_machines=args_cli.link_machines))
     with open(f'train_log/PPVCT/config_{model_name}.json', 'w') as f:
@@ -197,6 +241,7 @@ def main():
 
     # fixed vali envs (subset per cell), built once and reset each pass
     vali_envs = []
+    vali_norm = []
     if args_cli.dist == 'link':
         # one shared vali instance set; fleet size varied per cell by
         # overriding the recorded n_vehicles
@@ -215,7 +260,31 @@ def main():
                     insts.append((jl, pt, meta))
                 vali_envs.append((f'v{v}', make_env(insts, None, None)))
     else:
-        if args_cli.vali_cells:
+        vali_cell_dirs = []
+        if sizes:
+            # one fixed vali env per (module count, cell); instances generated
+            # from the SAME seed base as data/PPVCT (p1_make_ppvct_data.py: the
+            # vali split uses seed0 = 10000), so the size-10 envs reproduce the
+            # on-disk vali set exactly (both generators are deterministic
+            # functions of their arguments; layout.py has no RNG).
+            vsizes = [int(x) for x in args_cli.vali_size_mix.split(',')
+                      if x.strip()] or sizes
+            for sz in vsizes:
+                for (v, r) in cells:
+                    insts = []
+                    for i in range(args_cli.vali_subset):
+                        jl, pt, meta = ppvc_instance_generator(
+                            n_modules=sz, class_mix='mixed', seed=10000 + i)
+                        insts.append((jl, pt, meta))
+                    venv = make_env(insts, v, r)
+                    vali_envs.append((f'j{sz}v{v}t{r}', venv))
+                    # root certificate B(s_0): make_env has already attached the
+                    # bound, so max_endTime IS B at the root -- the same read
+                    # p8_certificate.py:48-49 and x2_scale_cert.py:48-49 use
+                    vali_norm.append(float(np.mean(venv.max_endTime)))
+            print(f'[size-mix] train sizes={sizes} vali sizes={vsizes} '
+                  f'norms={[round(x, 1) for x in vali_norm]}', flush=True)
+        elif args_cli.vali_cells:
             vali_cell_dirs = [(c, f'data/PPVCT/10x25+ppvct-mixed+{c}/vali')
                               for c in args_cli.vali_cells.split(',')]
         else:
@@ -234,6 +303,12 @@ def main():
     t0 = time.time()
     for upd in range(args_cli.max_updates):
         v, r = cells[upd % len(cells)]
+        # round-robin the module count ACROSS updates. The `// len(cells)` is
+        # what makes every size see every regime cell instead of pinning one
+        # size to one cell; with a single size it is constant, i.e. exactly
+        # --n_modules with that value.
+        n_mod = sizes[(upd // len(cells)) % len(sizes)] if sizes \
+            else args_cli.n_modules
         seed0 = args_cli.seed * 1_000_000 + upd * configs.num_envs
         insts = []
         for e in range(configs.num_envs):
@@ -244,7 +319,7 @@ def main():
                 jl, pt, meta = link_to_env_inputs(jobs, tt, v)
             else:
                 jl, pt, meta = ppvc_instance_generator(
-                    n_modules=args_cli.n_modules, class_mix='mixed', seed=seed0 + e)
+                    n_modules=n_mod, class_mix='mixed', seed=seed0 + e)
             insts.append((jl, pt, meta))
         env = make_env(insts, v, r)
         mem = TransportMemory(configs.gamma, configs.gae_lambda)
@@ -252,6 +327,8 @@ def main():
         loss, vloss = ppo.update(mem, credit=args_cli.credit)
         rec = dict(update=upd, cell=[v, r], train_ms=float(ms.mean()),
                    loss=loss, vloss=vloss, wall=round(time.time() - t0, 1))
+        if sizes:
+            rec['n_modules'] = n_mod
 
         if (upd + 1) % args_cli.vali_every == 0 and vali_envs:
             per_cell = {}
@@ -259,7 +336,13 @@ def main():
                 vms = rollout(venv, ppo, None, device, greedy=True)
                 key = f'v{tag[0]}t{tag[1]}' if isinstance(tag, tuple) else tag
                 per_cell[key] = float(vms.mean())
-            score = float(np.mean(list(per_cell.values())))
+            if sizes:
+                # dimensionless: mean over (size, cell) of makespan / B(s_0),
+                # so the larger sizes cannot dominate model selection
+                score = float(np.mean([per_cell[t] / nrm for (t, _), nrm
+                                       in zip(vali_envs, vali_norm)]))
+            else:
+                score = float(np.mean(list(per_cell.values())))
             rec['vali'] = per_cell
             rec['vali_score'] = score
             if score < best_score:

@@ -166,8 +166,11 @@ def main():
             mct = [np.asarray(x[2]['mch_type']) for x in insts]
             lay = [x[2]['transport'] for x in insts]
             guide = bool(getattr(configs, 'guide', False))
-            env = FJSPEnvTransport(len(jls[0]), pts[0].shape[1],
-                                   use_lag_features=True, use_guide=guide)
+            env = FJSPEnvTransport(
+                len(jls[0]), pts[0].shape[1], use_lag_features=True,
+                use_guide=guide,
+                guide_price=snap.get('guide_price', 'certified'),
+                guide_price_scale=float(snap.get('guide_price_scale', 1.0)))
             env.set_initial_data(jls, pts, lags, opt, mct, lay)
             if guide:
                 # the guide channel prices actions against the FULL bound at

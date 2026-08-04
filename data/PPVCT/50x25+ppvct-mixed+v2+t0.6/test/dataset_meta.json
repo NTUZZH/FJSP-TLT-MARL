@@ -1,0 +1,17 @@
+{
+ "seed0": 20000,
+ "n_instances": 30,
+ "n_modules": 50,
+ "ppvc_mix": "mixed",
+ "ppvc_factory": "default",
+ "n_vehicles": 2,
+ "tau_over_p": 0.6,
+ "split": "test-only (zero-shot)",
+ "generator": "x2_scale_make_data.py v2",
+ "ops_mean": 1100.0,
+ "ops_min": 1100,
+ "ops_max": 1100,
+ "realized_tau_over_p_mean": 0.5999321971431176,
+ "realized_tau_over_p_min": 0.5983773389708529,
+ "realized_tau_over_p_max": 0.6015737033704956
+}

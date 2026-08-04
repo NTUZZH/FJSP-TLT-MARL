@@ -1,0 +1,152 @@
+{
+ "v12": {
+  "n": 100,
+  "ours_mean": 2724.18,
+  "ours_std": 177.6063846791209,
+  "anchors": {
+   "joint": {
+    "name": "M:model_repo/01-23_07-52-10_M_LFalse_FTFalse/checkpoints/policy_module_final.pt)",
+    "mean": 1733.3,
+    "rel_diff_pct": 57.167253216408,
+    "mwu_p": 2.5586821035553476e-34
+   },
+   "best-modular": {
+    "name": "Job:model_repo/04-01_20-22-26_M_jssp/checkpoints/policy_module_final.pt)+AGV:model_repo/01-25_20-27-15_M_agv/checkpoints/policy_module_final.pt)",
+    "mean": 1765.64,
+    "rel_diff_pct": 54.28852993815272,
+    "mwu_p": 2.559258714835744e-34
+   },
+   "best-heuristic": {
+    "name": "Job:MOR+AGV:NSCPT",
+    "mean": 1819.3,
+    "rel_diff_pct": 49.73781124608365,
+    "mwu_p": 2.5586821035553476e-34
+   }
+  }
+ },
+ "v15": {
+  "n": 100,
+  "ours_mean": 2720.01,
+  "ours_std": 164.59129025644955,
+  "anchors": {
+   "joint": {
+    "name": "M:model_repo/01-23_07-52-10_M_LFalse_FTFalse/checkpoints/policy_module_final.pt)",
+    "mean": 1729.42,
+    "rel_diff_pct": 57.27874084953337,
+    "mwu_p": 2.559547067908908e-34
+   },
+   "best-modular": {
+    "name": "Job:model_repo/04-01_20-22-26_M_jssp/checkpoints/policy_module_final.pt)+AGV:model_repo/01-25_20-27-15_M_agv/checkpoints/policy_module_final.pt)",
+    "mean": 1729.22,
+    "rel_diff_pct": 57.29693156452043,
+    "mwu_p": 2.5576733381056476e-34
+   },
+   "best-heuristic": {
+    "name": "Job:MOR+AGV:NSCPT",
+    "mean": 1813.0,
+    "rel_diff_pct": 50.028130170987325,
+    "mwu_p": 2.5582497280894126e-34
+   }
+  }
+ },
+ "v18": {
+  "n": 100,
+  "ours_mean": 2728.33,
+  "ours_std": 165.8967096805367,
+  "anchors": {
+   "joint": {
+    "name": "M:model_repo/01-23_07-52-10_M_LFalse_FTFalse/checkpoints/policy_module_final.pt)",
+    "mean": 1723.68,
+    "rel_diff_pct": 58.285180543952464,
+    "mwu_p": 2.5586821035553476e-34
+   },
+   "best-modular": {
+    "name": "Job:model_repo/04-01_20-22-26_M_jssp/checkpoints/policy_module_final.pt)+AGV:model_repo/01-27_15-27-34_M_agv/checkpoints/policy_module_final.pt)",
+    "mean": 1717.0,
+    "rel_diff_pct": 58.900990099009896,
+    "mwu_p": 2.5570970745401475e-34
+   },
+   "best-heuristic": {
+    "name": "Job:MOR+AGV:NSCPT",
+    "mean": 1812.62,
+    "rel_diff_pct": 50.518586355661974,
+    "mwu_p": 2.5579615172936e-34
+   }
+  }
+ },
+ "v3": {
+  "n": 100,
+  "ours_mean": 4254.27,
+  "ours_std": 279.2023217393553,
+  "anchors": {
+   "joint": {
+    "name": "M:model_repo/01-23_07-52-10_M_LFalse_FTFalse/checkpoints/policy_module_final.pt)",
+    "mean": 4971.94,
+    "rel_diff_pct": -14.43440588583127,
+    "mwu_p": 6.211105671515883e-29
+   },
+   "best-modular": {
+    "name": "Job:model_repo/04-01_20-22-26_M_jssp/checkpoints/policy_module_final.pt)+AGV:model_repo/01-25_20-27-15_M_agv/checkpoints/policy_module_final.pt)",
+    "mean": 5066.63,
+    "rel_diff_pct": -16.033537084807843,
+    "mwu_p": 5.563548099415708e-29
+   },
+   "best-heuristic": {
+    "name": "Job:FDDMWR+AGV:NSCPT",
+    "mean": 4626.29,
+    "rel_diff_pct": -8.041432767941473,
+    "mwu_p": 9.167454225677662e-14
+   }
+  }
+ },
+ "v6": {
+  "n": 100,
+  "ours_mean": 2970.19,
+  "ours_std": 171.7629147659322,
+  "anchors": {
+   "joint": {
+    "name": "M:model_repo/01-23_07-52-10_M_LFalse_FTFalse/checkpoints/policy_module_final.pt)",
+    "mean": 2306.99,
+    "rel_diff_pct": 28.747415463439385,
+    "mwu_p": 6.477520546866267e-34
+   },
+   "best-modular": {
+    "name": "Job:model_repo/04-01_20-22-26_M_jssp/checkpoints/policy_module_final.pt)+AGV:model_repo/01-25_20-27-15_M_agv/checkpoints/policy_module_final.pt)",
+    "mean": 2398.04,
+    "rel_diff_pct": 23.859068239061905,
+    "mwu_p": 5.746029192111728e-34
+   },
+   "best-heuristic": {
+    "name": "Job:MOR+AGV:NSCPT",
+    "mean": 2257.02,
+    "rel_diff_pct": 31.59785912397764,
+    "mwu_p": 2.8001110164261127e-34
+   }
+  }
+ },
+ "v9": {
+  "n": 100,
+  "ours_mean": 2718.59,
+  "ours_std": 180.3695474196341,
+  "anchors": {
+   "joint": {
+    "name": "M:model_repo/01-23_07-52-10_M_LFalse_FTFalse/checkpoints/policy_module_final.pt)",
+    "mean": 1826.58,
+    "rel_diff_pct": 48.83498122173681,
+    "mwu_p": 2.559402887419299e-34
+   },
+   "best-modular": {
+    "name": "Job:model_repo/04-01_20-22-26_M_jssp/checkpoints/policy_module_final.pt)+AGV:model_repo/01-28_00-00-24_M_agv/checkpoints/policy_module_final.pt)",
+    "mean": 1890.79,
+    "rel_diff_pct": 43.7806419538923,
+    "mwu_p": 2.558393845341341e-34
+   },
+   "best-heuristic": {
+    "name": "Job:MOR+AGV:NSCPT",
+    "mean": 1873.56,
+    "rel_diff_pct": 45.10290569824293,
+    "mwu_p": 2.559114550158045e-34
+   }
+  }
+ }
+}

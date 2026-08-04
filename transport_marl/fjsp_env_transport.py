@@ -67,7 +67,8 @@ class TransportEnvState(EnvState):
 class FJSPEnvTransport(FJSPEnvForSameOpNums):
     """Same-op-nums batched env with transport coupling (always enabled)."""
 
-    def __init__(self, n_j, n_m, use_lag_features=True, use_guide=False):
+    def __init__(self, n_j, n_m, use_lag_features=True, use_guide=False,
+                 guide_price='certified', guide_price_scale=1.0):
         super().__init__(n_j, n_m, use_lag_features=use_lag_features)
         # +2 transport op channels (tau_in_min, tau_in_max),
         # +2 machine channels (reserved flag, outbound task count)
@@ -77,6 +78,11 @@ class FJSPEnvTransport(FJSPEnvForSameOpNums):
         # bound-guided action prior (guide.py): one extra per-candidate
         # channel on BOTH pair grids when enabled
         self.use_guide = use_guide
+        # 'certified' = admissible Theorem-1 price (headline); 'naive' = the
+        # non-admissible control. The CHANNEL COUNT is identical either way,
+        # so the network and its parameter count are untouched.
+        self.guide_price = guide_price
+        self.guide_price_scale = float(guide_price_scale)
         self.veh_pair_dim = 6 + (1 if use_guide else 0)
 
     # ------------------------------------------------------------------
@@ -466,8 +472,12 @@ class FJSPEnvTransport(FJSPEnvForSameOpNums):
         self.construct_pair_features()
         self._construct_vehicle_features()
         if self.use_guide:
-            from transport_marl.guide import guide_features
-            gp, gt = guide_features(self)
+            if getattr(self, 'guide_price', 'certified') == 'naive':
+                from transport_marl.guide import naive_price_features
+                gp, gt = naive_price_features(self)
+            else:
+                from transport_marl.guide import guide_features
+                gp, gt = guide_features(self)
             self.fea_pairs = np.concatenate(
                 [self.fea_pairs, gp[:, :, :, None]], axis=3)
             self.fea_veh_pairs = np.concatenate(

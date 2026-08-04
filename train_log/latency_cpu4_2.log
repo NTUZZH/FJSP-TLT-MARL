@@ -1,0 +1,2 @@
+v2+t0.6 greedy: n=100 mean=305.06 std(1)=9.92 lat/event=4.4ms  gap-vs-ref 9.87% (cov 100)
+  diagnostics -> results/diagnostics/10x25+ppvct-mixed+m1-bcb-guide-s301_v2+t0.6_greedy.json

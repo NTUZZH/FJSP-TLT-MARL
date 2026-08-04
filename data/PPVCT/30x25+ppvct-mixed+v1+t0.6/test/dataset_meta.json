@@ -1,0 +1,11 @@
+{
+ "seed0": 20000,
+ "n_instances": 30,
+ "n_modules": 30,
+ "ppvc_mix": "mixed",
+ "ppvc_factory": "default",
+ "n_vehicles": 1,
+ "tau_over_p": 0.6,
+ "split": "test-only (zero-shot)",
+ "generator": "x2_scale_make_data.py v1"
+}

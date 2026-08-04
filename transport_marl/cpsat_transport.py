@@ -29,10 +29,30 @@ SCALE = 128
 
 
 def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
-                             n_workers=8, log=False, warmstart=None):
+                             n_workers=8, log=False, warmstart=None,
+                             strengthen=False, energy_cut=True, fleet=True):
     """warmstart: optional schedule_record dict (sim/env format: assigned_mch,
     op_start, op_ct, transports) hinted via AddHint (proposal §8 warm-started
-    variant). Hints must come from the SAME quantized time grid (dyadic)."""
+    variant). Hints must come from the SAME quantized time grid (dyadic).
+
+    strengthen=False reproduces the v1 reference model exactly (do not change
+    its semantics: or_solution/PPVCT/*.jsonl was produced with it).
+    strengthen=True adds three sound, solution-preserving strengthenings:
+      (a) horizon = warm-start makespan.  The warm start is a feasible schedule
+          of the same instance, so its makespan is a valid upper bound and
+          every optimal solution survives the tightened variable domains.
+      (b) redundant fleet capacity: an AddCumulative of unit demand over the
+          loaded-move intervals with capacity |V| (a vehicle is occupied for
+          the whole loaded leg), plus makespan >= end of every loaded move and
+          the energetic corollary |V| * makespan >= sum of loaded durations.
+          Empty legs stay encoded in the circuit's arc precedences and are
+          deliberately NOT given intervals: a vehicle waiting idle at a cell is
+          not occupied, so charging it would be unsound.
+      (c) vehicle symmetry breaking (only when |V| >= 2 and all vehicles share
+          one start cell, which is the case here): vehicle v may serve move k
+          only if vehicle v-1 serves some move with a smaller index.  The
+          warm-start vehicle labels are canonicalized to match before hinting.
+    """
     jl = np.asarray(job_length, dtype=int)
     pt = np.asarray(op_pt, dtype=float)
     tr = meta['transport']
@@ -75,6 +95,13 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
     horizon = int(ipt.max(initial=0) * n_ops + ilag.sum() +
                   (max(m[4] for m in moves) if moves else 0) * (K + n_ops) +
                   itau.max(initial=0) * (K + 1))
+
+    # (a) horizon = warm-start makespan (a valid UB, so no optimum is cut off)
+    ws_ub = None
+    if strengthen and warmstart is not None:
+        ws_ub = I(float(np.max(np.asarray(warmstart['op_ct'], dtype=float))))
+        if 0 < ws_ub < horizon:
+            horizon = ws_ub
 
     model = cp_model.CpModel()
     start = [model.NewIntVar(0, horizon, f's{o}') for o in range(n_ops)]
@@ -120,6 +147,17 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
                   for k in range(K)]
         for k in range(K):
             model.AddExactlyOne(veh_of[k])
+        # (c) identical-vehicle symmetry breaking. All vehicles share the same
+        # start cell `depot` and are otherwise interchangeable, so any solution
+        # can be relabelled so that vehicle v is first used later than v-1.
+        if strengthen and n_veh >= 2:
+            for v in range(1, n_veh):
+                for k in range(K):
+                    if k < v:
+                        model.Add(veh_of[k][v] == 0)
+                    else:
+                        model.AddBoolOr([veh_of[k][v].Not()] +
+                                        [veh_of[kp][v - 1] for kp in range(k)])
         for v in range(n_veh):
             arcs = []
             # node 0 = depot, node k+1 = move k
@@ -152,6 +190,34 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
 
     makespan = model.NewIntVar(0, horizon, 'makespan')
     model.AddMaxEquality(makespan, [end[last[j]] for j in range(n_j)])
+
+    # (b) redundant fleet-capacity constraint. Each loaded move occupies one
+    # vehicle for its whole duration, so at most |V| loaded moves overlap.
+    # Implied by the circuits, but the cumulative propagator turns it into an
+    # energetic bound on the makespan that the circuits alone do not deliver.
+    # fleet=False removes strengthening (b) ENTIRELY (no cumulative, no
+    # makespan-to-move links, no energy cut) while keeping (a) and (c). This
+    # is the single-variable ablation that isolates the fleet-capacity
+    # constraint. energy_cut=False is a different, weaker ablation: it drops
+    # only the linear cut and keeps the cumulative.
+    if strengthen and fleet and K and itau.max() > 0:
+        mv_ivs = []
+        for k in range(K):
+            dur = moves[k][4]
+            mv_end_k = model.NewIntVar(0, horizon, f'mve{k}')
+            model.Add(mv_end_k == mv_start[k] + dur)
+            mv_ivs.append(model.NewIntervalVar(mv_start[k], dur, mv_end_k,
+                                               f'mviv{k}'))
+            # a loaded move always finishes before the job's last op ends
+            model.Add(makespan >= mv_end_k)
+        model.AddCumulative(mv_ivs, [1] * K, n_veh)
+        # energetic corollary of the same cumulative, stated linearly so the
+        # LP relaxation sees it without waiting for the propagator.
+        # energy_cut=False leaves it to the cumulative propagator alone (used
+        # to check that the LB lift is not an artifact of this one line).
+        if energy_cut:
+            model.Add(n_veh * makespan >= int(sum(m[4] for m in moves)))
+
     model.Minimize(makespan)
 
     if warmstart is not None:
@@ -161,13 +227,26 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
             model.AddHint(start[o], I(ws_start[o]))
             model.AddHint(mch_of[o], int(ws_mch[o]))
         ws_moves = {t['op']: t for t in warmstart.get('transports', [])}
+        # under (c) the hinted vehicle labels must be relabelled into the
+        # canonical order (first use by increasing move index), or the hint
+        # contradicts the symmetry-breaking clauses and is thrown away.
+        relabel = {}
+        if strengthen and n_veh >= 2:
+            for k, (j, o, fc, tc, dur) in enumerate(moves):
+                t = ws_moves.get(o)
+                if t is None:
+                    continue
+                v0 = t.get('veh', -1)
+                if 0 <= v0 < n_veh and v0 not in relabel:
+                    relabel[v0] = len(relabel)
         for k, (j, o, fc, tc, dur) in enumerate(moves):
             t = ws_moves.get(o)
             if t is not None:
                 model.AddHint(mv_start[k], I(t['pickup']))
                 if itau.max() > 0 and 0 <= t.get('veh', -1) < n_veh:
+                    vh = relabel.get(t['veh'], t['veh'])
                     for v in range(n_veh):
-                        model.AddHint(veh_of[k][v], int(v == t['veh']))
+                        model.AddHint(veh_of[k][v], int(v == vh))
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = float(time_limit)
@@ -184,6 +263,8 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
                              if solver.Value(veh_of[k][v]))
     out = dict(
         status=name,
+        strengthened=bool(strengthen),
+        horizon=horizon / SCALE,
         makespan=solver.Value(makespan) / SCALE,
         objective_bound=solver.BestObjectiveBound() / SCALE,
         walltime=solver.WallTime(),

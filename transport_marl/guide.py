@@ -161,3 +161,62 @@ def guide_features(env):
                             b = max(b, nv_min + Wp / V)
                 task_delta[e, j] = max(b - B_cur, 0.0) * s
     return pair_delta, task_delta
+
+
+def naive_price_features(env):
+    """NON-ADMISSIBLE control channel (Paper X2 arm c).
+
+    Same shapes, same clamp, same inv_slope scaling and the same call site as
+    guide_features(), but the number is a myopic DURATION rather than a
+    certified floor rise: the wall time the committed action itself occupies,
+    measured from the current decision time.
+
+        machine event : (commit time - now) + loaded travel + processing time
+        vehicle event : (arrival  - now) + processing time
+
+    It is deliberately NOT a lower bound on B(s.a) - B(s): it charges work the
+    certificate shows the rest of the shop absorbs in parallel, so it exceeds
+    the certified price on most (s, a) and its ranking of candidates need not
+    agree with the certified ranking. Corollary 2's admissibility therefore
+    fails by construction, which is the point of the arm.
+
+    env.guide_price_scale multiplies the result so that the channel's mean
+    magnitude matches the certified channel's (calibrated before launch and
+    recorded in the config snapshot). Without that match the arm would test
+    feature scale rather than admissibility.
+    """
+    E, J, M = env.number_of_envs, env.number_of_jobs, env.number_of_machines
+    s = env.inv_slope * float(getattr(env, 'guide_price_scale', 1.0))
+    pair_delta = np.zeros((E, J, M))
+    task_delta = np.zeros((E, J))
+    now = env.next_event_time
+    for e in range(E):
+        if env.n_realized[e] >= env.number_of_ops:
+            continue
+        if env.event_type[e] == 0:
+            avail = ~env.dynamic_pair_mask[e]                # [J, M]
+            for j in np.nonzero(avail.any(axis=1))[0]:
+                o = env.candidate[e, j]
+                cur = env.job_cell[e, j]
+                for m in np.nonzero(avail[j])[0]:
+                    commit_t = max(env.true_candidate_free_time[e, j],
+                                   env.true_mch_free_time[e, m])
+                    dest = env.station_cell[e, m]
+                    tau_l = 0.0
+                    if cur >= 0 and cur != dest:
+                        tau_l = env.tau_cells[e, cur, dest]
+                    dur = (commit_t - now[e]) + tau_l + env.true_op_pt[e, o, m]
+                    pair_delta[e, j, m] = max(dur, 0.0) * s
+        else:
+            v = env.event_veh[e]
+            vloc = env.veh_cell[e, v]
+            for j in np.nonzero(env.task_active[e])[0]:
+                frm, to = env.task_from[e, j], env.task_to[e, j]
+                depart = max(env.veh_free[e, v],
+                             env.task_release[e, j]) + env.tau_cells[e, vloc, frm]
+                arrival = depart + env.tau_cells[e, frm, to]
+                o = env.task_dest_op[e, j]
+                m = env.task_dest_mch[e, j]
+                dur = (arrival - now[e]) + env.true_op_pt[e, o, m]
+                task_delta[e, j] = max(dur, 0.0) * s
+    return pair_delta, task_delta
