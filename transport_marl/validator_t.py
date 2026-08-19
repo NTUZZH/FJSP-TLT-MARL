@@ -10,6 +10,11 @@ consistency, [precedence] job order with lags (same-cell case),
 [vehicle] per-vehicle chain consistency (empty-move duration, no overlap,
 valid ids), [spurious] no transport for same-cell pairs, [bound] makespan
 >= chain lower bound with lags and mandatory minimal travel.
+
+validate_recovered_schedule() adds the checks a schedule recovered from a
+mid-execution machine breakdown must also pass: [freeze], [downtime],
+[replan] and [recovery]. It runs the full contract above first, so a
+recovered schedule is never accepted on the recovery checks alone.
 """
 
 import numpy as np
@@ -163,5 +168,89 @@ def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
 
     if abs(makespan - float(np.max(ct))) > tol:
         v.append("[bound] reported makespan != max completion")
+
+    return dict(feasible=len(v) == 0, violations=v, makespan=makespan)
+
+
+def validate_recovered_schedule(job_length, op_pt, time_lag, station_cell,
+                                tau_cells, n_vehicles, veh_start_cell,
+                                record, residual, tol=1e-6, job_start_cell=-1):
+    """Feasibility of a schedule recovered after a mid-execution breakdown.
+
+    `residual` is the dict transport_marl/disruption.build_residual returns.
+    On top of the full feasibility contract this adds:
+      [freeze]   every frozen operation keeps the machine, start time and
+                 completion time it had in the baseline, and the move that
+                 delivered its module is unchanged;
+      [downtime] no operation occupies the broken machine at any instant of
+                 [t, t + d);
+      [replan]   nothing that was re-planned starts before t, and no move
+                 departs before t;
+      [recovery] the makespan is at least max(t + d, the latest frozen
+                 completion time).
+    """
+    res = validate_transport_schedule(job_length, op_pt, time_lag,
+                                      station_cell, tau_cells, n_vehicles,
+                                      veh_start_cell, record, tol=tol,
+                                      job_start_cell=job_start_cell)
+    v = list(res['violations'])
+    amch = np.asarray(record['assigned_mch'], dtype=int)
+    start = np.asarray(record['op_start'], dtype=float)
+    ct = np.asarray(record['op_ct'], dtype=float)
+    t = float(residual['t'])
+    t_up = float(residual['t_up'])
+    broken = int(residual['broken'])
+    frozen = set(int(o) for o in residual['frozen'])
+    b_mch = np.asarray(residual['base_assigned_mch'], dtype=int)
+    b_start = np.asarray(residual['base_op_start'], dtype=float)
+    b_ct = np.asarray(residual['base_op_ct'], dtype=float)
+
+    for o in sorted(frozen):
+        if amch[o] != b_mch[o]:
+            v.append(f"[freeze] op {o} moved from machine {b_mch[o]} to {amch[o]}")
+        if abs(start[o] - b_start[o]) > tol:
+            v.append(f"[freeze] op {o} start {start[o]:.6f} != frozen "
+                     f"{b_start[o]:.6f}")
+        if abs(ct[o] - b_ct[o]) > tol:
+            v.append(f"[freeze] op {o} completion {ct[o]:.6f} != frozen "
+                     f"{b_ct[o]:.6f}")
+
+    base_tr = {int(x['op']): x for x in residual['base_transports']}
+    out_tr = {int(x['op']): x for x in record['transports']}
+    for o in sorted(int(x['op']) for x in residual['transports']):
+        a, b = base_tr.get(o), out_tr.get(o)
+        if b is None:
+            v.append(f"[freeze] completed move for op {o} is missing")
+            continue
+        for k in ('veh', 'frm', 'to'):
+            if int(a[k]) != int(b[k]):
+                v.append(f"[freeze] completed move for op {o}: {k} changed")
+        for k in ('depart', 'pickup', 'arrival'):
+            if abs(float(a[k]) - float(b[k])) > tol:
+                v.append(f"[freeze] completed move for op {o}: {k} changed")
+
+    for o in np.nonzero(amch == broken)[0]:
+        if start[o] < t_up - tol and ct[o] > t + tol:
+            v.append(f"[downtime] op {o} occupies broken machine {broken} "
+                     f"during [{t:.6f}, {t_up:.6f}) "
+                     f"(runs {start[o]:.6f}-{ct[o]:.6f})")
+
+    for o in range(len(amch)):
+        if o not in frozen and start[o] < t - tol:
+            v.append(f"[replan] re-planned op {o} starts {start[o]:.6f} "
+                     f"before the disruption time {t:.6f}")
+    kept_ops = set(int(x['op']) for x in residual['transports'])
+    for x in record['transports']:
+        if int(x['op']) in kept_ops:
+            continue
+        if float(x['depart']) < t - tol:
+            v.append(f"[replan] move for op {x['op']} departs "
+                     f"{x['depart']:.6f} before the disruption time {t:.6f}")
+
+    makespan = float(ct.max())
+    lb = float(residual['lower_bound'])
+    if makespan < lb - tol:
+        v.append(f"[recovery] makespan {makespan:.6f} below the disrupted "
+                 f"lower bound {lb:.6f}")
 
     return dict(feasible=len(v) == 0, violations=v, makespan=makespan)

@@ -1,0 +1,24 @@
+{
+ "model": "10x25+ppvct-mixed+m1-bcb-guide-s301",
+ "cell": "10x25+ppvct-mixed+v2+t1.0",
+ "n": 2,
+ "device": "cpu",
+ "batch": 1,
+ "params": 40205,
+ "latency_contended": true,
+ "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
+ "rows": {
+  "instance_000": {
+   "ms": 415.09375,
+   "decisions": 334,
+   "lat_batch_s": 0.002273602021821847,
+   "validated": true
+  },
+  "instance_001": {
+   "ms": 388.875,
+   "decisions": 333,
+   "lat_batch_s": 0.002241570087200081,
+   "validated": true
+  }
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "50x25+ppvct-mixed+v2+t0.6": {
+  "n": 30,
+  "V": 2,
+  "W_tr_mean": 1449.0361979166667,
+  "C_best_mean": 1014.8302083333333,
+  "C_source": "GA 60 CPU-s",
+  "util": 0.7139303629404344,
+  "all_C": {
+   "GA 60 CPU-s": 1014.8,
+   "size-mixture policy": 1056.2,
+   "CP-SAT 3600s": 1028.9
+  }
+ },
+ "50x25+ppvct-mixed+v2+t1.0": {
+  "n": 30,
+  "V": 2,
+  "W_tr_mean": 2415.0041666666666,
+  "C_best_mean": 1609.27109375,
+  "C_source": "GA 60 CPU-s",
+  "util": 0.750341000980484,
+  "all_C": {
+   "GA 60 CPU-s": 1609.3,
+   "size-mixture policy": 1663.4,
+   "CP-SAT 3600s": 1703.3
+  }
+ },
+ "80x25+ppvct-mixed+v3+t1.0": {
+  "n": 30,
+  "V": 3,
+  "W_tr_mean": 3868.8234375,
+  "C_best_mean": 1855.4127604166667,
+  "C_source": "GA 60 CPU-s",
+  "util": 0.6950517103323118,
+  "all_C": {
+   "GA 60 CPU-s": 1855.4,
+   "size-mixture policy": 1890.7,
+   "CP-SAT 3600s": 2100.3
+  }
+ },
+ "link": {
+  "n": 100,
+  "W_tr_mean": 8359.26,
+  "per_fleet": {
+   "v3": {
+    "V": 3,
+    "C_best_mean": 4238.48,
+    "C_source": "ours",
+    "util": 0.6574102036579151
+   },
+   "v6": {
+    "V": 6,
+    "C_best_mean": 2257.02,
+    "C_source": "best-heuristic",
+    "util": 0.617278535413953
+   },
+   "v9": {
+    "V": 9,
+    "C_best_mean": 1826.58,
+    "C_source": "joint",
+    "util": 0.5084949285915025
+   },
+   "v12": {
+    "V": 12,
+    "C_best_mean": 1733.3,
+    "C_source": "joint",
+    "util": 0.40189522875439915
+   },
+   "v15": {
+    "V": 15,
+    "C_best_mean": 1729.22,
+    "C_source": "best-modular",
+    "util": 0.32227478285007116
+   },
+   "v18": {
+    "V": 18,
+    "C_best_mean": 1717.0,
+    "C_source": "best-modular",
+    "util": 0.27047369442826635
+   }
+  }
+ }
+}

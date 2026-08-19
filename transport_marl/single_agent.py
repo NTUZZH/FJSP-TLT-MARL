@@ -43,8 +43,14 @@ class DANIELSingle(nn.Module):
     def __init__(self, config):
         super().__init__()
         device = torch.device(config.device)
-        self.pair_input_dim = 8
-        self.veh_pair_dim = 6
+        # the guide channel widens both pair grids by one, exactly as in
+        # DANIELTransport; without this the merged head cannot be trained
+        # with the certified action prices, which would leave the
+        # single-agent control differing from the proposed arm in two ways
+        # at once, the head structure and the price channel
+        guide = 1 if getattr(config, 'guide', False) else 0
+        self.pair_input_dim = 8 + guide
+        self.veh_pair_dim = 6 + guide
         self.d = config.layer_fea_output_dim[-1]
 
         self.type_emb_dim = config.type_emb_dim

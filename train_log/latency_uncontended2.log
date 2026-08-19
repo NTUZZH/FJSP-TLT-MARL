@@ -1,10 +1,10 @@
-<site-packages>/torch/cuda/__init__.py:1061: UserWarning: Can't initialize NVML
+<env>/lib/python3.11/site-packages/torch/cuda/__init__.py:1061: UserWarning: Can't initialize NVML
   raw_cnt = _raw_device_count_nvml()
 v1+t0.6 greedy: n=100 mean=426.86 std(1)=11.46 lat/event=3.0ms  gap-vs-ref 3.55% (cov 100)
   diagnostics -> results/diagnostics/10x25+ppvct-mixed+m1-bcb-guide-s301_v1+t0.6_greedy.json
 v2+t1.0 greedy: n=100 mean=402.32 std(1)=10.95 lat/event=2.9ms  gap-vs-ref 7.90% (cov 100)
   diagnostics -> results/diagnostics/10x25+ppvct-mixed+m1-bcb-guide-s301_v2+t1.0_greedy.json
-<site-packages>/torch/cuda/__init__.py:1061: UserWarning: Can't initialize NVML
+<env>/lib/python3.11/site-packages/torch/cuda/__init__.py:1061: UserWarning: Can't initialize NVML
   raw_cnt = _raw_device_count_nvml()
 v1+t0.6 greedy: n=100 mean=423.77 std(1)=11.46 lat/event=3.2ms  gap-vs-ref 2.81% (cov 100)
   diagnostics -> results/diagnostics/10x25+ppvct-mixed+single-joint-s301_v1+t0.6_greedy.json

@@ -1,0 +1,192 @@
+{
+ "model": "mix10-15-20x25+ppvct-mixed+single-joint-mix-s301",
+ "cell": "50x25+ppvct-mixed+v2+t1.0",
+ "n": 30,
+ "device": "cuda",
+ "batch": 15,
+ "params": 36782,
+ "latency_contended": true,
+ "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
+ "rows": {
+  "instance_000": {
+   "ms": 1634.46875,
+   "decisions": 1675,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_001": {
+   "ms": 1665.6875,
+   "decisions": 1670,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_002": {
+   "ms": 1688.90625,
+   "decisions": 1674,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_003": {
+   "ms": 1718.125,
+   "decisions": 1671,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_004": {
+   "ms": 1680.625,
+   "decisions": 1674,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_005": {
+   "ms": 1663.0625,
+   "decisions": 1672,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_006": {
+   "ms": 1666.21875,
+   "decisions": 1675,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_007": {
+   "ms": 1639.421875,
+   "decisions": 1676,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_008": {
+   "ms": 1706.6328125,
+   "decisions": 1676,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_009": {
+   "ms": 1707.5859375,
+   "decisions": 1679,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_010": {
+   "ms": 1636.375,
+   "decisions": 1675,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_011": {
+   "ms": 1598.03125,
+   "decisions": 1681,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_012": {
+   "ms": 1700.390625,
+   "decisions": 1680,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_013": {
+   "ms": 1619.9375,
+   "decisions": 1676,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_014": {
+   "ms": 1686.65625,
+   "decisions": 1671,
+   "lat_batch_s": 0.004741156465860924,
+   "validated": true
+  },
+  "instance_015": {
+   "ms": 1660.859375,
+   "decisions": 1670,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_016": {
+   "ms": 1679.71875,
+   "decisions": 1672,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_017": {
+   "ms": 1654.546875,
+   "decisions": 1675,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_018": {
+   "ms": 1653.625,
+   "decisions": 1673,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_019": {
+   "ms": 1678.03125,
+   "decisions": 1676,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_020": {
+   "ms": 1667.953125,
+   "decisions": 1674,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_021": {
+   "ms": 1656.3125,
+   "decisions": 1679,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_022": {
+   "ms": 1722.5546875,
+   "decisions": 1678,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_023": {
+   "ms": 1713.5,
+   "decisions": 1674,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_024": {
+   "ms": 1738.1484375,
+   "decisions": 1673,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_025": {
+   "ms": 1647.53125,
+   "decisions": 1678,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_026": {
+   "ms": 1642.171875,
+   "decisions": 1676,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_027": {
+   "ms": 1685.625,
+   "decisions": 1684,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_028": {
+   "ms": 1697.9921875,
+   "decisions": 1679,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  },
+  "instance_029": {
+   "ms": 1668.125,
+   "decisions": 1673,
+   "lat_batch_s": 0.004702766397356823,
+   "validated": true
+  }
+ }
+}

@@ -13,6 +13,12 @@ Implements the v1 decision model pinned in notes/design_v1.md §2:
 This module is plain numpy, torch-free. The batched training env must agree
 with it on random instances (unit-tested), and every schedule it emits must
 pass transport_marl/validator_t.py (which shares no code with this file).
+
+A simulator can also be pre-loaded with a mid-execution state through
+load_residual_state(), so a rollout continues from a disrupted schedule
+instead of from an empty factory (transport_marl/disruption.py builds the
+state). reset() then restores that state, which is what makes the PDR rules
+and the GA decode re-plan a residual problem without knowing about it.
 """
 
 import numpy as np
@@ -58,6 +64,38 @@ class TransportSim:
         self.n_committed = 0
         self.n_completed = 0
         self.now = 0.0
+        res = getattr(self, '_residual', None)
+        if res is not None:
+            self._apply_residual(res)
+
+    # ---------- residual (mid-execution) state ----------
+
+    def load_residual_state(self, residual):
+        """Pre-load the mid-execution state built by disruption.build_residual.
+
+        After this call the simulator holds the frozen prefix of a disrupted
+        schedule and every subsequent reset() restores it, so run() and the GA
+        decode roll out the residual problem. schedule_record() then returns
+        the FULL recovered schedule, frozen operations included.
+        """
+        self._residual = residual
+        self.reset()
+
+    def _apply_residual(self, res):
+        self.next_op = np.asarray(res['next_op'], dtype=int).copy()
+        self.job_ready = np.asarray(res['job_ready'], dtype=float).copy()
+        self.job_loc = np.asarray(res['job_loc'], dtype=int).copy()
+        self.mch_free = np.asarray(res['mch_free'], dtype=float).copy()
+        self.veh_free = np.asarray(res['veh_free'], dtype=float).copy()
+        self.veh_loc = np.asarray(res['veh_cell'], dtype=int).copy()
+        self.assigned_mch = np.asarray(res['assigned_mch'], dtype=int).copy()
+        self.assigned_veh = np.asarray(res['assigned_veh'], dtype=int).copy()
+        self.op_start = np.asarray(res['op_start'], dtype=float).copy()
+        self.op_ct = np.asarray(res['op_ct'], dtype=float).copy()
+        self.transports = [dict(tr) for tr in res['transports']]
+        self.n_committed = int(res['n_frozen'])
+        self.n_completed = int(res['n_frozen'])
+        self.now = float(res['t'])
 
     # ---------- event machinery ----------
 

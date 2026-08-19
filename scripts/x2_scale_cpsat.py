@@ -131,6 +131,29 @@ def _pin(core_list):
         pass
 
 
+def _worker_init(cfg):
+    """Spawn-mode worker bootstrap.
+
+    Under the 'spawn' start method the child re-imports this module with its
+    own argv, so every CLI-derived global silently falls back to its default
+    (TLIM 300, ANYTIME False, ...). That would be an invisible protocol
+    drift: children would solve at the wrong budget and drop the anytime
+    trace. This initializer overwrites the child's globals from the parent's
+    resolved configuration and installs the anytime shim explicitly.
+    Spawn (rather than fork) is used because forking a parent that holds
+    ortools/absl locks intermittently deadlocks workers at birth, which is
+    the 0%-CPU hang observed on the 80-module campaign.
+    """
+    global PAR, WORKERS, TLIM, CORES, ENERGY, FLEET, ANYTIME, OUT_DIR
+    PAR = cfg['par']; WORKERS = cfg['workers']; TLIM = cfg['tlim']
+    CORES = cfg['cores']; ENERGY = cfg['energy']; FLEET = cfg['fleet']
+    ANYTIME = cfg['anytime']; OUT_DIR = cfg['out_dir']
+    for _v in ('OMP_NUM_THREADS', 'MKL_NUM_THREADS'):
+        os.environ[_v] = str(WORKERS)
+    if ANYTIME:
+        _install_anytime_shim()
+
+
 def solve_one(task):
     cell, stem, slot = task
     t0_all = time.time()
@@ -200,7 +223,19 @@ def main():
               f'workers={WORKERS} cores={CORES}', flush=True)
         tasks = [(cell, s, i % PAR) for i, s in enumerate(todo)]
         if tasks:
-            with Pool(PAR) as pool:
+            from multiprocessing import get_context
+            _cfg = dict(par=PAR, workers=WORKERS, tlim=TLIM, cores=CORES,
+                        energy=ENERGY, fleet=FLEET, anytime=ANYTIME,
+                        out_dir=OUT_DIR)
+            # maxtasksperchild=1: a pool worker that solves several large
+            # instances in a row does not return their memory to the OS, so
+            # its resident size ratchets up (43.8 GB after one 80-module
+            # solve, 51.7 GB after three) until the kernel reaps it. One
+            # task per child makes each solve start from a clean process;
+            # the extra spawn costs seconds against a 3600 s solve.
+            with get_context('spawn').Pool(PAR, initializer=_worker_init,
+                                           initargs=(_cfg,),
+                                           maxtasksperchild=1) as pool:
                 for rec in pool.imap_unordered(solve_one, tasks):
                     with open(jsonl, 'a') as f:
                         f.write(json.dumps(rec) + '\n')

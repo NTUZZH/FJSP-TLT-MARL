@@ -1,0 +1,198 @@
+[
+ {
+  "cell": "10x25+ppvct-mixed+v1+t0.6",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 1,
+  "chain": 234.05416666666667,
+  "mch": 51.16111111111111,
+  "veh": 290.82005208333334,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "10x25+ppvct-mixed+v3+t0.6",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 3,
+  "chain": 234.05416666666667,
+  "mch": 51.16111111111111,
+  "veh": 96.94001736111112,
+  "active": {
+   "chain": 30,
+   "mch": 0,
+   "veh": 0
+  }
+ },
+ {
+  "cell": "10x25+ppvct-mixed+v1+t1.0",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 1,
+  "chain": 256.5541666666667,
+  "mch": 51.16111111111111,
+  "veh": 484.4877604166667,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "10x25+ppvct-mixed+v3+t1.0",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 3,
+  "chain": 256.5541666666667,
+  "mch": 51.16111111111111,
+  "veh": 161.49592013888886,
+  "active": {
+   "chain": 30,
+   "mch": 0,
+   "veh": 0
+  }
+ },
+ {
+  "cell": "30x25+ppvct-mixed+v2+t1.0",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 2,
+  "chain": 264.8375,
+  "mch": 148.15277777777777,
+  "veh": 725.94765625,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "50x25+ppvct-mixed+v2+t0.6",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 2,
+  "chain": 247.60833333333332,
+  "mch": 243.86944444444447,
+  "veh": 724.5180989583333,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "50x25+ppvct-mixed+v2+t1.0",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 2,
+  "chain": 270.18958333333336,
+  "mch": 243.86944444444447,
+  "veh": 1207.5020833333333,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "80x25+ppvct-mixed+v3+t1.0",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 3,
+  "chain": 272.425,
+  "mch": 392.2416666666667,
+  "veh": 1289.6078125,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "50x25+ppvct-mixed+v2+t0.1",
+  "n": 30,
+  "n_machines": 25,
+  "n_vehicles": 2,
+  "chain": 219.36458333333334,
+  "mch": 243.86944444444447,
+  "veh": 120.440234375,
+  "active": {
+   "chain": 0,
+   "mch": 30,
+   "veh": 0
+  }
+ },
+ {
+  "cell": "50x15+ppvct-mixed+v2+t0.1",
+  "n": 30,
+  "n_machines": 15,
+  "n_vehicles": 2,
+  "chain": 221.41041666666666,
+  "mch": 522.3333333333334,
+  "veh": 120.71809895833333,
+  "active": {
+   "chain": 0,
+   "mch": 30,
+   "veh": 0
+  }
+ },
+ {
+  "cell": "50x9+ppvct-mixed+v2+t0.1",
+  "n": 30,
+  "n_machines": 9,
+  "n_vehicles": 2,
+  "chain": 227.97083333333333,
+  "mch": 1118.8333333333333,
+  "veh": 120.57734375,
+  "active": {
+   "chain": 0,
+   "mch": 30,
+   "veh": 0
+  }
+ },
+ {
+  "cell": "50x15+ppvct-mixed+v2+t1.0",
+  "n": 30,
+  "n_machines": 15,
+  "n_vehicles": 2,
+  "chain": 272.19166666666666,
+  "mch": 522.3333333333334,
+  "veh": 1206.9040364583334,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "50x9+ppvct-mixed+v2+t1.0",
+  "n": 30,
+  "n_machines": 9,
+  "n_vehicles": 2,
+  "chain": 278.80833333333334,
+  "mch": 1118.8333333333333,
+  "veh": 1207.9489583333334,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ },
+ {
+  "cell": "80x15+ppvct-mixed+v3+t1.0",
+  "n": 30,
+  "n_machines": 15,
+  "n_vehicles": 3,
+  "chain": 276.3520833333333,
+  "mch": 836.4666666666667,
+  "veh": 1289.482465277778,
+  "active": {
+   "chain": 0,
+   "mch": 0,
+   "veh": 30
+  }
+ }
+]

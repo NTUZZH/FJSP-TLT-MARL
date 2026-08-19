@@ -358,6 +358,59 @@ class FJSPEnvTransport(FJSPEnvForSameOpNums):
             self.true_candidate_free_time[it, jt] = opt_ct + self.true_op_lag[it, ot]
             self._raise_ct_lb(it, jt, ot, opt_ct)
 
+    # ------------------------------------------------------------------
+    # injected-state entry (transport_marl/disruption.py)
+    # ------------------------------------------------------------------
+
+    def force_realize(self, e, job, op, mch, start):
+        """Commit and realize one operation at a GIVEN start time.
+
+        Bypasses the event machinery so a frozen prefix of an already-executed
+        schedule can be loaded into a fresh env; every derived array is then
+        updated by the same code a normal commit uses. The operation must be
+        its job's current candidate, and the module must already be at the
+        machine's cell (frozen prefixes are replayed in start-time order, so it
+        always is), hence no transport task is created here.
+        """
+        idx = np.array([e])
+        jb = np.array([job])
+        op_a = np.array([op])
+        mch_a = np.array([mch])
+        assert self.candidate[e, job] == op, \
+            f'force_realize out of order: candidate {self.candidate[e, job]} != op {op}'
+        assert not self.reverse_process_relation[e, op, mch], \
+            f'force_realize on incompatible pair (op {op}, machine {mch})'
+        self.rec_assigned_mch[e, op] = mch
+        add_flag = (op_a != self.job_last_op_id[idx, jb])
+        self.candidate[idx, jb] += add_flag
+        self.mask[idx, jb] = (1 - add_flag)
+        am = add_flag
+        self.candidate_pt[idx[am], jb[am]] = self.unmasked_op_pt[idx[am], op_a[am] + 1]
+        self.candidate_process_relation[idx[am], jb[am]] = \
+            self.reverse_process_relation[idx[am], op_a[am] + 1]
+        self.candidate_process_relation[idx[~am], jb[~am]] = 1
+        self.op_scheduled_flag[e, op] = 1
+        self.remain_process_relation[e, op] = 0
+        self.mch_current_available_op_nums[idx] -= self.process_relation[idx, op_a]
+        self._op_match_stats_update(idx, jb, op_a)
+        self._realize_op(idx, jb, op_a, mch_a, np.array([float(start)]))
+
+    def refresh_state(self):
+        """Recompute events, features and the exported state after an external
+        state injection. Same tail as step(), without the reward telescope;
+        max_endTime is re-based so a later step() still telescopes exactly."""
+        self._compute_events()
+        self._rebuild_all_features()
+        self.max_endTime = self._bound_value()
+        self.state.update(self.fea_j, self.op_mask, self.fea_m, self.mch_mask,
+                          self.dynamic_pair_mask, self.comp_idx, self.candidate,
+                          self.fea_pairs, op_type=self.op_type,
+                          mch_type=self.mch_type)
+        self.state.update_transport(self.fea_v, self.fea_veh_pairs,
+                                    self.veh_action_mask, self.event_type,
+                                    self.event_veh, self.task_dest_op)
+        return self.state
+
     def _step_vehicle(self, idx, actions):
         veh = self.event_veh[idx]
         job = actions

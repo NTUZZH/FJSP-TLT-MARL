@@ -25,13 +25,18 @@ BLUE_F, ROSE_F, AMBER_F, GREY_F = '#a8c6e3', '#eda9b0', '#f3cf8f', '#c3cbd3'
 BLUE_M, ROSE_M = '#4f81ad', '#c25b6a'
 AMBER_M, GREY_M = '#b8860b', '#6b7480'
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from x2_style import register_fonts, FAMILY
+register_fonts()
+
 plt.rcParams.update({
     'font.family': 'serif',
-    'font.serif': ['Liberation Serif'],
+    'font.serif': [FAMILY],
     'mathtext.fontset': 'custom',
-    'mathtext.rm': 'Liberation Serif',
-    'mathtext.it': 'Liberation Serif:italic',
-    'mathtext.bf': 'Liberation Serif:bold',
+    'mathtext.rm': FAMILY,
+    'mathtext.it': FAMILY + ':italic',
+    'mathtext.bf': FAMILY + ':bold',
     'font.size': 8, 'axes.labelsize': 8, 'axes.titlesize': 8,
     'xtick.labelsize': 7.5, 'ytick.labelsize': 7.5, 'legend.fontsize': 7.5,
     'text.color': 'black', 'axes.labelcolor': 'black',
@@ -85,10 +90,10 @@ ARMS = [
     ('m2-shaped', 'M2: credit in return', ROSE_M, '-.', 1.0),
 ]
 
-figc, ax1 = plt.subplots(figsize=(3.5, 2.45))
-figc.subplots_adjust(left=0.135, right=0.965, top=0.97, bottom=0.19)
-figb, ax2 = plt.subplots(figsize=(3.5, 1.98))
-figb.subplots_adjust(left=0.125, right=0.99, top=0.965, bottom=0.225)
+figc, ax1 = plt.subplots(figsize=(3.5, 1.62))
+figc.subplots_adjust(left=0.135, right=0.965, top=0.965, bottom=0.255)
+figb, ax2 = plt.subplots(figsize=(3.5, 1.60))
+figb.subplots_adjust(left=0.125, right=0.99, top=0.965, bottom=0.27)
 
 clip_hi = 380.0
 for prefix, label, color, ls, lw in ARMS:
@@ -107,7 +112,7 @@ for prefix, label, color, ls, lw in ARMS:
                      xytext=(620, 362), fontsize=7, style='italic',
                      arrowprops=dict(arrowstyle='-', lw=0.6, color='black'))
 ax1.set_xlabel('PPO update')
-ax1.set_ylabel('validation makespan (9-cell mean)')
+ax1.set_ylabel('validation makespan')
 ax1.set_xlim(0, 2000)
 ax1.legend(frameon=False, loc='center right', bbox_to_anchor=(1.0, 0.60),
            fontsize=6.5, labelspacing=0.22, handlelength=1.6)
@@ -141,7 +146,7 @@ ax2.axhline(0, color=GREY_M, lw=0.6)
 ax2.set_xticks(range(len(tvals)))
 ax2.set_xticklabels(['0.1', '0.3', '0.6', '1.0 (zero-shot)'])
 ax2.set_xlabel(r'travel intensity $\bar\tau/\bar p$')
-ax2.set_ylabel('improvement over credit-only (%)')
+ax2.set_ylabel('improvement (%)')
 ax2.legend(frameon=False, loc='upper left')
 ax2.spines[['top', 'right']].set_visible(False)
 
@@ -164,17 +169,30 @@ for i, v in enumerate((1, 2, 3)):
             e0 = np.load(p)[:, 0]
             reg[i, j] = 100 * (e0.mean() - ours.mean()) / ours.mean()
 
+# minimum loaded fleet utilization per cell, B_veh(s0)/UB = W_tr/(|V| C):
+# a floor on the share of fleet time any schedule must spend carrying loads
+# (scripts/x2_fleet_util.py -> results/fleet_util.json; empty legs excluded)
+util = np.full((3, 4), np.nan)
+_fu = json.load(open('results/fleet_util.json'))
+for i, v in enumerate((1, 2, 3)):
+    for j, t in enumerate(tvals):
+        rec = _fu.get(f'10x25+ppvct-mixed+v{v}+t{t}')
+        if rec and rec.get('util_mean') is not None:
+            util[i, j] = 100 * rec['util_mean']
+
 cmap = LinearSegmentedColormap.from_list(
     'regret', [BLUE_F, '#ffffff', ROSE_F])
 norm = TwoSlopeNorm(vcenter=0.0, vmin=-2.0, vmax=np.nanmax(reg))
 
-fig, ax = plt.subplots(figsize=(3.5, 1.60))
-fig.subplots_adjust(left=0.13, right=0.97, top=0.97, bottom=0.19)
+fig, ax = plt.subplots(figsize=(3.5, 1.62))
+fig.subplots_adjust(left=0.13, right=0.97, top=0.97, bottom=0.235)
 ax.imshow(reg, cmap=cmap, norm=norm, aspect='auto')
 for i in range(3):
     for j in range(4):
-        ax.text(j, i, f'{reg[i, j]:+.1f}%', ha='center', va='center',
+        ax.text(j, i - 0.16, f'{reg[i, j]:+.1f}%', ha='center', va='center',
                 fontsize=8, color='black')
+        ax.text(j, i + 0.19, f'{util[i, j]:.0f}% loaded', ha='center',
+                va='center', fontsize=6.2, color='black')
 ax.set_xticks(range(4))
 ax.set_xticklabels(['0.1', '0.3', '0.6', '1.0 (zero-shot)'])
 ax.set_yticks(range(3))

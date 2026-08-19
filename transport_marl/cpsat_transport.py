@@ -18,6 +18,12 @@ Model:
   exactly one vehicle. Times are integerized by round(x * SCALE).
 
 Entry: solve_transport_instance(jl, pt, meta, time_limit, ...) -> dict.
+
+Residual mode (Paper X2 disruption experiment): six optional arguments turn
+the same model into the residual of a partially executed schedule, without
+touching a single default. See their docstring below; when all six are absent
+the model built here is byte-identical to the one that produced
+or_solution/PPVCT/*.jsonl.
 """
 
 import numpy as np
@@ -30,8 +36,28 @@ SCALE = 128
 
 def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
                              n_workers=8, log=False, warmstart=None,
-                             strengthen=False, energy_cut=True, fleet=True):
-    """warmstart: optional schedule_record dict (sim/env format: assigned_mch,
+                             strengthen=False, energy_cut=True, fleet=True,
+                             op_release=None, mch_ready=None, fixed_ops=None,
+                             veh_ready=None, veh_cells=None,
+                             delivered_ops=None):
+    """RESIDUAL ARGUMENTS (all default None, and every one of them only ever
+    ADDS constraints, so with all six absent the model, the parameters and the
+    search are exactly what they were before they existed):
+      op_release   [N]  earliest start time of each operation.
+      mch_ready    [M]  earliest time each machine is available; a machine
+                        down for repair until T carries mch_ready = T.
+      fixed_ops    {op: (machine, start)} decisions already executed and not
+                        open to the solver.
+      veh_ready    [V]  earliest time each vehicle can depart.
+      veh_cells    [V]  the cell each vehicle stands in at the start of the
+                        residual problem (they no longer share one depot, so
+                        vehicle symmetry breaking switches itself off unless
+                        they happen to coincide).
+      delivered_ops     operations whose incoming move already happened; no
+                        move variable is created for them even though their
+                        cell differs from their predecessor's.
+
+    warmstart: optional schedule_record dict (sim/env format: assigned_mch,
     op_start, op_ct, transports) hinted via AddHint (proposal §8 warm-started
     variant). Hints must come from the SAME quantized time grid (dyadic).
 
@@ -83,18 +109,35 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
         assert len(cells) == 1, 'PPVC-specialized model needs type-pure eligibility'
         op_cell[o] = cells.pop()
 
-    # moves: consecutive pairs with differing cells (job-first ops never move)
+    # moves: consecutive pairs with differing cells (job-first ops never move).
+    # A residual problem skips the operations whose module has already been
+    # delivered: that move is history, not a decision.
+    delivered = set(int(o) for o in (delivered_ops or ()))
     moves = []   # (job, dest_op, from_cell, to_cell, dur)
     for j in range(n_j):
         for o in range(first[j] + 1, last[j] + 1):
-            if op_cell[o] != op_cell[o - 1]:
+            if op_cell[o] != op_cell[o - 1] and o not in delivered:
                 moves.append((j, o, int(op_cell[o - 1]), int(op_cell[o]),
                               int(itau[op_cell[o - 1], op_cell[o]])))
     K = len(moves)
 
+    ir_op = None if op_release is None else [I(x) for x in op_release]
+    ir_mch = None if mch_ready is None else [I(x) for x in mch_ready]
+    ir_veh = None if veh_ready is None else [I(x) for x in veh_ready]
+    v_cells = ([depot] * n_veh if veh_cells is None
+               else [int(c) for c in veh_cells])
+    fixed = {} if fixed_ops is None else {int(o): (int(m), I(s))
+                                          for o, (m, s) in fixed_ops.items()}
+    # vehicles are interchangeable only while they share a start cell and a
+    # ready time; a residual problem generally breaks both
+    symmetric = len(set(v_cells)) == 1 and (ir_veh is None
+                                            or len(set(ir_veh)) == 1)
+
     horizon = int(ipt.max(initial=0) * n_ops + ilag.sum() +
                   (max(m[4] for m in moves) if moves else 0) * (K + n_ops) +
                   itau.max(initial=0) * (K + 1))
+    # the residual clock starts late, so the horizon has to start there too
+    horizon += max([0] + [max(x) for x in (ir_op, ir_mch, ir_veh) if x])
 
     # (a) horizon = warm-start makespan (a valid UB, so no optimum is cut off)
     ws_ub = None
@@ -116,8 +159,15 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
                                               p, f'iv{o}_{m}')
             per_mch_intervals[m].append(iv)
             model.Add(mch_of[o] == int(m)).OnlyEnforceIf(p)
+            if ir_mch is not None and o not in fixed:
+                model.Add(start[o] >= ir_mch[m]).OnlyEnforceIf(p)
             alts.append(p)
         model.AddExactlyOne(alts)
+        if ir_op is not None:
+            model.Add(start[o] >= ir_op[o])
+        if o in fixed:
+            model.Add(mch_of[o] == fixed[o][0])
+            model.Add(start[o] == fixed[o][1])
     for m in range(n_m):
         if per_mch_intervals[m]:
             model.AddNoOverlap(per_mch_intervals[m])
@@ -150,7 +200,10 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
         # (c) identical-vehicle symmetry breaking. All vehicles share the same
         # start cell `depot` and are otherwise interchangeable, so any solution
         # can be relabelled so that vehicle v is first used later than v-1.
-        if strengthen and n_veh >= 2:
+        # In a residual problem the vehicles stand in different cells and are
+        # ready at different times, so they are no longer interchangeable and
+        # the relabelling argument fails.
+        if strengthen and n_veh >= 2 and symmetric:
             for v in range(1, n_veh):
                 for k in range(K):
                     if k < v:
@@ -164,8 +217,10 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
             for k in range(K):
                 lit_start = model.NewBoolVar(f'a_dep_{k}_{v}')
                 arcs.append((0, k + 1, lit_start))
-                model.Add(mv_start[k] >= int(itau[depot, moves[k][2]])
-                          ).OnlyEnforceIf(lit_start)
+                first_ok = int(itau[v_cells[v], moves[k][2]])
+                if ir_veh is not None:
+                    first_ok += ir_veh[v]
+                model.Add(mv_start[k] >= first_ok).OnlyEnforceIf(lit_start)
                 lit_end = model.NewBoolVar(f'a_{k}_dep_{v}')
                 arcs.append((k + 1, 0, lit_end))
                 # self-loop when k not on vehicle v
@@ -231,7 +286,7 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
         # canonical order (first use by increasing move index), or the hint
         # contradicts the symmetry-breaking clauses and is thrown away.
         relabel = {}
-        if strengthen and n_veh >= 2:
+        if strengthen and n_veh >= 2 and symmetric:
             for k, (j, o, fc, tc, dur) in enumerate(moves):
                 t = ws_moves.get(o)
                 if t is None:

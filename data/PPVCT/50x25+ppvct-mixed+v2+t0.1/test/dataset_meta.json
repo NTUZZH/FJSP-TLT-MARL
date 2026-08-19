@@ -1,0 +1,9 @@
+{
+ "seed0": 20000,
+ "n_instances": 30,
+ "n_modules": 50,
+ "n_machines": 25,
+ "n_vehicles": 2,
+ "target_ratio": 0.1,
+ "factory": "DEFAULT"
+}

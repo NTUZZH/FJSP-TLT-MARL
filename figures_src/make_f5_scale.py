@@ -36,13 +36,18 @@ AMBER_M, GREY_M = '#b8860b', '#6b7480'
 # medium shades of one blue family for the per-cell lines of S2
 BLUE_SHADES = ['#22405c', '#3d6b96', '#5f93bd', '#89b4d8']
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from x2_style import register_fonts, FAMILY
+register_fonts()
+
 plt.rcParams.update({
     'font.family': 'serif',
-    'font.serif': ['Liberation Serif'],
+    'font.serif': [FAMILY],
     'mathtext.fontset': 'custom',
-    'mathtext.rm': 'Liberation Serif',
-    'mathtext.it': 'Liberation Serif:italic',
-    'mathtext.bf': 'Liberation Serif:bold',
+    'mathtext.rm': FAMILY,
+    'mathtext.it': FAMILY + ':italic',
+    'mathtext.bf': FAMILY + ':bold',
     'font.size': 8, 'axes.labelsize': 8, 'axes.titlesize': 8,
     'xtick.labelsize': 7.5, 'ytick.labelsize': 7.5, 'legend.fontsize': 7.5,
     'text.color': 'black', 'axes.labelcolor': 'black',
@@ -187,8 +192,8 @@ def cpsat_ledger(cell):
 
 # ------------------------------------------------------------------ F5
 def build_f5():
-    fig = plt.figure(figsize=(3.5, 2.18))
-    axa = fig.add_axes([0.175, 0.175, 0.805, 0.79])
+    fig = plt.figure(figsize=(3.5, 1.72))
+    axa = fig.add_axes([0.145, 0.21, 0.835, 0.755])
     figb = plt.figure(figsize=(3.5, 2.40))
     axb = figb.add_axes([0.175, 0.165, 0.805, 0.80])
 
@@ -263,13 +268,13 @@ def build_f5():
     axa.set_xticklabels([str(t) for t in ticks])
     axa.minorticks_off()
     axa.set_xlim(min(ticks) * 0.88, max(ticks) * 1.14)
-    axa.set_ylim(-15.4, 8.6)
-    axa.text(min(ticks) * 0.91, 0.5, 'best fixed dispatching pair',
+    axa.set_ylim(-15.4, 10.4)
+    axa.text(min(ticks) * 0.91, 0.6, 'best fixed dispatching pair',
              fontsize=6.5, va='bottom', ha='left', color='black')
     axa.set_xlabel('modules per instance')
-    axa.set_ylabel('makespan vs best fixed pair (%)\n(below 0: policy better)')
+    axa.set_ylabel('margin to best fixed pair (%)')
     axa.legend(frameon=False, loc='lower left', fontsize=6.5,
-               labelspacing=0.25, handlelength=2.0, borderaxespad=0.15)
+               labelspacing=0.3, handlelength=2.0, borderaxespad=0.1)
     axa.spines[['top', 'right']].set_visible(False)
     axa.tick_params(width=0.6, length=2.5)
 
@@ -468,9 +473,9 @@ def build_s2():
     ax.text(4.4, 0.9955, 'policy trained on 10 modules', fontsize=6.5,
             va='top', ha='left')
     if mixes:
-        ax.text(4.4, float(np.mean(mixes)) + 0.005,
+        ax.text(1450, float(np.mean(mixes)) + 0.006,
                 'policy trained on 10, 15 and 20 modules', fontsize=6.5,
-                va='bottom', ha='left')
+                va='bottom', ha='right')
     if lat:
         ax.axvline(lat[0], color=GREY_M, lw=0.8, ls='-.', zorder=2)
         ax.text(lat[0] * 1.12, lo - 0.048,
