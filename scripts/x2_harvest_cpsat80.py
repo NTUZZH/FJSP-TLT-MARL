@@ -1,7 +1,7 @@
 """Harvest the 80-module CP-SAT cell and print the macro lines it fills.
 
 The cell is filled only if all 30 instances produced a full-protocol
-incumbent, which was pre-registered before the campaign started: dropping the
+incumbent, which was pre-specified before the campaign started: dropping the
 instances a solver could not finish would bias the cell mean towards the easy
 instances and flatter the comparison. Every row is therefore checked for the
 protocol it claims (four workers, a 3600 s budget, the strengthened model)
@@ -37,7 +37,7 @@ def main():
             rows[r['instance']] = r
     print(f'ledger rows: {len(rows)} unique of {NEED} required')
     if len(rows) < NEED:
-        print('PRE-REGISTERED FILL RULE: the cell stays "--" until all 30 land')
+        print('PRE-SPECIFIED FILL RULE: the cell stays "--" until all 30 land')
         return 1
 
     bad = [n for n, r in rows.items()

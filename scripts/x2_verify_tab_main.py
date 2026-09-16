@@ -110,17 +110,22 @@ def scale_cells(mac, bad):
             'Mix': np.mean([[json.load(open(
                 f'results/scaleup/policy/{mix}-s{s}_{cl}.json'))['rows'][n_]['ms']
                 for n_ in names] for s in SEEDS], axis=0)}
-        cp = {}
+        cp, cph = {}, {}
         if os.path.exists(f'results/scaleup/cpsat_b/{cl}.jsonl'):
             for line in open(f'results/scaleup/cpsat_b/{cl}.jsonl'):
                 if line.strip():
                     r = json.loads(line)
                     cp[r['instance']] = r['ub']
+                    # half-budget incumbent: last logged ub at t <= 1800 s
+                    # (same rule as scripts/x2_cpsat_halftime.py)
+                    cph[r['instance']] = [u for t, u, _ in r['anytime']
+                                          if t <= 1800][-1]
         if len(cp) == len(names):
             series['Cp'] = np.array([cp[n_] for n_ in names])
+            series['CpHalf'] = np.array([cph[n_] for n_ in names])
         elif cp:
             print(f'  Sc Cp{tag}: {len(cp)}/{len(names)} solver rows, '
-                  f'cell not filled yet (pre-registered rule)')
+                  f'cell not filled yet (pre-specified rule)')
         for k, a in series.items():
             name = f'Sc{k}{tag}'
             if name not in mac:

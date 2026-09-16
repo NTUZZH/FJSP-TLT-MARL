@@ -1,6 +1,6 @@
 """Single-instance event-driven simulator for FJSP-TL-T (reference oracle).
 
-Implements the v1 decision model pinned in notes/design_v1.md §2:
+Implements the v1 decision model of Section III-D of the manuscript:
 - Machine-class event (global DANIEL-style pair pick): fires at
   t_M = min over eligible (ready job, machine) pairs of max(job_ready, mch_free);
   action space = all pairs achieving <= t_M. Committing to a different cell

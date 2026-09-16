@@ -6,8 +6,8 @@ block between the AUTOGEN markers in macros.tex. Idempotent; NEVER fabricates:
 a macro whose result file is missing stays \\prelim.
 
 Headline policy arm: m1-bcb-guide (bound-guided; adoption gate PASS,
-notes/gate_GUIDE.md + decisions 2026-07-29). All multi-seed arms are
-aggregated per the pre-registered nuisance-factor treatment: per-instance
+notes/gate_GUIDE.md). All multi-seed arms are
+aggregated per the pre-specified nuisance-factor treatment: per-instance
 makespans averaged over training seeds, then instance-level statistics.
 
 Run: python scripts/fill_macros.py   (from repo root; then recompile paper)
@@ -367,7 +367,7 @@ def ladder_macros(lines):
         pmax = max(pmax, ps[j]); j += 1
     new(lines, 'GuPvalMax', texpval(pmax) if all(stats) and stats else '\\prelim',
         'largest Holm-corrected p, guide vs m1 family')
-    # G2 final (from the pre-registered verdict file; FAIL -> credit is neutral)
+    # G2 final (from the pre-specified verdict file; FAIL -> credit is neutral)
     g2 = gate_rows('notes/gate_G2_final.md')
     lines.append('% G2 final, 3 seeds (notes/gate_G2_final.md): credit-only vs '
                  'shared reward, all n.s.')

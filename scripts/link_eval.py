@@ -1,6 +1,6 @@
 """L1 external evaluation, our side: greedy rollouts on the certified Link
 test set for each fleet size, decision sequences exported for scoring in the
-RELEASED simulator (the pre-registered protocol: our policy decides, their
+RELEASED simulator (the pre-specified protocol: our policy decides, their
 executor times).
 
 Usage:

@@ -29,7 +29,7 @@ CELLS = ['v1+t0.6', 'v1+t1.0', 'v2+t0.6', 'v2+t1.0']
 BUDGETS = [0.25, 1, 5, 15, 60]
 OUT = 'notes/ga_budget_sweep.md'
 
-# Certified end-to-end policy compute per instance, notes/review_stats_pack.md
+# Certified end-to-end policy compute per instance
 # (\PolSecVOneTSix / \PolSecCpuVOneTSix: 335 decisions x 3.0 ms GPU, x 4.4 ms
 # on four pinned CPU cores).
 POL_GPU_S, POL_CPU_S = 1.0, 1.5
@@ -98,7 +98,7 @@ def main():
            '',
            f'Policy compute per instance: {POL_GPU_S:.1f} s on GPU / '
            f'{POL_CPU_S:.1f} s on four pinned CPU cores (335 decisions at 3.0 /',
-           '4.4 ms per decision, notes/review_stats_pack.md). Put both on the',
+           '4.4 ms per decision). Put both on the',
            f'same scale and the policy costs about {4 * POL_CPU_S:.0f} CPU-core-'
            'seconds when run without a GPU, while the GA rows below are',
            'single-core seconds: the 1 s row spends roughly 2.6 core-seconds all',

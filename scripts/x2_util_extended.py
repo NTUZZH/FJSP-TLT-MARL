@@ -64,25 +64,47 @@ SCALE = {
 }
 for cell, V in SCALE.items():
     W, n = mean_wtr(f'data/PPVCT/{cell}/test', cap=30)
-    best_c, best_name = None, None
-    for arm in ('ga', 'ga_long', 'policy', 'cpsat_b', 'pdr'):
-        for p in glob.glob(f'results/scaleup/{arm}/*{cell}*.json'):
-            try:
-                d = json.load(open(p))
-            except Exception:
-                continue
-            vals = None
-            if isinstance(d, dict):
-                if 'mean' in d:
-                    vals = [d['mean']]
-                elif all(isinstance(v, (int, float)) for v in d.values()):
-                    vals = list(d.values())
-                elif 'makespans' in d:
-                    vals = d['makespans']
-            if vals:
-                c = float(np.mean(vals))
-                if best_c is None or c < best_c:
-                    best_c, best_name = c, f'{arm}:{os.path.basename(p)}'
+    # C = best known mean over every arm that ran the cell. Formats differ
+    # per arm, so each is parsed explicitly; sample-decode files are the
+    # per-seed best-of-64 rows and are averaged per instance across seeds.
+    best = [None, None]
+
+    def offer(vals, name):
+        if vals is not None and len(vals):
+            c = float(np.mean(vals))
+            if best[0] is None or c < best[0]:
+                best[0], best[1] = c, name
+
+    for p in (glob.glob(f'results/scaleup/ga/{cell}.json')
+              + glob.glob(f'results/scaleup/ga_long/*/{cell}.json')):
+        d = json.load(open(p))
+        offer([r['ga'] for r in d.values()],
+              f'ga:{os.path.relpath(p, "results/scaleup")}')
+    for p in glob.glob(f'results/scaleup/pdr/{cell}.json'):
+        d = json.load(open(p))
+        pairs = sorted(next(iter(d.values())))
+        offer(min(([d[k][q] for k in sorted(d)] for q in pairs),
+                  key=np.mean), f'pdr:{os.path.basename(p)}')
+    pol = [json.load(open(p))['rows']
+           for p in glob.glob(f'results/scaleup/policy/*_{cell}.json')
+           if '+b1lat' not in p]
+    if pol:
+        keys = sorted(pol[0])
+        offer(np.mean([[r[k]['ms'] for k in keys] for r in pol
+                       if sorted(r) == keys], axis=0), 'policy:3-seed-mean')
+    groups = {}
+    for p in glob.glob(f'results/sample_decode/*_{cell}_N64.json'):
+        model = os.path.basename(p).split('-s3')[0]
+        groups.setdefault(model, []).append(json.load(open(p))['rows'])
+    for model, rows in groups.items():
+        keys = sorted(rows[0])
+        offer(np.mean([[r[k] for k in keys] for r in rows], axis=0),
+              f'sample_decode:{model}:seed-mean')
+    p_ = f'results/scaleup/cpsat_b/{cell}.jsonl'
+    if os.path.exists(p_):
+        offer([json.loads(l)['ub'] for l in open(p_) if l.strip()],
+              'cpsat_b:ub')
+    best_c, best_name = best
     u = W / (V * best_c) if best_c else None
     out[cell] = {'n': n, 'V': V, 'W_tr_mean': W, 'C_best_mean': best_c,
                  'C_source': best_name, 'util': u}

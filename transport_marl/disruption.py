@@ -9,7 +9,7 @@ WHY THIS FILE EXISTS
   module builds that disrupted state and hands every scheduling method the
   same residual problem.
 
-THE PROTOCOL (pre-registered; scripts/x2_disruption.py runs it)
+THE PROTOCOL (pre-specified; scripts/x2_disruption.py runs it)
   1. A baseline schedule of the instance gives its makespan C0.
   2. At t = 0.30 * C0 the machine with the largest remaining processing
      workload at t breaks down and is unavailable for d = 0.20 * C0.

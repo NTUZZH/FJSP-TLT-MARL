@@ -1,7 +1,7 @@
 """E4 driver: paired TOST (ours vs single-agent) per cell from eval .npy files.
 
 Pairing is by instance order (both evals iterate the same sorted stems).
-With one training seed the seed-averaging step of the pre-registered
+With one training seed the seed-averaging step of the pre-specified
 protocol is trivial; rerun after seeds 302/303 to produce the final table.
 
 Usage: python scripts/e4_tost_run.py --ours 10x25+ppvct-mixed+m1-bcb-s301 \
@@ -44,7 +44,7 @@ def cells_list():
 rows = {}
 lines = ['# E4 paired TOST: ours vs single-agent (per cell)\n',
          f'- ours: `{args.ours}`  single: `{args.single}`\n',
-         '- protocol: stats_tost.py (pre-registered 2026-07-11); '
+         '- protocol: stats_tost.py (pre-specified 2026-07-11); '
          'seeds averaged per instance (currently s301 only)\n\n']
 for cell in cells_list():
     ours = np.load(f'test_results/PPVCT/{cell}/Result_greedy+{args.ours}_{cell}.npy')[:, 0]

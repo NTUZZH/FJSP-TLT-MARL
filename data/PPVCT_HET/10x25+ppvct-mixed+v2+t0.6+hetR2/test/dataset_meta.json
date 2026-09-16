@@ -1,0 +1,13 @@
+{
+ "seed0": 20000,
+ "n_instances": 100,
+ "n_modules": 10,
+ "ppvc_mix": "mixed",
+ "ppvc_factory": "default",
+ "n_vehicles": 2,
+ "tau_over_p": 0.6,
+ "generator": "scripts/x2_hetero_make_data.py (S33 Stage A)",
+ "hetero_R": 2,
+ "hetero_base": "data/PPVCT/10x25+ppvct-mixed+v2+t0.6/test",
+ "entropy": 20260901
+}

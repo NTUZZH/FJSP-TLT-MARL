@@ -1,0 +1,200 @@
+[
+ {
+  "cell": "v1+t0.6",
+  "arm": "m1-bcb-guide",
+  "seed": "301",
+  "n": 100,
+  "n_identical": 86,
+  "max_abs_diff": 20.5,
+  "mean_new": 427.128203125,
+  "mean_ref": 426.862890625,
+  "cell_mean_diff_pct": 0.06215403255400987
+ },
+ {
+  "cell": "v1+t0.6",
+  "arm": "m1-bcb-guide",
+  "seed": "302",
+  "n": 100,
+  "n_identical": 83,
+  "max_abs_diff": 25.875,
+  "mean_new": 427.37375,
+  "mean_ref": 427.32703125,
+  "cell_mean_diff_pct": 0.010932786035863059
+ },
+ {
+  "cell": "v1+t0.6",
+  "arm": "m1-bcb-guide",
+  "seed": "303",
+  "n": 100,
+  "n_identical": 86,
+  "max_abs_diff": 16.5,
+  "mean_new": 412.156796875,
+  "mean_ref": 412.02953125,
+  "cell_mean_diff_pct": 0.03088750085798779
+ },
+ {
+  "cell": "v1+t0.6",
+  "arm": "joint-v1",
+  "seed": "301",
+  "n": 100,
+  "n_identical": 81,
+  "max_abs_diff": 22.90625,
+  "mean_new": 438.9534375,
+  "mean_ref": 438.88375,
+  "cell_mean_diff_pct": 0.015878350474353712
+ },
+ {
+  "cell": "v1+t0.6",
+  "arm": "joint-v1",
+  "seed": "302",
+  "n": 100,
+  "n_identical": 71,
+  "max_abs_diff": 20.8125,
+  "mean_new": 435.640234375,
+  "mean_ref": 435.92359375,
+  "cell_mean_diff_pct": -0.06500207354285509
+ },
+ {
+  "cell": "v1+t0.6",
+  "arm": "joint-v1",
+  "seed": "303",
+  "n": 100,
+  "n_identical": 79,
+  "max_abs_diff": 22.6875,
+  "mean_new": 417.36078125,
+  "mean_ref": 417.744375,
+  "cell_mean_diff_pct": -0.0918249946513316
+ },
+ {
+  "cell": "v2+t0.6",
+  "arm": "m1-bcb-guide",
+  "seed": "301",
+  "n": 100,
+  "n_identical": 87,
+  "max_abs_diff": 11.078125,
+  "mean_new": 305.04078125,
+  "mean_ref": 305.09796875,
+  "cell_mean_diff_pct": -0.01874397926485629
+ },
+ {
+  "cell": "v2+t0.6",
+  "arm": "m1-bcb-guide",
+  "seed": "302",
+  "n": 100,
+  "n_identical": 83,
+  "max_abs_diff": 15.234375,
+  "mean_new": 304.82796875,
+  "mean_ref": 305.150625,
+  "cell_mean_diff_pct": -0.10573671608896948
+ },
+ {
+  "cell": "v2+t0.6",
+  "arm": "m1-bcb-guide",
+  "seed": "303",
+  "n": 100,
+  "n_identical": 82,
+  "max_abs_diff": 8.75,
+  "mean_new": 303.136640625,
+  "mean_ref": 302.95328125,
+  "cell_mean_diff_pct": 0.06052397724278126
+ },
+ {
+  "cell": "v2+t0.6",
+  "arm": "joint-v1",
+  "seed": "301",
+  "n": 100,
+  "n_identical": 78,
+  "max_abs_diff": 10.9375,
+  "mean_new": 304.558359375,
+  "mean_ref": 304.579921875,
+  "cell_mean_diff_pct": -0.007079422657697441
+ },
+ {
+  "cell": "v2+t0.6",
+  "arm": "joint-v1",
+  "seed": "302",
+  "n": 100,
+  "n_identical": 70,
+  "max_abs_diff": 18.25,
+  "mean_new": 308.61515625,
+  "mean_ref": 308.8709375,
+  "cell_mean_diff_pct": -0.08281169218131469
+ },
+ {
+  "cell": "v2+t0.6",
+  "arm": "joint-v1",
+  "seed": "303",
+  "n": 100,
+  "n_identical": 64,
+  "max_abs_diff": 15.2734375,
+  "mean_new": 304.868125,
+  "mean_ref": 304.75671875,
+  "cell_mean_diff_pct": 0.036555797836701806
+ },
+ {
+  "cell": "v1+t1.0",
+  "arm": "m1-bcb-guide",
+  "seed": "301",
+  "n": 100,
+  "n_identical": 86,
+  "max_abs_diff": 54.65625,
+  "mean_new": 649.864453125,
+  "mean_ref": 650.395390625,
+  "cell_mean_diff_pct": -0.08163303548166963
+ },
+ {
+  "cell": "v1+t1.0",
+  "arm": "m1-bcb-guide",
+  "seed": "302",
+  "n": 100,
+  "n_identical": 89,
+  "max_abs_diff": 72.609375,
+  "mean_new": 737.71109375,
+  "mean_ref": 737.3078125,
+  "cell_mean_diff_pct": 0.054696456915689785
+ },
+ {
+  "cell": "v1+t1.0",
+  "arm": "m1-bcb-guide",
+  "seed": "303",
+  "n": 100,
+  "n_identical": 87,
+  "max_abs_diff": 32.140625,
+  "mean_new": 628.225625,
+  "mean_ref": 628.641640625,
+  "cell_mean_diff_pct": -0.06617691195040695
+ },
+ {
+  "cell": "v1+t1.0",
+  "arm": "joint-v1",
+  "seed": "301",
+  "n": 100,
+  "n_identical": 74,
+  "max_abs_diff": 28.828125,
+  "mean_new": 669.91234375,
+  "mean_ref": 669.37828125,
+  "cell_mean_diff_pct": 0.07978485633007003
+ },
+ {
+  "cell": "v1+t1.0",
+  "arm": "joint-v1",
+  "seed": "302",
+  "n": 100,
+  "n_identical": 85,
+  "max_abs_diff": 27.09375,
+  "mean_new": 676.225859375,
+  "mean_ref": 676.10828125,
+  "cell_mean_diff_pct": 0.017390428169677553
+ },
+ {
+  "cell": "v1+t1.0",
+  "arm": "joint-v1",
+  "seed": "303",
+  "n": 100,
+  "n_identical": 88,
+  "max_abs_diff": 17.2890625,
+  "mean_new": 628.529296875,
+  "mean_ref": 628.58765625,
+  "cell_mean_diff_pct": -0.009284206334589328
+ }
+]

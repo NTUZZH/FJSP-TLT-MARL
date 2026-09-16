@@ -1,6 +1,6 @@
 """Magnitude calibration for the non-admissible price control (Paper X2 arm c).
 
-notes/gpu_arm_designs.md section 2.5. The control arm replaces the certified
+The control arm replaces the certified
 Theorem-1 action price by a myopic duration price (guide.naive_price_features).
 The arm only tests ADMISSIBILITY if the two channels have comparable magnitude;
 otherwise it is a feature-scale ablation wearing an admissibility label. This

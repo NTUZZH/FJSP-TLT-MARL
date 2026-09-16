@@ -9,7 +9,7 @@ same" (absence of evidence / evidence of absence). To claim equivalence we must
 test for it directly, against an equivalence margin fixed BEFORE seeing the
 data.
 
-PROTOCOL (pre-registered in notes/decisions.md, 2026-07-11, before the
+PROTOCOL (pre-specified on 2026-07-11, before the
 single-agent arm was trained):
   - unit of replication: the TEST INSTANCE (n=100 per cell). Per-instance
     makespan is first averaged over the training seeds, so seeds are a nuisance
@@ -38,7 +38,7 @@ Outcomes are reported honestly and can be any of:
 import numpy as np
 from scipy.stats import wilcoxon
 
-EQUIV_DELTA = 0.02       # 2% of makespan; pre-registered, see module docstring
+EQUIV_DELTA = 0.02       # 2% of makespan; pre-specified, see module docstring
 ALPHA = 0.05
 N_BOOT = 10000
 BOOT_SEED = 20260711     # fixed: the CI must be reproducible

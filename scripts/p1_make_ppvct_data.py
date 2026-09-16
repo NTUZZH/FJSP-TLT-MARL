@@ -1,7 +1,7 @@
 """Generate PPVC-T datasets: PPVC instances + transport layout side-car.
 
 Extends the public generator's meta.json with the layout fields pinned in
-notes/design_v1.md §6 (station_cell, cell_xy, speed_const, tau_cells,
+layout conventions (station_cell, cell_xy, speed_const, tau_cells,
 n_vehicles, veh_start_cell, tau_over_p) under meta['transport']. Old
 loaders ignore the new key; transport code requires it.
 

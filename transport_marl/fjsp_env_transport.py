@@ -1,7 +1,7 @@
 """Batched event-driven FJSP-TL-T environment (Paper X2, P1).
 
 Extends the lab's FJSPEnvForSameOpNums with a vehicle fleet and transport
-tasks under the v1 decision model (notes/design_v1.md §2):
+tasks under the v1 decision model (Section III-D of the manuscript):
 
 - event_type[e] == 0 (machine-class event): action = flat job*M + mch pair,
   the parent's encoding, restricted to pairs whose max(job_ready, mch_free)

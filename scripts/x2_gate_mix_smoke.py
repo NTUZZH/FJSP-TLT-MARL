@@ -1,6 +1,6 @@
 """Queue gate for the size-mixture calibration smoke (Paper X2 arm e).
 
-notes/gpu_arm_designs.md section 4.6 makes a 20-update smoke MANDATORY before
+A 20-update smoke run is required before
 the 2000-update mixture run, because the arm's 7-12 GPU-h budget rests on a
 predicted 19-35 s/update at 20 modules that has never been measured. This
 script turns that smoke into a queue gate: it runs as its own line between the

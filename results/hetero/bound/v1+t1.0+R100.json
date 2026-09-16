@@ -1,0 +1,717 @@
+{
+ "cell": "v1+t1.0",
+ "level": "100",
+ "dataset": "data/PPVCT_HET/10x25+ppvct-mixed+v1+t1.0+hetR100/test",
+ "n": 100,
+ "active_counts": {
+  "chain": 0,
+  "mch": 0,
+  "veh": 100
+ },
+ "mean_B": 483.104140625,
+ "mean_chain": 204.88140625,
+ "mean_mch": 26.645,
+ "mean_veh": 483.104140625,
+ "per_instance": {
+  "instance_000": {
+   "B": 488.8125,
+   "chain": 200.25,
+   "mch": 29.5,
+   "veh": 488.8125,
+   "active": "veh"
+  },
+  "instance_001": {
+   "B": 474.515625,
+   "chain": 219.625,
+   "mch": 27.5,
+   "veh": 474.515625,
+   "active": "veh"
+  },
+  "instance_002": {
+   "B": 470.25,
+   "chain": 209.0,
+   "mch": 25.0,
+   "veh": 470.25,
+   "active": "veh"
+  },
+  "instance_003": {
+   "B": 490.25,
+   "chain": 192.5,
+   "mch": 25.0,
+   "veh": 490.25,
+   "active": "veh"
+  },
+  "instance_004": {
+   "B": 477.25,
+   "chain": 211.25,
+   "mch": 36.0,
+   "veh": 477.25,
+   "active": "veh"
+  },
+  "instance_005": {
+   "B": 465.609375,
+   "chain": 211.4375,
+   "mch": 30.0,
+   "veh": 465.609375,
+   "active": "veh"
+  },
+  "instance_006": {
+   "B": 496.171875,
+   "chain": 209.375,
+   "mch": 25.0,
+   "veh": 496.171875,
+   "active": "veh"
+  },
+  "instance_007": {
+   "B": 486.875,
+   "chain": 189.0,
+   "mch": 26.5,
+   "veh": 486.875,
+   "active": "veh"
+  },
+  "instance_008": {
+   "B": 471.796875,
+   "chain": 198.1875,
+   "mch": 27.0,
+   "veh": 471.796875,
+   "active": "veh"
+  },
+  "instance_009": {
+   "B": 500.5859375,
+   "chain": 210.5625,
+   "mch": 25.0,
+   "veh": 500.5859375,
+   "active": "veh"
+  },
+  "instance_010": {
+   "B": 474.0625,
+   "chain": 201.5,
+   "mch": 24.0,
+   "veh": 474.0625,
+   "active": "veh"
+  },
+  "instance_011": {
+   "B": 503.203125,
+   "chain": 204.4375,
+   "mch": 24.0,
+   "veh": 503.203125,
+   "active": "veh"
+  },
+  "instance_012": {
+   "B": 485.90625,
+   "chain": 200.25,
+   "mch": 24.0,
+   "veh": 485.90625,
+   "active": "veh"
+  },
+  "instance_013": {
+   "B": 500.1875,
+   "chain": 212.625,
+   "mch": 26.0,
+   "veh": 500.1875,
+   "active": "veh"
+  },
+  "instance_014": {
+   "B": 484.171875,
+   "chain": 201.6875,
+   "mch": 28.0,
+   "veh": 484.171875,
+   "active": "veh"
+  },
+  "instance_015": {
+   "B": 484.171875,
+   "chain": 199.6875,
+   "mch": 25.5,
+   "veh": 484.171875,
+   "active": "veh"
+  },
+  "instance_016": {
+   "B": 471.796875,
+   "chain": 199.1875,
+   "mch": 24.0,
+   "veh": 471.796875,
+   "active": "veh"
+  },
+  "instance_017": {
+   "B": 483.46875,
+   "chain": 178.75,
+   "mch": 28.5,
+   "veh": 483.46875,
+   "active": "veh"
+  },
+  "instance_018": {
+   "B": 486.9375,
+   "chain": 198.125,
+   "mch": 24.0,
+   "veh": 486.9375,
+   "active": "veh"
+  },
+  "instance_019": {
+   "B": 480.46875,
+   "chain": 215.25,
+   "mch": 24.0,
+   "veh": 480.46875,
+   "active": "veh"
+  },
+  "instance_020": {
+   "B": 471.796875,
+   "chain": 186.1875,
+   "mch": 30.0,
+   "veh": 471.796875,
+   "active": "veh"
+  },
+  "instance_021": {
+   "B": 496.484375,
+   "chain": 207.125,
+   "mch": 25.0,
+   "veh": 496.484375,
+   "active": "veh"
+  },
+  "instance_022": {
+   "B": 492.75,
+   "chain": 198.0,
+   "mch": 26.0,
+   "veh": 492.75,
+   "active": "veh"
+  },
+  "instance_023": {
+   "B": 479.53125,
+   "chain": 206.125,
+   "mch": 26.0,
+   "veh": 479.53125,
+   "active": "veh"
+  },
+  "instance_024": {
+   "B": 485.2734375,
+   "chain": 207.8125,
+   "mch": 24.0,
+   "veh": 485.2734375,
+   "active": "veh"
+  },
+  "instance_025": {
+   "B": 489.078125,
+   "chain": 226.9375,
+   "mch": 25.0,
+   "veh": 489.078125,
+   "active": "veh"
+  },
+  "instance_026": {
+   "B": 474.0625,
+   "chain": 203.5,
+   "mch": 23.0,
+   "veh": 474.0625,
+   "active": "veh"
+  },
+  "instance_027": {
+   "B": 496.9453125,
+   "chain": 203.1875,
+   "mch": 25.0,
+   "veh": 496.9453125,
+   "active": "veh"
+  },
+  "instance_028": {
+   "B": 488.59375,
+   "chain": 214.3125,
+   "mch": 25.0,
+   "veh": 488.59375,
+   "active": "veh"
+  },
+  "instance_029": {
+   "B": 483.625,
+   "chain": 209.75,
+   "mch": 25.0,
+   "veh": 483.625,
+   "active": "veh"
+  },
+  "instance_030": {
+   "B": 479.53125,
+   "chain": 214.125,
+   "mch": 27.0,
+   "veh": 479.53125,
+   "active": "veh"
+  },
+  "instance_031": {
+   "B": 468.546875,
+   "chain": 161.703125,
+   "mch": 35.5,
+   "veh": 468.546875,
+   "active": "veh"
+  },
+  "instance_032": {
+   "B": 470.375,
+   "chain": 202.25,
+   "mch": 26.0,
+   "veh": 470.375,
+   "active": "veh"
+  },
+  "instance_033": {
+   "B": 486.9375,
+   "chain": 207.125,
+   "mch": 25.0,
+   "veh": 486.9375,
+   "active": "veh"
+  },
+  "instance_034": {
+   "B": 484.1953125,
+   "chain": 196.0625,
+   "mch": 23.0,
+   "veh": 484.1953125,
+   "active": "veh"
+  },
+  "instance_035": {
+   "B": 483.625,
+   "chain": 203.75,
+   "mch": 24.0,
+   "veh": 483.625,
+   "active": "veh"
+  },
+  "instance_036": {
+   "B": 476.4375,
+   "chain": 204.75,
+   "mch": 29.5,
+   "veh": 476.4375,
+   "active": "veh"
+  },
+  "instance_037": {
+   "B": 481.078125,
+   "chain": 213.3125,
+   "mch": 34.5,
+   "veh": 481.078125,
+   "active": "veh"
+  },
+  "instance_038": {
+   "B": 488.8125,
+   "chain": 202.25,
+   "mch": 32.5,
+   "veh": 488.8125,
+   "active": "veh"
+  },
+  "instance_039": {
+   "B": 488.8125,
+   "chain": 222.25,
+   "mch": 30.0,
+   "veh": 488.8125,
+   "active": "veh"
+  },
+  "instance_040": {
+   "B": 485.90625,
+   "chain": 196.25,
+   "mch": 23.0,
+   "veh": 485.90625,
+   "active": "veh"
+  },
+  "instance_041": {
+   "B": 480.125,
+   "chain": 209.625,
+   "mch": 35.5,
+   "veh": 480.125,
+   "active": "veh"
+  },
+  "instance_042": {
+   "B": 486.875,
+   "chain": 194.0,
+   "mch": 21.0,
+   "veh": 486.875,
+   "active": "veh"
+  },
+  "instance_043": {
+   "B": 475.6640625,
+   "chain": 193.6875,
+   "mch": 24.0,
+   "veh": 475.6640625,
+   "active": "veh"
+  },
+  "instance_044": {
+   "B": 483.671875,
+   "chain": 216.625,
+   "mch": 23.0,
+   "veh": 483.671875,
+   "active": "veh"
+  },
+  "instance_045": {
+   "B": 491.6796875,
+   "chain": 208.5625,
+   "mch": 25.0,
+   "veh": 491.6796875,
+   "active": "veh"
+  },
+  "instance_046": {
+   "B": 494.8828125,
+   "chain": 208.9375,
+   "mch": 28.0,
+   "veh": 494.8828125,
+   "active": "veh"
+  },
+  "instance_047": {
+   "B": 481.96875,
+   "chain": 231.5625,
+   "mch": 27.0,
+   "veh": 481.96875,
+   "active": "veh"
+  },
+  "instance_048": {
+   "B": 490.078125,
+   "chain": 224.375,
+   "mch": 28.0,
+   "veh": 490.078125,
+   "active": "veh"
+  },
+  "instance_049": {
+   "B": 494.8828125,
+   "chain": 208.9375,
+   "mch": 25.0,
+   "veh": 494.8828125,
+   "active": "veh"
+  },
+  "instance_050": {
+   "B": 480.3125,
+   "chain": 208.375,
+   "mch": 27.0,
+   "veh": 480.3125,
+   "active": "veh"
+  },
+  "instance_051": {
+   "B": 477.265625,
+   "chain": 199.875,
+   "mch": 23.0,
+   "veh": 477.265625,
+   "active": "veh"
+  },
+  "instance_052": {
+   "B": 490.359375,
+   "chain": 214.4375,
+   "mch": 23.5,
+   "veh": 490.359375,
+   "active": "veh"
+  },
+  "instance_053": {
+   "B": 474.890625,
+   "chain": 212.5625,
+   "mch": 26.0,
+   "veh": 474.890625,
+   "active": "veh"
+  },
+  "instance_054": {
+   "B": 480.46875,
+   "chain": 202.25,
+   "mch": 25.0,
+   "veh": 480.46875,
+   "active": "veh"
+  },
+  "instance_055": {
+   "B": 485.28125,
+   "chain": 208.9375,
+   "mch": 25.0,
+   "veh": 485.28125,
+   "active": "veh"
+  },
+  "instance_056": {
+   "B": 488.59375,
+   "chain": 197.3125,
+   "mch": 25.0,
+   "veh": 488.59375,
+   "active": "veh"
+  },
+  "instance_057": {
+   "B": 471.5,
+   "chain": 214.5,
+   "mch": 30.5,
+   "veh": 471.5,
+   "active": "veh"
+  },
+  "instance_058": {
+   "B": 477.984375,
+   "chain": 199.9375,
+   "mch": 28.0,
+   "veh": 477.984375,
+   "active": "veh"
+  },
+  "instance_059": {
+   "B": 496.140625,
+   "chain": 205.6875,
+   "mch": 25.0,
+   "veh": 496.140625,
+   "active": "veh"
+  },
+  "instance_060": {
+   "B": 486.875,
+   "chain": 204.0,
+   "mch": 28.0,
+   "veh": 486.875,
+   "active": "veh"
+  },
+  "instance_061": {
+   "B": 483.671875,
+   "chain": 210.625,
+   "mch": 27.0,
+   "veh": 483.671875,
+   "active": "veh"
+  },
+  "instance_062": {
+   "B": 473.6875,
+   "chain": 220.625,
+   "mch": 25.0,
+   "veh": 473.6875,
+   "active": "veh"
+  },
+  "instance_063": {
+   "B": 481.9765625,
+   "chain": 214.5625,
+   "mch": 25.0,
+   "veh": 481.9765625,
+   "active": "veh"
+  },
+  "instance_064": {
+   "B": 485.28125,
+   "chain": 207.9375,
+   "mch": 27.0,
+   "veh": 485.28125,
+   "active": "veh"
+  },
+  "instance_065": {
+   "B": 470.25,
+   "chain": 200.0,
+   "mch": 25.0,
+   "veh": 470.25,
+   "active": "veh"
+  },
+  "instance_066": {
+   "B": 468.625,
+   "chain": 189.125,
+   "mch": 40.5,
+   "veh": 468.625,
+   "active": "veh"
+  },
+  "instance_067": {
+   "B": 487.3125,
+   "chain": 195.75,
+   "mch": 24.0,
+   "veh": 487.3125,
+   "active": "veh"
+  },
+  "instance_068": {
+   "B": 482.015625,
+   "chain": 198.1875,
+   "mch": 30.0,
+   "veh": 482.015625,
+   "active": "veh"
+  },
+  "instance_069": {
+   "B": 481.96875,
+   "chain": 202.5625,
+   "mch": 25.0,
+   "veh": 481.96875,
+   "active": "veh"
+  },
+  "instance_070": {
+   "B": 477.265625,
+   "chain": 198.875,
+   "mch": 23.5,
+   "veh": 477.265625,
+   "active": "veh"
+  },
+  "instance_071": {
+   "B": 480.484375,
+   "chain": 213.375,
+   "mch": 34.5,
+   "veh": 480.484375,
+   "active": "veh"
+  },
+  "instance_072": {
+   "B": 473.6875,
+   "chain": 200.625,
+   "mch": 25.0,
+   "veh": 473.6875,
+   "active": "veh"
+  },
+  "instance_073": {
+   "B": 482.0703125,
+   "chain": 196.4375,
+   "mch": 25.0,
+   "veh": 482.0703125,
+   "active": "veh"
+  },
+  "instance_074": {
+   "B": 494.375,
+   "chain": 201.5,
+   "mch": 25.0,
+   "veh": 494.375,
+   "active": "veh"
+  },
+  "instance_075": {
+   "B": 490.84375,
+   "chain": 209.125,
+   "mch": 26.0,
+   "veh": 490.84375,
+   "active": "veh"
+  },
+  "instance_076": {
+   "B": 490.359375,
+   "chain": 209.4375,
+   "mch": 24.0,
+   "veh": 490.359375,
+   "active": "veh"
+  },
+  "instance_077": {
+   "B": 479.53125,
+   "chain": 201.125,
+   "mch": 31.5,
+   "veh": 479.53125,
+   "active": "veh"
+  },
+  "instance_078": {
+   "B": 480.484375,
+   "chain": 209.375,
+   "mch": 32.0,
+   "veh": 480.484375,
+   "active": "veh"
+  },
+  "instance_079": {
+   "B": 477.5,
+   "chain": 210.0,
+   "mch": 26.0,
+   "veh": 477.5,
+   "active": "veh"
+  },
+  "instance_080": {
+   "B": 487.265625,
+   "chain": 197.0625,
+   "mch": 25.0,
+   "veh": 487.265625,
+   "active": "veh"
+  },
+  "instance_081": {
+   "B": 480.46875,
+   "chain": 201.25,
+   "mch": 25.0,
+   "veh": 480.46875,
+   "active": "veh"
+  },
+  "instance_082": {
+   "B": 480.46875,
+   "chain": 201.25,
+   "mch": 27.0,
+   "veh": 480.46875,
+   "active": "veh"
+  },
+  "instance_083": {
+   "B": 484.1953125,
+   "chain": 203.0625,
+   "mch": 24.0,
+   "veh": 484.1953125,
+   "active": "veh"
+  },
+  "instance_084": {
+   "B": 467.0546875,
+   "chain": 207.6875,
+   "mch": 33.5,
+   "veh": 467.0546875,
+   "active": "veh"
+  },
+  "instance_085": {
+   "B": 494.4609375,
+   "chain": 215.1875,
+   "mch": 29.0,
+   "veh": 494.4609375,
+   "active": "veh"
+  },
+  "instance_086": {
+   "B": 490.078125,
+   "chain": 195.375,
+   "mch": 24.0,
+   "veh": 490.078125,
+   "active": "veh"
+  },
+  "instance_087": {
+   "B": 491.90625,
+   "chain": 201.6875,
+   "mch": 23.0,
+   "veh": 491.90625,
+   "active": "veh"
+  },
+  "instance_088": {
+   "B": 477.5,
+   "chain": 200.0,
+   "mch": 28.0,
+   "veh": 477.5,
+   "active": "veh"
+  },
+  "instance_089": {
+   "B": 488.59375,
+   "chain": 202.3125,
+   "mch": 28.0,
+   "veh": 488.59375,
+   "active": "veh"
+  },
+  "instance_090": {
+   "B": 481.078125,
+   "chain": 210.3125,
+   "mch": 27.5,
+   "veh": 481.078125,
+   "active": "veh"
+  },
+  "instance_091": {
+   "B": 478.8671875,
+   "chain": 195.0625,
+   "mch": 24.5,
+   "veh": 478.8671875,
+   "active": "veh"
+  },
+  "instance_092": {
+   "B": 477.0,
+   "chain": 197.0,
+   "mch": 28.0,
+   "veh": 477.0,
+   "active": "veh"
+  },
+  "instance_093": {
+   "B": 488.8125,
+   "chain": 230.25,
+   "mch": 26.5,
+   "veh": 488.8125,
+   "active": "veh"
+  },
+  "instance_094": {
+   "B": 485.28125,
+   "chain": 222.9375,
+   "mch": 25.0,
+   "veh": 485.28125,
+   "active": "veh"
+  },
+  "instance_095": {
+   "B": 477.265625,
+   "chain": 204.875,
+   "mch": 26.5,
+   "veh": 477.265625,
+   "active": "veh"
+  },
+  "instance_096": {
+   "B": 460.96875,
+   "chain": 189.875,
+   "mch": 27.0,
+   "veh": 460.96875,
+   "active": "veh"
+  },
+  "instance_097": {
+   "B": 478.8671875,
+   "chain": 201.0625,
+   "mch": 24.0,
+   "veh": 478.8671875,
+   "active": "veh"
+  },
+  "instance_098": {
+   "B": 486.9375,
+   "chain": 206.125,
+   "mch": 25.0,
+   "veh": 486.9375,
+   "active": "veh"
+  },
+  "instance_099": {
+   "B": 493.5625,
+   "chain": 202.875,
+   "mch": 28.0,
+   "veh": 493.5625,
+   "active": "veh"
+  }
+ }
+}

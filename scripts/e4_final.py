@@ -1,7 +1,7 @@
 """E4/G3 FINAL: 3-seed paired TOST, headline MARL (guide) vs single-agent.
 
 Per-instance makespans averaged over training seeds for each arm (the
-pre-registered nuisance-factor treatment), then stats_tost.paired_tost per
+pre-specified nuisance-factor treatment), then stats_tost.paired_tost per
 cell. G3 verdict: parity (EQUIVALENT) in the majority of cells.
 
 Usage: python scripts/e4_final.py [--seeds 301,302,303]

@@ -1,8 +1,8 @@
-"""GATE G2 FINAL CALL (3 seeds), per the pre-registered seed-extension rule.
+"""GATE G2 FINAL CALL (3 seeds), per the pre-specified seed-extension rule.
 
 Unit of replication: the test instance. Per-instance makespans are averaged
 over the training seeds for EACH arm (nuisance factor, mirroring the TOST
-protocol), then the pre-registered paired one-sided Wilcoxon (m1 < joint)
+protocol), then the pre-specified paired one-sided Wilcoxon (m1 < joint)
 with Holm correction across the four gate cells is applied. PASS requires
 all four significant, exactly as in attempt 1.
 

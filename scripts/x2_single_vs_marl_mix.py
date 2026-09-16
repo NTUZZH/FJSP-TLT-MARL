@@ -7,7 +7,7 @@ channel; they differ only in whether the machine and vehicle decisions come
 from one merged head or from two per-class heads. Everything is evaluated on
 the three production cells, zero-shot in size.
 
-The verdict follows the rule registered in notes/decisions.md on 2026-08-17,
+The verdict follows the rule fixed before the third seed finished training,
 before the third seed finished training: per-instance three-seed means, the
 paired +-2% equivalence test of scripts/stats_tost.py, and the difference
 test reported beside it but never used as parity evidence.
@@ -107,7 +107,7 @@ if rs:
     MACRO_ROWS.append(('80, sampled', rs))
 
 good = [v for v in verdicts if v]
-print('\nPre-registered rule (notes/decisions.md, 2026-08-17):')
+print('\nPre-specified rule:')
 if all(v['verdict'] == 'EQUIVALENT' for v in good):
     print('  (a) equivalence holds in every cell -> keep the parity sentence.')
 elif any(v['verdict'] == 'SINGLE BETTER' for v in good):

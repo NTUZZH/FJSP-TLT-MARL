@@ -1,6 +1,6 @@
 """Station layout and travel-time model for FJSP-TL-T (Paper X2, design_v1 §1/§6).
 
-v1 pins (notes/design_v1.md, notes/decisions.md):
+v1 pins:
 - 9 PPVC station types A..H,Q occupy a 3x3 zone grid in process-flow order;
   machines of the same type are co-located (tau = 0 within a zone).
 - tau(a, b) = Manhattan(cell_a, cell_b) * speed_const;  tau_e = tau.
