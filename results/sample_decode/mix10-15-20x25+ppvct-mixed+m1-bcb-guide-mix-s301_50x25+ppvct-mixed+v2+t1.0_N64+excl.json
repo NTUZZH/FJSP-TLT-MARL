@@ -1,0 +1,36 @@
+{
+ "rows": {
+  "instance_000": 1594.734375,
+  "instance_001": 1589.375,
+  "instance_002": 1625.703125,
+  "instance_003": 1602.1015625,
+  "instance_004": 1576.2421875,
+  "instance_005": 1596.25,
+  "instance_006": 1611.625,
+  "instance_007": 1581.625,
+  "instance_008": 1603.3125,
+  "instance_009": 1579.0078125,
+  "instance_010": 1604.390625,
+  "instance_011": 1615.0,
+  "instance_012": 1623.203125,
+  "instance_013": 1593.1484375,
+  "instance_014": 1606.8828125,
+  "instance_015": 1608.734375,
+  "instance_016": 1597.28125,
+  "instance_017": 1610.0625,
+  "instance_018": 1589.9375,
+  "instance_019": 1602.71875
+ },
+ "meta": {
+  "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301",
+  "cell": "50x25+ppvct-mixed+v2+t1.0",
+  "n_samples": 64,
+  "greedy_is_candidate_0": true,
+  "n_instances": 20,
+  "wall_s": 3631.6,
+  "wall_per_instance_s": 181.58,
+  "mean_pass_s_per_chunk": 56.72,
+  "batch": 20,
+  "note": "batched GPU, exclusive GPU and four pinned cores"
+ }
+}

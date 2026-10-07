@@ -46,6 +46,12 @@ CELLS_B = [
     (80, 3, 1.0),
 ]
 SEED0, N_INST = 20000, 30
+# Production batches (50 and 80 modules) use fixed base seeds of their own
+# (seed0 100000 at 50 modules, 110000 at 80, 20 instances each), so any study
+# that calls ppvc_instance_generator with these seeds gets the same module
+# routings, processing times and lags; only the transport layout is added
+# here. Other sizes keep the 20000.. block.
+PRODUCTION_SEEDS = {50: (100000, 20), 80: (110000, 20)}
 
 _CELL_RE = re.compile(r'^(\d+)x25\+ppvct-mixed\+v(\d+)\+t([0-9.]+)$')
 
@@ -77,10 +83,11 @@ def main():
             print(f'skip {ds} (exists)', flush=True)
             continue
         os.makedirs(ds, exist_ok=True)
+        seed0, n_inst = PRODUCTION_SEEDS.get(J, (SEED0, N_INST))
         n_ops, ratios, speeds = [], [], []
-        for i in range(N_INST):
+        for i in range(n_inst):
             jl, pt, meta = ppvc_instance_generator(
-                n_modules=J, class_mix='mixed', seed=SEED0 + i)
+                n_modules=J, class_mix='mixed', seed=seed0 + i)
             layout = build_transport_layout(
                 jl, pt, np.asarray(meta['mch_type']), r, V)
             meta = dict(meta)
@@ -97,10 +104,11 @@ def main():
             ratios.append(layout['speed_const'] * tau_bar_unit / p_bar)
             speeds.append(layout['speed_const'])
             n_ops.append(int(np.sum(jl)))
-        dm = dict(seed0=SEED0, n_instances=N_INST, n_modules=J,
+        dm = dict(seed0=seed0, n_instances=n_inst, n_modules=J,
                   ppvc_mix='mixed', ppvc_factory='default',
                   n_vehicles=V, tau_over_p=r, split='test-only (zero-shot)',
-                  generator='x2_scale_make_data.py v2',
+                  generator=('x2_scale_make_data.py v3 (fixed base seeds)'
+                             if J in PRODUCTION_SEEDS else 'x2_scale_make_data.py v2'),
                   ops_mean=float(np.mean(n_ops)),
                   ops_min=int(np.min(n_ops)), ops_max=int(np.max(n_ops)),
                   realized_tau_over_p_mean=float(np.mean(ratios)),
@@ -116,7 +124,7 @@ def main():
             hdr = f.readline().split()
         assert int(hdr[0]) == J and int(hdr[1]) == 25, \
             f'{ds}: bad header {hdr[:2]}, expected {J} 25'
-        print(f'wrote {ds}: n={N_INST} header {hdr[0]}x{hdr[1]} '
+        print(f'wrote {ds}: n={n_inst} seed0={seed0} header {hdr[0]}x{hdr[1]} '
               f'ops {np.mean(n_ops):.1f} [{np.min(n_ops)}, {np.max(n_ops)}] '
               f'speed_const {np.mean(speeds):.4f} '
               f'realized tau/p {np.mean(ratios):.4f} '

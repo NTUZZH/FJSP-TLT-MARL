@@ -5,8 +5,7 @@ the event-sequential two-class setting:
     A_t = Q(s_t, a_t) - sum_{a'} pi(a'|s_t) Q(s_t, a')
 with a CENTRALIZED learned Q over the acting head's action space (machine
 pair grid or vehicle task slots), trained by regression on Monte-Carlo
-return-to-go (gamma=1, deterministic env, on-policy — logged in
-decisions.md). The actor update keeps the same PPO clipping/entropy as all
+return-to-go (gamma=1, deterministic env, on-policy). The actor update keeps the same PPO clipping/entropy as all
 other arms (fair comparison: only the advantage estimator differs).
 
 This is exactly the "learned critic, extra network, extra training" cost

@@ -1,0 +1,113 @@
+{
+ "model": "10x25+ppvct-mixed+e0b-uncontended-s301",
+ "cell": "50x25+ppvct-mixed+v1+t0.3",
+ "n": 20,
+ "device": "cpu",
+ "threads": 1,
+ "veh_rule": "NVF",
+ "protocol": "penalty anchor: machine head of the policy, vehicle decisions by the nearest-vehicle-first rule; the vehicle head is untrained and unused",
+ "command": "scripts/eval_ppvct.py --model_name 10x25+ppvct-mixed+e0b-uncontended-s301 --cells 50x25+ppvct-mixed+v1+t0.3 --veh_rule NVF --batch 10 (CPU, 1 thread, cores 22-23); every schedule passed validator_t (the script asserts feasibility)",
+ "lat_note": "mean policy latency per event of one batched forward pass (batch 10), CPU, 1 thread",
+ "rows": {
+  "instance_000": {
+   "ms": 1024.375,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_001": {
+   "ms": 1013.75,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_002": {
+   "ms": 1026.828125,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_003": {
+   "ms": 1032.671875,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_004": {
+   "ms": 1096.4453125,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_005": {
+   "ms": 1005.40625,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_006": {
+   "ms": 1030.59375,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_007": {
+   "ms": 1016.828125,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_008": {
+   "ms": 1031.8125,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_009": {
+   "ms": 1018.96875,
+   "lat_event_s": 0.031915393478540506,
+   "validated": true
+  },
+  "instance_010": {
+   "ms": 1008.8359375,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_011": {
+   "ms": 1080.84375,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_012": {
+   "ms": 1027.90625,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_013": {
+   "ms": 1046.1171875,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_014": {
+   "ms": 1017.4375,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_015": {
+   "ms": 1039.984375,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_016": {
+   "ms": 1012.984375,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_017": {
+   "ms": 1045.65625,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_018": {
+   "ms": 1028.78125,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  },
+  "instance_019": {
+   "ms": 984.625,
+   "lat_event_s": 0.031830910491113695,
+   "validated": true
+  }
+ }
+}

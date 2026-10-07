@@ -25,7 +25,7 @@ LEDGER = f'results/scaleup/cpsat_b/{CELL}.jsonl'
 MIX = 'mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix'
 SEEDS = [301, 302, 303]
 TOL = 1e-6
-NEED = 30
+NEED = json.load(open(f'data/PPVCT/{CELL}/test/dataset_meta.json'))['n_instances']
 
 
 def main():
@@ -70,9 +70,9 @@ def main():
     print('\n--- macro lines (sample standard deviation, the paper convention) ---')
     print(f'\\newcommand{{\\ScCpEighty}}{{{ub.mean():.1f}$\\pm${ub.std(ddof=1):.1f}}}'
           f'  % anytime CP-SAT, 3600 s wall x 4 workers, strengthened, PDR '
-          f'warm start, n=30, results/scaleup/cpsat_b/{CELL}.jsonl')
+          f'warm start, n={NEED}, results/scaleup/cpsat_b/{CELL}.jsonl')
     print(f'\\newcommand{{\\ScMixDCpEighty}}{{{abs(gap):.1f}}}'
-          f'  % mixture policy vs that solver incumbent on the same 30 '
+          f'  % mixture policy vs that solver incumbent on the same {NEED} '
           f'instances, W/T/L {"/".join(map(str, w))}, Wilcoxon p={p:.1e}')
     return 0
 

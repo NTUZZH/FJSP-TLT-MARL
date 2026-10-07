@@ -429,6 +429,9 @@ def build_s2():
                 note(f'  (s2) skip {cell}: {len(pts)} budget point(s) on disk')
                 continue
             seeds = policy_seeds(TEN, cell, True)
+            if not seeds:               # e.g. machine-scarcity cells: mixture only
+                note(f'  (s2) skip {cell}: no 10-module policy run on this cell')
+                continue
             inst = sorted(next(iter(seeds.values())))
             ref = float(seed_mean(seeds, inst).mean())
             mixs = policy_seeds(MIX, cell, True)

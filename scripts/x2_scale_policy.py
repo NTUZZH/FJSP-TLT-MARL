@@ -135,7 +135,8 @@ def main():
     policy.eval()
     print(f'[x2_scale_policy] {args_cli.model_name} algo={algo} '
           f'params={n_par} device={configs.device} '
-          f'guide={bool(getattr(configs, "guide", False))}', flush=True)
+          f'guide={bool(getattr(configs, "guide", False))} '
+          f'bound_veh={int(snap.get("bound_veh", 1))}', flush=True)
 
     os.makedirs(args_cli.outdir, exist_ok=True)
     for cell in args_cli.cells.split(','):
@@ -165,8 +166,12 @@ def main():
             env.set_initial_data(jls, pts, lags, opt, mct, lay)
             if guide:
                 from transport_marl.bound import TransportBound
-                env.attach_bound(TransportBound(env, use_mch=True,
-                                                use_veh=True))
+                # same bound as at training time: the fleet-term ablation
+                # (snapshot bound_veh=0) prices actions without B_veh;
+                # snapshots without the key were all trained with it
+                env.attach_bound(TransportBound(
+                    env, use_mch=True,
+                    use_veh=bool(int(snap.get('bound_veh', 1)))))
             ms, dec, lat = greedy_rollout(env, policy)
             for e, stem in enumerate(chunk):
                 res = validate_transport_schedule(

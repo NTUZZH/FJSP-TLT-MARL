@@ -6,7 +6,7 @@ block between the AUTOGEN markers in macros.tex. Idempotent; NEVER fabricates:
 a macro whose result file is missing stays \\prelim.
 
 Headline policy arm: m1-bcb-guide (bound-guided; adoption gate PASS,
-notes/gate_GUIDE.md). All multi-seed arms are
+reports/gate_GUIDE.md). All multi-seed arms are
 aggregated per the pre-specified nuisance-factor treatment: per-instance
 makespans averaged over training seeds, then instance-level statistics.
 
@@ -130,7 +130,7 @@ def trained_seeds(model_stem=HEADLINE):
 
 
 def gate_rows(path):
-    """Parse the JSON verdict block scripts/gate_eval.py appends to notes/*.md."""
+    """Parse the JSON verdict block scripts/gate_eval.py appends to reports/*.md."""
     if not os.path.exists(path):
         return {}
     txt = open(path).read()
@@ -268,16 +268,16 @@ def cpsat_summary_macros(lines):
 # ------------------------------------------------------------- G1 (as before)
 def g1_macros(lines):
     # Source switch 2026-08-05: the retry (\Gb*) family now reads the 3-seed
-    # POOLED verdict, notes/gate_G1retry_s3.md (per-instance makespans averaged
-    # over seeds 301/302/303 before the test, Option A of gpu_arm_designs 1.7).
-    # The single-seed record notes/gate_G1retry.md is kept unmodified on disk
+    # POOLED verdict, reports/gate_G1retry_s3.md (per-instance makespans averaged
+    # over seeds 301/302/303 before the test).
+    # The single-seed record reports/gate_G1retry.md is kept unmodified on disk
     # but is no longer a macro source. Attempt one (\GaOne*) is single-seed and
     # unchanged.
-    lines.append('% Premise gate G1 (notes/gate_G1.md, '
-                 'notes/gate_G1retry_s3.md = 3-seed pooled retry)')
+    lines.append('% Premise gate G1 (reports/gate_G1.md, '
+                 'reports/gate_G1retry_s3.md = 3-seed pooled retry)')
     for tag, path, cells in (
-            ('GaOne', 'notes/gate_G1.md', ('v1+t0.6', 'v2+t0.6')),
-            ('Gb', 'notes/gate_G1retry_s3.md', ('v1+t1.0', 'v2+t1.0'))):
+            ('GaOne', 'reports/gate_G1.md', ('v1+t0.6', 'v2+t0.6')),
+            ('Gb', 'reports/gate_G1retry_s3.md', ('v1+t1.0', 'v2+t1.0'))):
         rows = gate_rows(path)
         pmax = 0.0
         for cell, word in zip(cells, ('VOne', 'VTwo')):
@@ -293,7 +293,7 @@ def g1_macros(lines):
         new(lines, f'{tag}PvalMax',
             texpval(pmax) if rows else '\\prelim',
             'largest Holm-corrected p in the gate family' if rows else '')
-    r = gate_rows('notes/gate_G1.md').get('v2+t0.6')
+    r = gate_rows('reports/gate_G1.md').get('v2+t0.6')
     new(lines, 'GaOnePvVTwo', f'{r["p_holm"]:.2f}' if r else '\\prelim',
         'n.s.' if r else '')
 
@@ -368,8 +368,8 @@ def ladder_macros(lines):
     new(lines, 'GuPvalMax', texpval(pmax) if all(stats) and stats else '\\prelim',
         'largest Holm-corrected p, guide vs m1 family')
     # G2 final (from the pre-specified verdict file; FAIL -> credit is neutral)
-    g2 = gate_rows('notes/gate_G2_final.md')
-    lines.append('% G2 final, 3 seeds (notes/gate_G2_final.md): credit-only vs '
+    g2 = gate_rows('reports/gate_G2_final.md')
+    lines.append('% G2 final, 3 seeds (reports/gate_G2_final.md): credit-only vs '
                  'shared reward, all n.s.')
     for cell, csuff in GATE_CELLS:
         r = g2.get(cell)
@@ -387,8 +387,8 @@ def ladder_macros(lines):
 
 # ---------------------------------------------------------------- E4 / TOST
 def tost_macros(lines):
-    rows = gate_rows('notes/e4_tost_final.md')
-    lines.append('% E4/G3 final TOST (notes/e4_tost_final.md), guide vs single, '
+    rows = gate_rows('reports/e4_tost_final.md')
+    lines.append('% E4/G3 final TOST (reports/e4_tost_final.md), guide vs single, '
                  '3-seed per-instance means')
     if not rows:
         for nme in ('TostCells', 'TostEq', 'TostBetter', 'TostBetterDiff',
@@ -421,7 +421,13 @@ def tost_macros(lines):
 
 # ----------------------------------------------------------------- latency
 def latency_macros(lines):
-    """Certified per-event latencies from the exclusive-slot rerun logs."""
+    """Certified per-event latencies from the exclusive-slot rerun logs.
+
+    Retired from the manuscript text on 2026-10-06: LatMarlDec, LatSingle and
+    LatCpuFour (10-module policy, batch 20, forward + selection only) are no
+    longer cited. The text uses the batch-1, per-size measurement of the
+    size-mixture policy from scripts/x2_latency_macros.py instead.
+    """
     lines.append('% Certified latency (exclusive queue slot; '
                  'train_log/latency_uncontended2.log, latency_cpu4_2.log)')
 
@@ -477,7 +483,7 @@ def link_seed_scores(stem):
 
 
 def link_macros(lines):
-    # Source switch 2026-08-05 (notes/harvest_2026-08-05.md sec 5): the
+    # Source switch 2026-08-05: the
     # headline external arm now pools training seeds 301/302/303 instead of
     # reporting seed 301 alone. Per-seed statistics are averaged over seeds;
     # because the released anchor rows are identical across seeds, the seed

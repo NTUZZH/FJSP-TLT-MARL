@@ -96,6 +96,17 @@ class TransportSim:
         self.n_committed = int(res['n_frozen'])
         self.n_completed = int(res['n_frozen'])
         self.now = float(res['t'])
+        # operations committed before the cut (residual built with
+        # keep_commitments): machine reserved, task released, no vehicle yet
+        for c in res.get('committed', []):
+            self.pool[c['job']] = dict(job=c['job'], op=c['op'], mch=c['mch'],
+                                       frm=c['frm'], to=c['to'],
+                                       release=c['release'])
+            self.mch_reserved[c['mch']] = c['op']
+            self.mch_free[c['mch']] = np.inf
+            self.job_waiting_arrival[c['job']] = True
+            self.assigned_mch[c['op']] = c['mch']
+            self.n_committed += 1
 
     # ---------- event machinery ----------
 

@@ -1,7 +1,7 @@
 {
  "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303",
  "cell": "50x25+ppvct-mixed+v2+t1.0",
- "n": 30,
+ "n": 20,
  "device": "cuda",
  "batch": 15,
  "params": 40205,
@@ -9,183 +9,123 @@
  "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
  "rows": {
   "instance_000": {
-   "ms": 1539.125,
-   "decisions": 1675,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1592.3984375,
+   "decisions": 1677,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_001": {
-   "ms": 1612.625,
-   "decisions": 1670,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1536.21875,
+   "decisions": 1679,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_002": {
-   "ms": 1523.2578125,
-   "decisions": 1674,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1588.109375,
+   "decisions": 1676,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_003": {
-   "ms": 1583.1875,
-   "decisions": 1671,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1588.4453125,
+   "decisions": 1672,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_004": {
-   "ms": 1584.375,
-   "decisions": 1674,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1649.9375,
+   "decisions": 1677,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_005": {
-   "ms": 1575.828125,
+   "ms": 1603.15625,
    "decisions": 1672,
-   "lat_batch_s": 0.002879976853517071,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_006": {
-   "ms": 1628.984375,
-   "decisions": 1675,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1571.078125,
+   "decisions": 1676,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_007": {
-   "ms": 1535.671875,
-   "decisions": 1676,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1712.0,
+   "decisions": 1673,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_008": {
-   "ms": 1580.03125,
-   "decisions": 1676,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1567.046875,
+   "decisions": 1677,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_009": {
-   "ms": 1615.4453125,
-   "decisions": 1679,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1568.9921875,
+   "decisions": 1676,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_010": {
-   "ms": 1567.15625,
-   "decisions": 1675,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1602.7109375,
+   "decisions": 1674,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_011": {
-   "ms": 1573.296875,
-   "decisions": 1681,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1587.625,
+   "decisions": 1674,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_012": {
-   "ms": 1544.9140625,
-   "decisions": 1680,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1640.78125,
+   "decisions": 1679,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_013": {
-   "ms": 1558.75,
-   "decisions": 1676,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1557.9609375,
+   "decisions": 1682,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_014": {
-   "ms": 1568.765625,
-   "decisions": 1671,
-   "lat_batch_s": 0.002879976853517071,
+   "ms": 1546.09375,
+   "decisions": 1680,
+   "lat_batch_s": 0.0037627697221305793,
    "validated": true
   },
   "instance_015": {
-   "ms": 1640.3046875,
-   "decisions": 1670,
-   "lat_batch_s": 0.002862132768005115,
+   "ms": 1547.6875,
+   "decisions": 1678,
+   "lat_batch_s": 0.003703198571123981,
    "validated": true
   },
   "instance_016": {
-   "ms": 1598.890625,
-   "decisions": 1672,
-   "lat_batch_s": 0.002862132768005115,
+   "ms": 1614.1875,
+   "decisions": 1675,
+   "lat_batch_s": 0.003703198571123981,
    "validated": true
   },
   "instance_017": {
-   "ms": 1573.8125,
-   "decisions": 1675,
-   "lat_batch_s": 0.002862132768005115,
+   "ms": 1562.34375,
+   "decisions": 1673,
+   "lat_batch_s": 0.003703198571123981,
    "validated": true
   },
   "instance_018": {
-   "ms": 1545.0,
-   "decisions": 1673,
-   "lat_batch_s": 0.002862132768005115,
+   "ms": 1527.015625,
+   "decisions": 1676,
+   "lat_batch_s": 0.003703198571123981,
    "validated": true
   },
   "instance_019": {
-   "ms": 1563.4609375,
-   "decisions": 1676,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_020": {
-   "ms": 1556.046875,
-   "decisions": 1674,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_021": {
-   "ms": 1560.59375,
-   "decisions": 1679,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_022": {
-   "ms": 1641.515625,
-   "decisions": 1678,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_023": {
-   "ms": 1621.203125,
-   "decisions": 1674,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_024": {
-   "ms": 1569.015625,
-   "decisions": 1673,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_025": {
-   "ms": 1549.8828125,
-   "decisions": 1678,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_026": {
-   "ms": 1639.859375,
-   "decisions": 1676,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_027": {
-   "ms": 1559.71875,
-   "decisions": 1684,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_028": {
-   "ms": 1542.0,
-   "decisions": 1679,
-   "lat_batch_s": 0.002862132768005115,
-   "validated": true
-  },
-  "instance_029": {
-   "ms": 1640.484375,
-   "decisions": 1673,
-   "lat_batch_s": 0.002862132768005115,
+   "ms": 1575.34375,
+   "decisions": 1680,
+   "lat_batch_s": 0.003703198571123981,
    "validated": true
   }
  }

@@ -5,7 +5,7 @@ pre-specified nuisance-factor treatment), then stats_tost.paired_tost per
 cell. G3 verdict: parity (EQUIVALENT) in the majority of cells.
 
 Usage: python scripts/e4_final.py [--seeds 301,302,303]
-Writes notes/e4_tost_final.md.
+Writes reports/e4_tost_final.md.
 """
 
 import argparse
@@ -63,7 +63,7 @@ summary = (f'SUMMARY: {len(rows)} cells -> ' +
            f'  ||  G3 (parity-or-better in majority): {g3}')
 print(summary)
 lines.append(f'\n{summary}\n\n```json\n' + json.dumps(rows, indent=1) + '\n```\n')
-os.makedirs('notes', exist_ok=True)
-with open('notes/e4_tost_final.md', 'w') as f:
+os.makedirs('reports', exist_ok=True)
+with open('reports/e4_tost_final.md', 'w') as f:
     f.writelines(lines)
-print('wrote notes/e4_tost_final.md')
+print('wrote reports/e4_tost_final.md')

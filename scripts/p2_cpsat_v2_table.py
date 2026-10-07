@@ -1,4 +1,4 @@
-"""Per-cell table for the strengthened CP-SAT references (notes/cpsat_v2_full).
+"""Per-cell table for the strengthened CP-SAT references (reports/cpsat_v2_full.md).
 
 For every cell with a results/cpsat_v2/{dataset}.json file, reports mean UB,
 mean LB, mean (UB-LB)/LB, count proved optimal, and the B(s0)-vs-proven-LB

@@ -1,4 +1,4 @@
-"""Build notes/ga_budget_sweep.md: GA search budget vs the bound-guided policy.
+"""Build reports/ga_budget_sweep.md: GA search budget vs the bound-guided policy.
 
 Question: at what per-instance search budget does the PDR-seeded GA overtake
 the policy's schedule quality?
@@ -27,7 +27,7 @@ import fill_macros as fm          # noqa: E402  (path set above)
 
 CELLS = ['v1+t0.6', 'v1+t1.0', 'v2+t0.6', 'v2+t1.0']
 BUDGETS = [0.25, 1, 5, 15, 60]
-OUT = 'notes/ga_budget_sweep.md'
+OUT = 'reports/ga_budget_sweep.md'
 
 # Certified end-to-end policy compute per instance
 # (\PolSecVOneTSix / \PolSecCpuVOneTSix: 335 decisions x 3.0 ms GPU, x 4.4 ms
@@ -169,6 +169,9 @@ def main():
                        f'({ours.mean():.1f}) at any budget tested.')
         out.append('')
 
+    os.makedirs('reports', exist_ok=True)
+    os.makedirs('reports', exist_ok=True)
+    os.makedirs('reports', exist_ok=True)
     open(OUT, 'w').write('\n'.join(out) + '\n')
     print(f'wrote {OUT}')
     for row in summary:

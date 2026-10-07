@@ -3,8 +3,8 @@
 Same protocol as scripts/p3_eval_ga.py -- pop 100, 60 s per instance, nine
 PDR-pair seeds, single-threaded, winner independently re-checked by
 validator_t -- but the GA core is transport_marl/ga_transport_v2.py, whose
-vehicle-side encoding contains the three PDR vehicle rules exactly. See
-notes/ga_diagnosis.md for why v1 stalled at |V|=1 with heavy travel.
+vehicle-side encoding contains the three PDR vehicle rules exactly. The docstring of transport_marl/ga_transport_v2.py explains
+why v1 stalled at |V|=1 with heavy travel.
 
 BUDGET: 60 s of worker CPU time (time.process_time), not wall-clock. On an
 idle core the two coincide; under machine load the CPU-time budget still
@@ -93,7 +93,7 @@ def one_instance(task):
 
     # v2 invariant: every seed decodes EXACTLY to its pair's makespan, so the
     # GA incumbent starts at PDR level and elitism keeps it monotone. This is
-    # what v1 could not do (notes/ga_diagnosis.md).
+    # what v1 could not do.
     for nm, s in zip(pair_ms.keys(), seeds):
         d = ga.decode(sim, elig_tbl, *s)
         assert abs(d - pair_ms[nm]) < 1e-9, \

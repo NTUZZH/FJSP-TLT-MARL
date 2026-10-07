@@ -29,7 +29,7 @@ Note (paper discipline): the pass floor uses vehicle-availability tightening
 that the HEADLINE Theorem-1 reward deliberately omits (capacity relaxation).
 Both are admissible bounds of their respective states; the baseline needs
 only action-independence, and the tightening is what makes vehicle credit
-informative. Logged in decisions.md.
+informative.
 
 Cost: O(candidates x M + pool x V + N) per env per step.
 """

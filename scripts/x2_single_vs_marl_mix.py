@@ -5,7 +5,8 @@ the same 10/15/20-module mixture, the same fleet and travel grids, the same
 2000 updates and the same three seeds, and both carry the certified price
 channel; they differ only in whether the machine and vehicle decisions come
 from one merged head or from two per-class heads. Everything is evaluated on
-the three production cells, zero-shot in size.
+the three production cells of Table III and the two one-vehicle short-travel
+cells, zero-shot in size.
 
 The verdict follows the rule fixed before the third seed finished training,
 before the third seed finished training: per-instance three-seed means, the
@@ -34,14 +35,20 @@ SINGLE = 'mix10-15-20x25+ppvct-mixed+single-joint-mix'
 SEEDS = [301, 302, 303]
 CELLS = [('50, V2, 0.6', '50x25+ppvct-mixed+v2+t0.6'),
          ('50, V2, 1.0', '50x25+ppvct-mixed+v2+t1.0'),
-         ('80, V3, 1.0', '80x25+ppvct-mixed+v3+t1.0')]
+         ('80, V3, 1.0', '80x25+ppvct-mixed+v3+t1.0'),
+         ('50, V1, 0.3', '50x25+ppvct-mixed+v1+t0.3'),
+         ('80, V1, 0.3', '80x25+ppvct-mixed+v1+t0.3')]
+# the two one-vehicle short-travel cells live in their own results folder;
+# their macros are written by scripts/x2_shorttravel_report.py
+POLICY_DIR = {'50x25+ppvct-mixed+v1+t0.3': 'results/shorttravel/policy',
+              '80x25+ppvct-mixed+v1+t0.3': 'results/shorttravel/policy'}
 SAMPLE_CELL = '80x25+ppvct-mixed+v3+t1.0'
 
 
 def greedy(arm, cell):
     per_seed = []
     for s in SEEDS:
-        p = f'results/scaleup/policy/{arm}-s{s}_{cell}.json'
+        p = f'{POLICY_DIR.get(cell, "results/scaleup/policy")}/{arm}-s{s}_{cell}.json'
         if not os.path.exists(p):
             return None
         rows = json.load(open(p))['rows']
@@ -75,7 +82,8 @@ def report(label, ours, single):
 
 
 TAGS = {'50, V2, 0.6': 'FiftyTSix', '50, V2, 1.0': 'FiftyTTen',
-        '80, V3, 1.0': 'Eighty', '80, sampled': 'EightySamp'}
+        '80, V3, 1.0': 'Eighty', '80, sampled': 'EightySamp',
+        '50, V1, 0.3': 'FiftyLow', '80, V1, 0.3': 'EightyLow'}
 MACRO_ROWS = []
 
 
@@ -93,7 +101,7 @@ def macro_lines():
     return out
 
 
-print('Greedy decode, three-seed per-instance means, n=30 per cell')
+print('Greedy decode, three-seed per-instance means, n = every instance of the cell')
 verdicts = []
 for label, cell in CELLS:
     r = report(label, greedy(MARL, cell), greedy(SINGLE, cell))

@@ -2,7 +2,7 @@
 set of cells, with Wilcoxon + Holm correction (proposal §9 gate protocol).
 
 Reuses eval_ppvct greedy rollout. Both arms evaluated on the SAME instances
-(paired). Writes notes/<gate>.md with honest numbers and the verdict.
+(paired). Writes reports/<gate>.md with honest numbers and the verdict.
 
 Usage (G1):
   python -u scripts/gate_eval.py --gate G1 \
@@ -117,8 +117,8 @@ def main():
               f'pre-specified cells.)\n')
     md.append('```json\n' + json.dumps(rows, indent=1) + '\n```')
 
-    out_path = f'notes/gate_{args_cli.gate}.md'
-    os.makedirs('notes', exist_ok=True)
+    out_path = f'reports/gate_{args_cli.gate}.md'
+    os.makedirs('reports', exist_ok=True)
     with open(out_path, 'w') as f:
         f.write('\n'.join(md))
     print('\n'.join(md))

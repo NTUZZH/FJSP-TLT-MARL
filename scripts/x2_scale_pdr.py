@@ -6,9 +6,10 @@ independently re-checked by validator_t -- but over the 20x25 / 30x25 pilot
 cells and writing to results/scaleup/pdr/ so nothing can be swept into the
 manuscript's results/pdr/ analysis.
 
-Output: results/scaleup/pdr/{cell}.json = {instance: {pair: makespan}}
+Output: {outdir}/{cell}.json = {instance: {pair: makespan}}, outdir
+        defaulting to results/scaleup/pdr
 
-Usage: python scripts/x2_scale_pdr.py [--workers 10]
+Usage: python scripts/x2_scale_pdr.py [--workers 10] [--outdir DIR]
 """
 
 import sys, os, glob, json, argparse, time
@@ -16,6 +17,7 @@ import sys, os, glob, json, argparse, time
 ap = argparse.ArgumentParser()
 ap.add_argument('--workers', type=int, default=10)
 ap.add_argument('--cells', type=str, default='')
+ap.add_argument('--outdir', type=str, default='results/scaleup/pdr')
 _A = ap.parse_args()
 sys.argv = [sys.argv[0]]
 sys.path.insert(0, '.')
@@ -55,11 +57,11 @@ def one_instance(task):
 
 
 def main():
-    os.makedirs('results/scaleup/pdr', exist_ok=True)
+    os.makedirs(_A.outdir, exist_ok=True)
     cells = _A.cells.split(',') if _A.cells else CELLS
     for cell in cells:
         ds = f'data/PPVCT/{cell}/test'
-        out_path = f'results/scaleup/pdr/{cell}.json'
+        out_path = f'{_A.outdir}/{cell}.json'
         if os.path.exists(out_path):
             print(f'skip {cell} (exists)', flush=True); continue
         stems = sorted(g[:-4] for g in glob.glob(f'{ds}/instance_*.fjs'))

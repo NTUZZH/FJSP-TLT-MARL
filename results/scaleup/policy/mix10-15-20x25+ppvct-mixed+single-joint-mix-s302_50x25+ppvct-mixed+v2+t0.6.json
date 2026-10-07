@@ -1,7 +1,7 @@
 {
  "model": "mix10-15-20x25+ppvct-mixed+single-joint-mix-s302",
  "cell": "50x25+ppvct-mixed+v2+t0.6",
- "n": 30,
+ "n": 20,
  "device": "cuda",
  "batch": 15,
  "params": 36782,
@@ -9,183 +9,123 @@
  "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
  "rows": {
   "instance_000": {
-   "ms": 1044.21875,
-   "decisions": 1675,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1055.5625,
+   "decisions": 1677,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_001": {
-   "ms": 1065.984375,
-   "decisions": 1670,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1027.6875,
+   "decisions": 1679,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_002": {
-   "ms": 1017.59375,
-   "decisions": 1674,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1035.2734375,
+   "decisions": 1676,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_003": {
-   "ms": 992.5390625,
-   "decisions": 1671,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1041.46875,
+   "decisions": 1672,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_004": {
-   "ms": 1050.8671875,
-   "decisions": 1674,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1058.75,
+   "decisions": 1677,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_005": {
-   "ms": 1044.5625,
+   "ms": 1005.7890625,
    "decisions": 1672,
-   "lat_batch_s": 0.004564786168366032,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_006": {
-   "ms": 1012.8359375,
-   "decisions": 1675,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1108.7265625,
+   "decisions": 1676,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_007": {
-   "ms": 1002.140625,
-   "decisions": 1676,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 996.90625,
+   "decisions": 1673,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_008": {
-   "ms": 1054.3125,
-   "decisions": 1676,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1048.765625,
+   "decisions": 1677,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_009": {
-   "ms": 1077.6328125,
-   "decisions": 1679,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1050.78125,
+   "decisions": 1676,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_010": {
-   "ms": 1076.0390625,
-   "decisions": 1675,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1042.84375,
+   "decisions": 1674,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_011": {
-   "ms": 1017.921875,
-   "decisions": 1681,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1020.28125,
+   "decisions": 1674,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_012": {
-   "ms": 1061.75,
-   "decisions": 1680,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1080.9453125,
+   "decisions": 1679,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_013": {
-   "ms": 1072.96875,
-   "decisions": 1676,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1024.09375,
+   "decisions": 1682,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_014": {
-   "ms": 1056.15625,
-   "decisions": 1671,
-   "lat_batch_s": 0.004564786168366032,
+   "ms": 1050.4140625,
+   "decisions": 1680,
+   "lat_batch_s": 0.0038467138931188426,
    "validated": true
   },
   "instance_015": {
-   "ms": 1028.9921875,
-   "decisions": 1670,
-   "lat_batch_s": 0.004417239341372181,
+   "ms": 1070.8125,
+   "decisions": 1678,
+   "lat_batch_s": 0.003489563395296933,
    "validated": true
   },
   "instance_016": {
-   "ms": 1023.71875,
-   "decisions": 1672,
-   "lat_batch_s": 0.004417239341372181,
+   "ms": 1053.78125,
+   "decisions": 1675,
+   "lat_batch_s": 0.003489563395296933,
    "validated": true
   },
   "instance_017": {
-   "ms": 1027.078125,
-   "decisions": 1675,
-   "lat_batch_s": 0.004417239341372181,
+   "ms": 1051.1953125,
+   "decisions": 1673,
+   "lat_batch_s": 0.003489563395296933,
    "validated": true
   },
   "instance_018": {
-   "ms": 1050.296875,
-   "decisions": 1673,
-   "lat_batch_s": 0.004417239341372181,
+   "ms": 1022.7421875,
+   "decisions": 1676,
+   "lat_batch_s": 0.003489563395296933,
    "validated": true
   },
   "instance_019": {
-   "ms": 1037.4375,
-   "decisions": 1676,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_020": {
-   "ms": 1009.59375,
-   "decisions": 1674,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_021": {
-   "ms": 1035.3671875,
-   "decisions": 1679,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_022": {
-   "ms": 1044.96875,
-   "decisions": 1678,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_023": {
-   "ms": 1023.5,
-   "decisions": 1674,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_024": {
-   "ms": 1026.4375,
-   "decisions": 1673,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_025": {
-   "ms": 1044.65625,
-   "decisions": 1678,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_026": {
-   "ms": 1073.7421875,
-   "decisions": 1676,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_027": {
-   "ms": 1079.375,
-   "decisions": 1684,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_028": {
-   "ms": 1055.25,
-   "decisions": 1679,
-   "lat_batch_s": 0.004417239341372181,
-   "validated": true
-  },
-  "instance_029": {
-   "ms": 1054.0078125,
-   "decisions": 1673,
-   "lat_batch_s": 0.004417239341372181,
+   "ms": 1107.25,
+   "decisions": 1680,
+   "lat_batch_s": 0.003489563395296933,
    "validated": true
   }
  }

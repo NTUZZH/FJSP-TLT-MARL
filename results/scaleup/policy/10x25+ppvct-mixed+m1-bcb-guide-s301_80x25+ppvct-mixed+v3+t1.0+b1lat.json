@@ -9,21 +9,21 @@
  "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
  "rows": {
   "instance_000": {
-   "ms": 2040.859375,
-   "decisions": 2679,
-   "lat_batch_s": 0.006355569086609778,
+   "ms": 2112.3359375,
+   "decisions": 2676,
+   "lat_batch_s": 0.006151800980858967,
    "validated": true
   },
   "instance_001": {
-   "ms": 2143.875,
-   "decisions": 2672,
-   "lat_batch_s": 0.006312858789691702,
+   "ms": 2130.765625,
+   "decisions": 2678,
+   "lat_batch_s": 0.00615284334695352,
    "validated": true
   },
   "instance_002": {
-   "ms": 2042.109375,
-   "decisions": 2682,
-   "lat_batch_s": 0.006216542582041949,
+   "ms": 2104.25,
+   "decisions": 2672,
+   "lat_batch_s": 0.006173211264631064,
    "validated": true
   }
  }

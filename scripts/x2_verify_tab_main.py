@@ -175,13 +175,18 @@ def mixsa_cells(mac, bad):
     rows = {'FiftyTSix': ('50x25+ppvct-mixed+v2+t0.6', 'greedy'),
             'FiftyTTen': ('50x25+ppvct-mixed+v2+t1.0', 'greedy'),
             'Eighty': ('80x25+ppvct-mixed+v3+t1.0', 'greedy'),
-            'EightySamp': ('80x25+ppvct-mixed+v3+t1.0', 'sampled')}
+            'EightySamp': ('80x25+ppvct-mixed+v3+t1.0', 'sampled'),
+            'FiftyLow': ('50x25+ppvct-mixed+v1+t0.3', 'greedy'),
+            'EightyLow': ('80x25+ppvct-mixed+v1+t0.3', 'greedy')}
+    # the one-vehicle short-travel cells have their own results folder
+    pdir = {'50x25+ppvct-mixed+v1+t0.3': 'results/shorttravel/policy',
+            '80x25+ppvct-mixed+v1+t0.3': 'results/shorttravel/policy'}
 
     def arm(name, cl, how):
         out = []
         for sd in seeds:
             if how == 'greedy':
-                f = f'results/scaleup/policy/{name}-s{sd}_{cl}.json'
+                f = f'{pdir.get(cl, "results/scaleup/policy")}/{name}-s{sd}_{cl}.json'
                 if not os.path.exists(f):
                     return None
                 r = json.load(open(f))['rows']
@@ -209,7 +214,7 @@ def mixsa_cells(mac, bad):
             if name not in mac:
                 continue
             n += 1
-            print(f'{"S-XI":10s} {name:26s} {mac[name]:>22s} {val:>22s}')
+            print(f'{"S-XIII":10s} {name:26s} {mac[name]:>22s} {val:>22s}')
             if mac[name].strip() != val:
                 bad.append((name, mac[name], val))
     return n

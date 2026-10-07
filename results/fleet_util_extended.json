@@ -1,27 +1,27 @@
 {
  "50x25+ppvct-mixed+v2+t0.6": {
-  "n": 30,
+  "n": 20,
   "V": 2,
-  "W_tr_mean": 1449.0361979166667,
-  "C_best_mean": 961.2822916666667,
+  "W_tr_mean": 1452.967578125,
+  "C_best_mean": 959.17421875,
   "C_source": "ga:ga_long/600s/50x25+ppvct-mixed+v2+t0.6.json",
-  "util": 0.7536996210573768
+  "util": 0.7574054586342581
  },
  "50x25+ppvct-mixed+v2+t1.0": {
-  "n": 30,
+  "n": 20,
   "V": 2,
-  "W_tr_mean": 2415.0041666666666,
-  "C_best_mean": 1526.8471354166666,
+  "W_tr_mean": 2422.544140625,
+  "C_best_mean": 1530.57265625,
   "C_source": "ga:ga_long/600s/50x25+ppvct-mixed+v2+t1.0.json",
-  "util": 0.7908467424958124
+  "util": 0.7913848881112208
  },
  "80x25+ppvct-mixed+v3+t1.0": {
-  "n": 30,
+  "n": 20,
   "V": 3,
-  "W_tr_mean": 3868.8234375,
-  "C_best_mean": 1808.1911458333334,
+  "W_tr_mean": 3863.762109375,
+  "C_best_mean": 1803.89765625,
   "C_source": "sample_decode:mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix:seed-mean",
-  "util": 0.7132032559011696
+  "util": 0.7139655061154471
  },
  "link": {
   "n": 100,

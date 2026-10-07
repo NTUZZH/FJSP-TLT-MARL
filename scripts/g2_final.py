@@ -7,7 +7,7 @@ with Holm correction across the four gate cells is applied. PASS requires
 all four significant, exactly as in attempt 1.
 
 Usage: python scripts/g2_final.py [--seeds 301,302,303]
-Writes notes/gate_G2_final.md.
+Writes reports/gate_G2_final.md.
 """
 
 import argparse
@@ -73,8 +73,8 @@ for r in rows:
     print(lines[-1].strip())
 lines.append(f'\n## FINAL VERDICT: {verdict}\n\n```json\n'
              + json.dumps(rows, indent=1) + '\n```\n')
-os.makedirs('notes', exist_ok=True)
-with open('notes/gate_G2_final.md', 'w') as f:
+os.makedirs('reports', exist_ok=True)
+with open('reports/gate_G2_final.md', 'w') as f:
     f.writelines(lines)
 print(f'FINAL VERDICT: {verdict}')
-print('wrote notes/gate_G2_final.md')
+print('wrote reports/gate_G2_final.md')

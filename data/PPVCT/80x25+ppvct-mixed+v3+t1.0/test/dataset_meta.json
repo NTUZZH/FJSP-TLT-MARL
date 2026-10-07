@@ -1,17 +1,17 @@
 {
- "seed0": 20000,
- "n_instances": 30,
+ "seed0": 110000,
+ "n_instances": 20,
  "n_modules": 80,
  "ppvc_mix": "mixed",
  "ppvc_factory": "default",
  "n_vehicles": 3,
  "tau_over_p": 1.0,
  "split": "test-only (zero-shot)",
- "generator": "x2_scale_make_data.py v2",
+ "generator": "x2_scale_make_data.py v3 (fixed base seeds)",
  "ops_mean": 1760.0,
  "ops_min": 1760,
  "ops_max": 1760,
- "realized_tau_over_p_mean": 0.999993222761068,
- "realized_tau_over_p_min": 0.9985937631971815,
- "realized_tau_over_p_max": 1.0014010121249144
+ "realized_tau_over_p_mean": 1.0000163633717059,
+ "realized_tau_over_p_min": 0.9984014516074312,
+ "realized_tau_over_p_max": 1.0015316750125598
 }

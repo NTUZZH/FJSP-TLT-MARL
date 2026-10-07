@@ -72,7 +72,7 @@ def calibrate_speed(job_length, op_pt, station_cell, target_ratio):
     The result is snapped to the nearest positive multiple of 1/128 (dyadic
     rational): every travel time is then exactly representable in float64,
     so the reference simulator, the batched env, and the CP-SAT model
-    (fix-point SCALE=128) break ties identically. Pinned in decisions.md."""
+    (fix-point SCALE=128) break ties identically."""
     _, min_tau_unit, mandatory = min_unit_travel_per_pair(job_length, op_pt, station_cell)
     if not mandatory.any() or target_ratio <= 0:
         return 0.0

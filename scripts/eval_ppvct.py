@@ -22,6 +22,12 @@ cli.add_argument('--veh_rule', type=str, default='policy',
                  choices=['policy', 'NVF', 'STT', 'FIFO'])
 cli.add_argument('--split', type=str, default='test')
 cli.add_argument('--batch', type=int, default=20)
+cli.add_argument('--out_root', type=str, default='',
+                 help='write the .npy to {out_root}/{cell}/ and the diagnostics '
+                      'to {out_root}/diagnostics/ instead of test_results/PPVCT/ '
+                      'and results/diagnostics/, so an ablation arm cannot be '
+                      'swept into analyses that glob those folders. Empty '
+                      '(default) = the standard folders.')
 args_cli = cli.parse_args()
 sys.argv = [sys.argv[0]]
 
@@ -177,7 +183,11 @@ def main():
                 # training time; eval must attach the same bound or the
                 # feature distribution silently shifts to chain-only
                 from transport_marl.bound import TransportBound
-                env.attach_bound(TransportBound(env, use_mch=True, use_veh=True))
+                # the fleet-term ablation trains without B_veh; its prices must
+                # be computed with the same bound at test time
+                env.attach_bound(TransportBound(
+                    env, use_mch=True,
+                    use_veh=bool(int(snap.get('bound_veh', 1)))))
             ms, lat = greedy_rollout(env, policy, args_cli.veh_rule)
             for e, stem in enumerate(chunk):
                 res = validate_transport_schedule(
@@ -192,7 +202,8 @@ def main():
             del env
             import gc
             gc.collect()
-        out_dir = f'test_results/PPVCT/{cell}'
+        out_dir = (f'{args_cli.out_root}/{cell}' if args_cli.out_root
+                   else f'test_results/PPVCT/{cell}')
         os.makedirs(out_dir, exist_ok=True)
         arr = np.array([(m, l) for _, m, l in results])
         np.save(f'{out_dir}/Result_{tag}+{args_cli.model_name}_{cell}.npy', arr)
@@ -221,8 +232,10 @@ def main():
                 mch_gini=float(_np.mean([d['mch_gini'] for d in diag_rows])),
                 n_transports_mean=float(_np.mean([d['n_transports'] for d in diag_rows])),
                 n=len(diag_rows))
-            os.makedirs('results/diagnostics', exist_ok=True)
-            dp = f'results/diagnostics/{args_cli.model_name}_{cell}_{tag}.json'
+            diag_dir = (f'{args_cli.out_root}/diagnostics' if args_cli.out_root
+                        else 'results/diagnostics')
+            os.makedirs(diag_dir, exist_ok=True)
+            dp = f'{diag_dir}/{args_cli.model_name}_{cell}_{tag}.json'
             with open(dp, 'w') as f:
                 json.dump(agg, f, indent=1)
             print(f'  diagnostics -> {dp}', flush=True)

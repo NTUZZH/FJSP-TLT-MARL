@@ -13,7 +13,7 @@ Output: results/scaleup/cpsat/{cell}.jsonl, one JSON record per instance,
 appended and fsynced as each solve returns. The ledger is keyed by instance
 name and read back on start, so this script is idempotent: killing and
 restarting it loses at most the solves in flight and never redoes finished
-work. A companion {cell}.json (dict keyed by instance) is rewritten from the
+work. A matching {cell}.json (dict keyed by instance) is rewritten from the
 ledger via tmp + atomic rename after every solve.
 
 Wall-clock warning: the 300 s budget is wall time, so a contended box weakens
@@ -29,11 +29,23 @@ without a ladder of separate budgets. The model, the parameters, the warm start
 and the worker count are untouched; only a callback is attached. The flag is
 OFF by default, so a Phase A invocation of this script is unchanged.
 
+COLD START (--cold). The solve gets no warm start: the nine PDR rollouts are
+skipped, no AddHint is added, and with no warm-start makespan the horizon
+stays at the model's generic bound. strengthen=True still adds the fleet
+cumulative and vehicle symmetry breaking, so the warm and cold arms differ in
+the warm start alone. Cold records go to their own ledger,
+{out_dir}/{cell}+cold.jsonl (and {cell}+cold.json), and carry
+warmstart=false; warm records carry warmstart=true. The two arms therefore
+never share a resume ledger, and a reader globbing {cell}.* never picks up a
+cold file. pdr_seed is None in a cold record.
+
 Usage:
   python -u scripts/x2_scale_cpsat.py CELL [CELL ...] [--par 3] [--workers 4]
          [--time 300] [--cores 12-23] [--chunk 12]
   python -u scripts/x2_scale_cpsat.py CELL --time_limit 3600 --anytime \
          --out_dir results/scaleup/cpsat_b
+  python -u scripts/x2_scale_cpsat.py CELL --time_limit 3600 --anytime \
+         --out_dir results/scaleup/cpsat_b --cold
 """
 import sys, os, json, glob, time
 from multiprocessing import Pool
@@ -45,6 +57,7 @@ sys.path.insert(0, '.')
 PAR, WORKERS, TLIM, CORES = 3, 4, 300.0, None
 ENERGY, FLEET, CHUNK, LIMIT_N = True, True, None, None
 ANYTIME = False
+COLD = False
 OUT_DIR = 'results/scaleup/cpsat'
 cells = []
 i = 0
@@ -65,6 +78,8 @@ while i < len(ARGS):
         OUT_DIR = ARGS[i + 1]; i += 2
     elif ARGS[i] == '--anytime':
         ANYTIME = True; i += 1
+    elif ARGS[i] == '--cold':
+        COLD = True; i += 1
     else:
         cells.append(ARGS[i]); i += 1
 
@@ -144,10 +159,10 @@ def _worker_init(cfg):
     ortools/absl locks intermittently deadlocks workers at birth, which is
     the 0%-CPU hang observed on the 80-module campaign.
     """
-    global PAR, WORKERS, TLIM, CORES, ENERGY, FLEET, ANYTIME, OUT_DIR
+    global PAR, WORKERS, TLIM, CORES, ENERGY, FLEET, ANYTIME, OUT_DIR, COLD
     PAR = cfg['par']; WORKERS = cfg['workers']; TLIM = cfg['tlim']
     CORES = cfg['cores']; ENERGY = cfg['energy']; FLEET = cfg['fleet']
-    ANYTIME = cfg['anytime']; OUT_DIR = cfg['out_dir']
+    ANYTIME = cfg['anytime']; OUT_DIR = cfg['out_dir']; COLD = cfg['cold']
     for _v in ('OMP_NUM_THREADS', 'MKL_NUM_THREADS'):
         os.environ[_v] = str(WORKERS)
     if ANYTIME:
@@ -166,7 +181,7 @@ def solve_one(task):
     jl, pt, meta = load_instance(stem)
     tr = meta['transport']
     best_ms, best_rec = np.inf, None
-    for mn in MCH_RULES:
+    for mn in (() if COLD else MCH_RULES):
         for vn in VEH_RULES:
             sim = TransportSim(jl, pt, meta['time_lag'], tr['station_cell'],
                                tr['tau_cells'], int(tr['n_vehicles']),
@@ -182,13 +197,14 @@ def solve_one(task):
                                    strengthen=True, energy_cut=ENERGY,
                                    fleet=FLEET)
     rec = dict(instance=os.path.basename(stem), cell=cell, dataset=cell,
-               pdr_seed=round(float(best_ms), 6), status=sol['status'],
+               pdr_seed=None if COLD else round(float(best_ms), 6),
+               status=sol['status'],
                ub=sol['makespan'], lb=sol.get('objective_bound'),
                horizon=sol.get('horizon'),
                walltime=round(sol.get('walltime', time.time() - t0), 2),
                warmstart_cpu_s=round(t_seed, 2),
                n_workers=WORKERS, time_limit_s=TLIM, strengthened=True,
-               energy_cut=ENERGY, fleet=FLEET)
+               energy_cut=ENERGY, fleet=FLEET, warmstart=not COLD)
     if ANYTIME:
         trace = [list(x) for x in TRACE]
         # the last incumbent must be the returned upper bound
@@ -199,15 +215,21 @@ def solve_one(task):
         rec['anytime_note'] = ('[wall_s, ub, lb] at every improving '
                                'incumbent; wall_s is solver time from the '
                                'start of Solve(), so it excludes the '
-                               'warm-start PDR rollouts (warmstart_cpu_s)')
+                               'warm-start PDR rollouts (warmstart_cpu_s)'
+                               if not COLD else
+                               '[wall_s, ub, lb] at every improving '
+                               'incumbent; wall_s is solver time from the '
+                               'start of Solve(); cold start, no warm '
+                               'start was given')
     return rec
 
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     for cell in cells:
-        jsonl = f'{OUT_DIR}/{cell}.jsonl'
-        js = f'{OUT_DIR}/{cell}.json'
+        stem_out = f'{OUT_DIR}/{cell}+cold' if COLD else f'{OUT_DIR}/{cell}'
+        jsonl = f'{stem_out}.jsonl'
+        js = f'{stem_out}.json'
         done = set()
         if os.path.exists(jsonl):
             with open(jsonl) as f:
@@ -220,13 +242,14 @@ def main():
         if CHUNK is not None:
             todo = todo[:CHUNK]
         print(f'{cell}: {len(todo)} to solve ({len(done)} done), par={PAR} '
-              f'workers={WORKERS} cores={CORES}', flush=True)
+              f'workers={WORKERS} cores={CORES} '
+              f'warmstart={"off" if COLD else "best-of-9 PDR"}', flush=True)
         tasks = [(cell, s, i % PAR) for i, s in enumerate(todo)]
         if tasks:
             from multiprocessing import get_context
             _cfg = dict(par=PAR, workers=WORKERS, tlim=TLIM, cores=CORES,
                         energy=ENERGY, fleet=FLEET, anytime=ANYTIME,
-                        out_dir=OUT_DIR)
+                        out_dir=OUT_DIR, cold=COLD)
             # maxtasksperchild=1: a pool worker that solves several large
             # instances in a row does not return their memory to the OS, so
             # its resident size ratchets up (43.8 GB after one 80-module

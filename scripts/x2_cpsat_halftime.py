@@ -40,7 +40,8 @@ def main():
                 assert r['instance'] not in rows, f'duplicate {r["instance"]}'
                 rows[r['instance']] = r
         names = sorted(rows)
-        assert len(names) == 30, (cell, len(names))
+        n_cell = json.load(open(f'data/PPVCT/{cell}/test/dataset_meta.json'))['n_instances']
+        assert len(names) == n_cell, (cell, len(names), n_cell)
 
         half, full = [], []
         for n in names:

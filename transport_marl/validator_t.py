@@ -22,11 +22,17 @@ import numpy as np
 
 def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
                                 tau_cells, n_vehicles, veh_start_cell,
-                                record, tol=1e-6, job_start_cell=-1):
+                                record, tol=1e-6, job_start_cell=-1,
+                                loaded_time=None):
     """job_start_cell >= 0 switches on external (Link JSSPT) semantics: every
     job materializes at that cell, so a first op on a different cell REQUIRES
     a transport (release 0). Default -1 keeps PPVC semantics (first op needs
-    and tolerates no transport)."""
+    and tolerates no transport).
+
+    loaded_time(op, frm, to), when given, is the loaded duration of the move
+    into op, replacing tau[frm, to] in the move-duration checks and in the
+    chain bound. It lets a schedule executed under realized per-move travel
+    times be checked; empty legs are always checked against tau."""
     job_length = np.asarray(job_length, dtype=int)
     op_pt = np.asarray(op_pt, dtype=float)
     time_lag = np.asarray(time_lag, dtype=float)
@@ -38,6 +44,14 @@ def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
     transports = record['transports']
     n_ops = int(job_length.sum())
     v = []
+
+    def lt(o, a, b):
+        return tau[a, b] if loaded_time is None else loaded_time(o, a, b)
+
+    def lt_min(o, ca, cb):
+        if loaded_time is None:
+            return tau[np.ix_(ca, cb)].min()
+        return min(lt(o, int(a), int(b)) for a in ca for b in cb)
 
     # [assign] completeness
     if (amch < 0).any():
@@ -86,7 +100,8 @@ def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
                                      f"{job_start_cell}->{station_cell[amch[o]]}")
                         if tr['pickup'] < -tol:
                             v.append(f"[transport] op {o} picked up before release 0")
-                        if abs(tr['arrival'] - tr['pickup'] - tau[tr['frm'], tr['to']]) > tol:
+                        if abs(tr['arrival'] - tr['pickup']
+                               - lt(o, tr['frm'], tr['to'])) > tol:
                             v.append(f"[transport] op {o} loaded move duration wrong")
                         if start[o] < tr['arrival'] - tol:
                             v.append(f"[transport] op {o} starts {start[o]:.6f} < "
@@ -112,7 +127,8 @@ def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
                 if tr['pickup'] < release - tol:
                     v.append(f"[transport] op {o} picked up {tr['pickup']:.6f} < "
                              f"pred ct+lag {release:.6f}")
-                if abs(tr['arrival'] - tr['pickup'] - tau[tr['frm'], tr['to']]) > tol:
+                if abs(tr['arrival'] - tr['pickup']
+                       - lt(o, tr['frm'], tr['to'])) > tol:
                     v.append(f"[transport] op {o} loaded move duration wrong")
                 if start[o] < tr['arrival'] - tol:
                     v.append(f"[transport] op {o} starts {start[o]:.6f} < arrival "
@@ -155,13 +171,13 @@ def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
             o = first + k
             if k == 0 and job_start_cell >= 0:
                 cb = station_cell[np.nonzero(op_pt[o] > 0)[0]]
-                lb += tau[job_start_cell, cb].min()
+                lb += lt_min(o, [job_start_cell], cb)
             lb += op_pt[o][op_pt[o] > 0].min()
             if k < L - 1:
                 lb += time_lag[o]
                 ca = station_cell[np.nonzero(op_pt[o] > 0)[0]]
                 cb = station_cell[np.nonzero(op_pt[o + 1] > 0)[0]]
-                lb += tau[np.ix_(ca, cb)].min()
+                lb += lt_min(o + 1, ca, cb)
         if makespan < lb - tol:
             v.append(f"[bound] makespan {makespan:.6f} < job {j} chain LB {lb:.6f}")
         first += L
@@ -174,7 +190,8 @@ def validate_transport_schedule(job_length, op_pt, time_lag, station_cell,
 
 def validate_recovered_schedule(job_length, op_pt, time_lag, station_cell,
                                 tau_cells, n_vehicles, veh_start_cell,
-                                record, residual, tol=1e-6, job_start_cell=-1):
+                                record, residual, tol=1e-6, job_start_cell=-1,
+                                loaded_time=None):
     """Feasibility of a schedule recovered after a mid-execution breakdown.
 
     `residual` is the dict transport_marl/disruption.build_residual returns.
@@ -192,7 +209,8 @@ def validate_recovered_schedule(job_length, op_pt, time_lag, station_cell,
     res = validate_transport_schedule(job_length, op_pt, time_lag,
                                       station_cell, tau_cells, n_vehicles,
                                       veh_start_cell, record, tol=tol,
-                                      job_start_cell=job_start_cell)
+                                      job_start_cell=job_start_cell,
+                                      loaded_time=loaded_time)
     v = list(res['violations'])
     amch = np.asarray(record['assigned_mch'], dtype=int)
     start = np.asarray(record['op_start'], dtype=float)

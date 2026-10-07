@@ -86,12 +86,19 @@ ARMS = [
     ('joint-v1', 'Shared reward', GREY_M, '-', 1.0),
     ('m1-bcb', '+ BCB credit (M1)', AMBER_M, '--', 1.0),
     ('m1-bcb-guide', '+ price channel (ours)', BLUE_M, '-', 1.6),
+    ('m1-bcb-guide-noveh', 'price channel without fleet term', BLUE_M,
+     (0, (5, 1.2, 1, 1.2, 1, 1.2)), 1.0),   # dash-dot-dot: unlike M1 in grey
     ('coma-critic', 'COMA-style critic', GREY_M, ':', 1.0),
     ('m2-shaped', 'M2: credit in return', ROSE_M, '-.', 1.0),
 ]
 
-figc, ax1 = plt.subplots(figsize=(3.5, 1.62))
-figc.subplots_adjust(left=0.135, right=0.965, top=0.965, bottom=0.255)
+# the six-arm legend sits in a boxed band above the axes; the figure grows
+# by that band so the axes keep their former size and position (inches)
+LEG_IN = 0.50
+figc, ax1 = plt.subplots(figsize=(3.5, 1.62 + LEG_IN))
+_h = 1.62 + LEG_IN
+figc.subplots_adjust(left=0.135, right=0.965, top=0.965 * 1.62 / _h,
+                     bottom=0.255 * 1.62 / _h)
 figb, ax2 = plt.subplots(figsize=(3.5, 1.60))
 figb.subplots_adjust(left=0.125, right=0.99, top=0.965, bottom=0.27)
 
@@ -101,7 +108,7 @@ for prefix, label, color, ls, lw in ARMS:
     if c is None:
         continue
     u, mean, lo, hi = c
-    ax1.plot(u, np.minimum(mean, clip_hi), ls, color=color, lw=lw,
+    ax1.plot(u, np.minimum(mean, clip_hi), linestyle=ls, color=color, lw=lw,
              label=label)
     ax1.fill_between(u, np.minimum(lo, clip_hi), np.minimum(hi, clip_hi),
                      color=color, alpha=0.14, lw=0)
@@ -114,8 +121,13 @@ for prefix, label, color, ls, lw in ARMS:
 ax1.set_xlabel('PPO update')
 ax1.set_ylabel('validation makespan')
 ax1.set_xlim(0, 2000)
-ax1.legend(frameon=False, loc='center right', bbox_to_anchor=(1.0, 0.60),
-           fontsize=6.5, labelspacing=0.22, handlelength=1.6)
+_leg = figc.legend(*ax1.get_legend_handles_labels(), loc='upper center',
+                   bbox_to_anchor=(0.55, 1 - 0.03 / _h), ncol=2,
+                   frameon=True, fancybox=False, fontsize=6.5,
+                   labelspacing=0.22, handlelength=2.2, columnspacing=1.2,
+                   borderpad=0.35)
+_leg.get_frame().set_linewidth(0.5)
+_leg.get_frame().set_edgecolor('black')
 ax1.spines[['top', 'right']].set_visible(False)
 
 # (b) guide vs credit-only, per-cell improvement with 95% bootstrap CI

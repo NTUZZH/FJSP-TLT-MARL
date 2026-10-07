@@ -2,7 +2,7 @@
 
 Reads results/hetero/{policy,pdr,bound}/ plus results/hetero/verification.json
 and writes results/hetero/summary.json and a Markdown block appended to
-notes/hetero_summary.md.
+reports/hetero_summary.md.
 
 Aggregation follows the paper's own convention (scripts/fill_macros.py): a
 policy arm's per-instance makespan is the mean over its three training
@@ -31,7 +31,7 @@ cli.add_argument('--cells', type=str, default='v1+t0.6,v2+t0.6,v1+t1.0')
 cli.add_argument('--levels', type=str, default='base,2,5,10,20')
 cli.add_argument('--seeds', type=str, default='301,302,303')
 cli.add_argument('--append', action='store_true',
-                 help='append the Markdown block to notes/hetero_summary.md')
+                 help='append the Markdown block to reports/hetero_summary.md')
 A = cli.parse_args()
 sys.argv = [sys.argv[0]]
 
@@ -241,9 +241,10 @@ def main():
     md = render(rows, cells, levels) + render_trends(trends, cells, levels)
     print(md)
     if A.append:
-        with open('notes/hetero_summary.md', 'a') as f:
+        os.makedirs('reports', exist_ok=True)
+        with open('reports/hetero_summary.md', 'a') as f:
             f.write(md)
-        print('appended to notes/hetero_summary.md')
+        print('appended to reports/hetero_summary.md')
 
 
 def pv(p):

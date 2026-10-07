@@ -14,7 +14,6 @@ WHY v2 EXISTS
   schedules they were supposed to encode, and were beaten by random
   chromosomes. The GA converged ~25% above best-of-nine PDR, the caller fell
   back to reporting the PDR schedule, and the cell recorded 0/100 improved.
-  Diagnosis with evidence: notes/ga_diagnosis.md.
 
   The loss was entirely on the vehicle side. Decoding the same seed
   chromosomes with the machine-side keys but the true vehicle rule reproduced

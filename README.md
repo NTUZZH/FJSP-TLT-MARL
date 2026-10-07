@@ -46,11 +46,12 @@ The manuscript's reproducibility footnote names the artifact families below. Eac
 | CP-SAT references | `results/cpsat_v2/` (reported), `results/scaleup/{cpsat,cpsat_b}/` (scale-up, including the anytime ledgers), `or_solution/PPVCT/` (archival); model in `transport_marl/cpsat_transport.py` |
 | Dispatching-rule references | `results/pdr/` and `results/scaleup/pdr/`; rules in `transport_marl/pdr_pairs.py` |
 | GA references | `results/ga_v2/` (reported), `results/ga_v2_budget/` and `results/scaleup/{ga,ga_long,ga_budget}/` (budget sweeps), `results/ga/` (archival); solvers in `transport_marl/ga_transport_v2.py` and `ga_transport.py` |
-| Trained models | `trained_network/PPVCT/` (84 checkpoint files: 42 arm-seed pairs, best plus final) with the hyperparameter snapshots in `train_log/PPVCT/` that the loaders read to rebuild each network |
+| Trained models | `trained_network/PPVCT/` (96 checkpoint files: 48 arm-seed pairs, best plus final) with the hyperparameter snapshots in `train_log/PPVCT/` that the loaders read to rebuild each network |
 | Evaluation code | `scripts/` (rollouts, baselines, statistics, acceptance tests, scale-up pipeline), `transport_marl/validator_t.py` (independent feasibility checking), `figures_src/` (figures), with the per-instance outputs in `test_results/PPVCT/`, `results/diagnostics/`, `results/certificate/` and `results/scaleup/` |
 | External-benchmark scores | `results/external_l1/{arm}/score_vs_released.json` and `summary.json`, one directory per training seed: our schedules re-timed in the benchmark authors' own simulator, against their released anchors |
 | Regime and mechanism diagnostics | `results/fleet_util.json` and `results/fleet_util_extended.json` (minimum loaded fleet utilization per cell), `results/bound_terms.json` and `results/bound_terms_grid.json` (which bound component is active at the root, per cell), `results/hetero/` (processing-time heterogeneity study), `results/disruption/` (breakdown-recovery ledgers), `results/sample_decode/` (best-of-N decoding) |
-| Decision-latency evidence | `train_log/latency_uncontended2.log` (GPU) and `train_log/latency_cpu4_2.log` (four pinned CPU cores), the console logs of the runs that produced the reported per-decision times |
+| Decision-latency evidence | `train_log/latency_uncontended2.log` (GPU) and `train_log/latency_cpu4_2.log` (four pinned CPU cores), the console logs of the runs that produced the reported per-decision times; `results/latency/` (batch-1 time per event and memory by instance size) |
+| Supplement studies | `results/disruption/` (breakdown recovery, including the GA and CP-SAT search arms), `results/execution_noise/` (execution under duration noise), `results/shorttravel/` (one-vehicle production batches with short moves), `results/ablation/noveh_mix/` (fleet-term ablation of the size-mixture policy), `results/scaleup/cpsat_cold/` (CP-SAT without a warm start); see "Supplement studies" below |
 
 ---
 
@@ -85,7 +86,8 @@ they can be rebuilt bit-for-bit from their pinned seeds.
 | PPVC-T training grid | `data/PPVCT/10x25+ppvct-mixed+v{V}+t{r}/{test,vali}`, `V` in {1,2,3}, `r` in {0.1,0.3,0.6} | 10 modules; 100 test + 100 validation instances per cell |
 | PPVC-T held-out intensity | `data/PPVCT/10x25+ppvct-mixed+v{1,2,3}+t1.0/{test,vali}` | the travel intensity the policy never trains on; 100 test instances per cell |
 | PPVC-T transfer cells | `data/PPVCT/10x25+ppvct-mixed+v4+t{0.6,1.0}`, `data/PPVCT/15x25+ppvct-mixed+v2+t{0.6,1.0}` | held-out fleet size and held-out problem scale, test split only |
-| PPVC-T scale-up cells | `data/PPVCT/{20,30}x25+ppvct-mixed+...`, `data/PPVCT/{50,80}x25+ppvct-mixed+...` (7 cells) | 20, 30, 50 and 80 modules against the 10-module training size; 30 test instances per cell, test split only |
+| PPVC-T scale-up cells | `data/PPVCT/{20,30}x25+ppvct-mixed+...`, `data/PPVCT/{50,80}x25+ppvct-mixed+...` (7 cells) | 20, 30, 50 and 80 modules against the 10-module training size; 30 test instances per cell at 20 and 30 modules and 20 per production batch at 50 and 80, test split only |
+| PPVC-T short-move production batches | `data/PPVCT/{50,80}x25+ppvct-mixed+v1+t0.3/test` | one vehicle and travel intensity 0.3; the module routings, processing times and lags of the 50- and 80-module production batches (same base seeds), with only the transport layout changed; 20 instances per cell |
 | Link JSSPT port | `data/LINK/15x10/{test,vali}` | 15 jobs x 10 machines, external anchor distribution, with `PROVENANCE.json` per split |
 | PPVC-T heterogeneity copies | `data/PPVCT_HET/` | the test cells of the heterogeneity study with processing times redrawn at dispersion levels R in {2, 5, 10, 20, 100}, mean preserved per operation before one-hour discretization |
 
@@ -98,9 +100,13 @@ python scripts/p1_make_ppvct_data.py          # add --smoke for a 3-instance dry
 # held-out transfer cells (test split only; never seen in training or validation)
 python scripts/p7_make_transfer_data.py
 
-# scale-up cells, 30 instances each (phase A = 20 and 30 modules, phase B = 50 and 80)
+# scale-up cells: phase A holds 20 and 30 modules, 30 instances each; phase B holds the
+# 50- and 80-module production batches, 20 instances each on fixed base seeds 100000 and 110000
 python scripts/x2_scale_make_data.py --phase A
 python scripts/x2_scale_make_data.py --phase B
+
+# one-vehicle production batches with short moves (same base seeds as phase B)
+python scripts/x2_scale_make_data.py --cells 50x25+ppvct-mixed+v1+t0.3,80x25+ppvct-mixed+v1+t0.3
 
 # heterogeneity copies of the test cells (paired on the same base instances)
 python scripts/x2_hetero_make_data.py
@@ -108,8 +114,8 @@ python scripts/x2_hetero_verify.py       # checks mean drift and realized disper
 ```
 
 The seven scale-up cells are zero-shot only: training and model selection
-happen at 10 modules, and their test seeds (20000 onward) cannot collide with
-a training seed.
+happen at 10 modules, and their test seeds (20000 onward, and 100000 and
+110000 for the production batches) cannot collide with a training seed.
 
 Training instances are drawn on the fly by the trainer and are not stored.
 
@@ -158,6 +164,11 @@ python -u scripts/p2_train_mappo.py --model_suffix m2-shaped   --credit m2 --see
 python -u scripts/p2_train_mappo.py --model_suffix coma-critic --algo coma --seed 301 --max_updates 2000
 python -u scripts/p2_train_mappo.py --model_suffix single-joint --algo single --seed 301 --max_updates 2000
 
+# fleet-term ablation: the headline arm with the fleet-capacity term removed from the
+# bound, so reward, action prices and credit all read the chain and machine terms only
+python -u scripts/p2_train_mappo.py --model_suffix m1-bcb-guide-noveh --credit m1 --guide \
+    --bound_veh 0 --seed 301 --max_updates 2000
+
 # ample-fleet ("uncontended") arm, deployed later under a fixed vehicle rule
 python -u scripts/p2_train_mappo.py --model_suffix e0b-uncontended --fleet_grid 10 \
     --seed 301 --max_updates 1000
@@ -186,6 +197,12 @@ python -u scripts/x2_gate_mix_smoke.py     # 20-update calibration smoke, run fi
 python -u scripts/p2_train_mappo.py --model_suffix m1-bcb-guide-mix --credit m1 --guide \
     --seed 301 --max_updates 2000 --size_mix 10,15,20 --vali_size_mix 10,20
 
+# fleet-term ablation of the size-mixture arm; scripts/run_x2_ablation_noveh_mix.sh wraps
+# this command and first checks the resolved configuration against the comparator
+# (p2_train_mappo.py --dry_run, then scripts/x2_preflight_config.py)
+python -u scripts/p2_train_mappo.py --model_suffix m1-bcb-guide-mix-noveh --credit m1 --guide \
+    --seed 301 --max_updates 2000 --size_mix 10,15,20 --vali_size_mix 10,20 --bound_veh 0
+
 # external anchor (Link JSSPT distribution); checkpoints named 15x10+link+{suffix}-s{seed}
 python -u scripts/p2_train_mappo.py --dist link --model_suffix link-m1 --credit m1 \
     --seed 301 --max_updates 2000 --fleet_grid 3,6,9,12,15,18
@@ -193,15 +210,15 @@ python -u scripts/p2_train_mappo.py --dist link --model_suffix link-m1-guide --c
     --seed 301 --max_updates 2000 --fleet_grid 3,6,9,12,15,18
 ```
 
-Seed coverage, per arm: the primary-grid arms, the scarce-cell reruns and the
-external `link-m1-guide` arm are trained on three seeds (301, 302, 303); the
-ample-fleet anchor, the external `link-m1` ablation, the non-admissible price
-control and the train-in-regime anchor are single runs on seed 301. The
-size-mixture arms (BOLT and the merged-head control) ship all three seeds. Run one training job
+Seed coverage, per arm: the ample-fleet anchor and the external `link-m1`
+ablation are single runs on seed 301. Every other arm ships three seeds (301,
+302, 303), including the scarce-cell reruns, the non-admissible price control,
+the train-in-regime anchor, both fleet-term ablations (10 modules and
+size mixture), the external `link-m1-guide` arm and the size-mixture arms. Run one training job
 at a time: two concurrent jobs on one GPU roughly double each other's
 wall-clock, which corrupts any timing comparison.
 
-`trained_network/PPVCT/` already holds the 84 checkpoint files (42 arm-seed
+`trained_network/PPVCT/` already holds the 96 checkpoint files (48 arm-seed
 pairs, best plus final) these commands produce, so training can be skipped
 entirely.
 
@@ -279,7 +296,8 @@ holds the first-generation GA. `transport_marl/cpsat_transport.py` reproduces
 either model: `strengthen=False` is the v1 semantics, byte-for-byte, so the
 archival ledgers stay checkable.
 
-Scale-up (zero-shot at 20, 30, 50 and 80 modules; 30 instances per cell). The
+Scale-up (zero-shot at 20, 30, 50 and 80 modules; 30 instances per cell at 20
+and 30 modules, 20 per production batch at 50 and 80). The
 solver jobs are the expensive part and are core-pinned so they cannot starve a
 concurrent trainer:
 
@@ -300,6 +318,7 @@ python scripts/x2_cpsat_halftime.py                                # 1800-s incu
 python scripts/x2_eval_sample.py --model_name mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301 \
     --cells 80x25+ppvct-mixed+v3+t1.0 --n_samples 64                 # best-of-64 decoding -> results/sample_decode/
 python scripts/x2_single_vs_marl_mix.py                            # merged-head vs factorized, size-mixture arms
+python scripts/x2_production_macros.py                             # every production-batch number the manuscript quotes
 ```
 
 Regime and mechanism diagnostics (CPU):
@@ -366,6 +385,73 @@ python scripts/p4_guide_tests.py          # action-price channel shapes and mask
 
 ---
 
+## Supplement studies
+
+Each study below has its own result folder and one script that turns the
+result files into the supplement table. The table scripts print by default;
+`--write` also patches the manuscript's macro file and supplement table, which
+are not part of this release (see "Reproducing the reported numbers"). The
+`run_x2_*.sh` wrappers hold the full launch settings (pinned cores, thread
+caps, resume and busy-machine checks); run them from the repository root, with
+`PY` pointing at the Python interpreter if `python` is not the right one.
+
+| Supplement section or table | Result files | Produced by | Table or numbers from |
+| --- | --- | --- | --- |
+| Scale-up compute sweep: CP-SAT without a warm start | `results/scaleup/cpsat_cold/{cell}+cold.{json,jsonl}` | `scripts/x2_scale_cpsat.py --cold` | read directly from the ledgers; the warm-started runs on the same instances are in `results/cpsat_v2/` (10 modules) and `results/scaleup/cpsat_b/` (50 modules) |
+| Scale-up: 3600-s anytime CP-SAT at 80 modules (20 of 20 instances) | `results/scaleup/cpsat_b/80x25+ppvct-mixed+v3+t1.0.{json,jsonl}` | `scripts/x2_scale_cpsat.py --anytime` | `scripts/x2_production_macros.py`, `scripts/x2_cpsat_halftime.py` |
+| Wall times on dedicated resources (best-of-64 decoding on an exclusive GPU; one schedule on one CPU core) | `results/sample_decode/*+excl.json`, `results/scaleup/policy/*+b1lat.json` | `scripts/run_x2_timing_excl.sh` | `scripts/x2_production_macros.py` |
+| One-vehicle production batches with short moves | `results/shorttravel/{pdr,ga,policy,policy_cpu}/` | `scripts/run_x2_shorttravel.sh` (rules and GA), `scripts/run_x2_shorttravel_gpu.sh` (policies) | `scripts/x2_shorttravel_report.py` |
+| Fleet-term ablation, 10 modules | `test_results/PPVCT/{cell}/Result_greedy+10x25+ppvct-mixed+m1-bcb-guide-noveh-s*.npy` | `scripts/run_x2_ablation_noveh.sh` | `scripts/x2_ablation_noveh_report.py` |
+| Fleet-term ablation, size mixture | `results/ablation/noveh_mix/{policy,test_results}/` | `scripts/run_x2_ablation_noveh_mix.sh` (training), `scripts/run_x2_ablation_noveh_mix_eval.sh` (evaluation) | `scripts/x2_ablation_noveh_mix_report.py` |
+| Schedules of BOLT and the transport-as-penalty anchor | `figures_src/data/s_gantt_schedules.json` (the two plotted schedules) | `figures_src/make_gantt.py` | the figure itself |
+| Recovery from a machine breakdown, with the search arms | `results/disruption/{cell}.jsonl` | `scripts/x2_disruption.py`; `scripts/run_x2_disruption_search.sh` for the GA and CP-SAT arms | `scripts/x2_disruption_report.py`, `scripts/x2_disruption_search_table.py` |
+| Execution under duration noise | `results/execution_noise/{cell}.jsonl`, with the initial plans in `results/execution_noise/plans/{cell}/` | `scripts/x2_execution_noise.py` via `scripts/run_x2_execution_noise.sh` | `scripts/x2_execution_noise_table.py` |
+| Deployment cost by instance size | `results/latency/x2_latency_memory_{cpu,cuda}.json` | `scripts/x2_latency_memory.py` via `scripts/run_x2_latency_memory.sh` | `scripts/x2_latency_macros.py` |
+
+```bash
+# CP-SAT without a warm start, one cell per size
+python -u scripts/x2_scale_cpsat.py 10x25+ppvct-mixed+v1+t0.6 --par 1 --workers 4 --time 600 \
+    --n 5 --anytime --out_dir results/scaleup/cpsat_cold --cold
+python -u scripts/x2_scale_cpsat.py 50x25+ppvct-mixed+v2+t1.0 --par 1 --workers 4 --time 3600 \
+    --n 3 --anytime --out_dir results/scaleup/cpsat_cold --cold
+
+# breakdown recovery: the arms without search budget, then the GA and CP-SAT arms
+python scripts/x2_disruption.py --cell 50x25+ppvct-mixed+v2+t1.0 \
+    --model_name mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301 \
+    --methods right_shift,pdr,policy --baseline policy
+bash scripts/run_x2_disruption_search.sh --dry_run    # lists the remaining runs
+python scripts/x2_disruption_search_table.py
+
+# execution under duration noise (seed-301 size-mixture policy, 3 replicates per instance)
+CORES=0-3 bash scripts/run_x2_execution_noise.sh
+python scripts/x2_execution_noise_table.py
+
+# short moves with one vehicle, then the report
+bash scripts/run_x2_shorttravel.sh && bash scripts/run_x2_shorttravel_gpu.sh
+python scripts/x2_shorttravel_report.py
+
+# deployment cost by instance size, on a quiet machine
+CORE=4 N=3 bash scripts/run_x2_latency_memory.sh
+python scripts/x2_latency_macros.py
+
+# fleet-term ablations
+python scripts/x2_ablation_noveh_report.py
+python scripts/x2_ablation_noveh_mix_report.py
+
+# schedule figure (reads the stored schedules; no rollout needed)
+python figures_src/make_gantt.py
+```
+
+The execution-noise study caches each instance's initial plans (the policy
+rollout, the best dispatching pair and the 60-CPU-s GA schedule) in
+`results/execution_noise/plans/`. The GA budget is CPU time, so a GA run on
+another machine does not return the same schedule; with the cached plans
+present, a rerun executes exactly the plans behind the reported ledgers. The
+two latency files keep every measured field; the machine's host name and the
+commit identifier of the unreleased working tree are replaced by `<masked>`.
+
+---
+
 ## Reproducing the reported numbers
 
 Every quantity in the manuscript is a macro produced by `scripts/fill_macros.py`
@@ -392,18 +478,20 @@ The mapping from files to reported numbers:
 | Minimum loaded fleet utilization per cell (the regime variable) | `results/fleet_util.json`, `results/fleet_util_extended.json` |
 | Active bound component at the root, per cell | `results/bound_terms.json`, `results/bound_terms_grid.json` |
 | CP-SAT incumbents at 1800 s (production cells) | `results/scaleup/cpsat_b/*.jsonl`, read by `scripts/x2_cpsat_halftime.py` |
-| Best-of-64 sampled decoding | `results/sample_decode/` |
+| Best-of-64 sampled decoding | `results/sample_decode/`; files tagged `+excl` repeat the timing on an exclusive GPU |
+| Time for one 50-module schedule on one CPU core | `results/scaleup/policy/*+b1lat.json` |
+| Fleet-term ablation (headline arm without the fleet-capacity term) | `test_results/PPVCT/{cell}/Result_greedy+10x25+ppvct-mixed+m1-bcb-guide-noveh-s*.npy`, read by `scripts/x2_ablation_noveh_report.py` |
 | Processing-time heterogeneity study | `results/hetero/summary.json` (from `results/hetero/{policy,pdr,bound}/`) |
 | Breakdown-recovery comparison | `results/disruption/` |
 | Merged-head against factorized heads, size-mixture arms | `test_results/PPVCT/` and `results/scaleup/policy/`, read by `scripts/x2_single_vs_marl_mix.py` |
 | Per-decision latency, GPU and four CPU cores | `train_log/latency_uncontended2.log`, `train_log/latency_cpu4_2.log` |
 | Seed count actually trained per arm | `trained_network/PPVCT/*.pth` |
-| Statistical verdicts (paired tests, equivalence tests) | `notes/*.md`, written by `gate_eval.py`, `g2_final.py` and `e4_final.py` |
+| Statistical verdicts (paired tests, equivalence tests) | `reports/*.md`, written by `gate_eval.py`, `g2_final.py` and `e4_final.py` |
 | Archival first-generation references (read by nothing) | `or_solution/PPVCT/{cell}.jsonl`, `results/ga/{cell}.json` |
 
 The statistical comparisons run before `fill_macros.py`: `gate_eval.py`,
 `g2_final.py`, `e4_final.py` and `e4_tost_run.py` each write a verdict block to
-`notes/`, creating the directory if it does not exist, and `fill_macros.py`
+`reports/`, creating the directory if it does not exist, and `fill_macros.py`
 parses those blocks back into macros. Run them in that order on a fresh clone.
 
 `fill_macros.py` rewrites a marked block inside the manuscript's macro file;
@@ -432,7 +520,7 @@ python scripts/e3_regret_map.py --explicit 10x25+ppvct-mixed+joint-v1-s301 \
 | `scripts/` | Dataset generation, training, evaluation, baselines, statistics, acceptance tests; the `x2_scale_*` family is the scale-up pipeline |
 | `figures_src/` | Manuscript figures and the shared plotting style |
 | `data/` | PPVC-T, PPVC-T heterogeneity and Link instance files |
-| `trained_network/PPVCT/` | 84 checkpoint files (42 arm-seed pairs, best plus final), covering every reported arm and seed |
+| `trained_network/PPVCT/` | 96 checkpoint files (48 arm-seed pairs, best plus final), covering every reported arm and seed |
 | `train_log/PPVCT/` | Per-model hyperparameter snapshots (required to rebuild networks for the released checkpoints) |
 | `train_log/latency_*2.log` | Console logs of the two uncontended decision-latency runs |
 | `results/external_l1/` | External-benchmark scores, one directory per training seed (raw replays regenerable with `scripts/link_eval.py`) |
@@ -440,6 +528,7 @@ python scripts/e3_regret_map.py --explicit 10x25+ppvct-mixed+joint-v1-s301 \
 | `results/scaleup/` | Scale-up evidence at 20 to 80 modules: policy rollouts, GA (60 s, 600 s and the small-budget sweep), CP-SAT (300 s and the 3600 s anytime ledgers), dispatching rules, root bounds |
 | `results/pdr`, `results/certificate`, `results/diagnostics` | Dispatching-rule baselines, certificates and diagnostic result files |
 | `results/hetero/`, `results/bound_terms*.json`, `results/fleet_util*.json`, `results/disruption/`, `results/sample_decode/` | Heterogeneity study, active bound components, fleet utilization, breakdown recovery, sampled decoding |
+| `results/execution_noise/`, `results/shorttravel/`, `results/ablation/noveh_mix/`, `results/scaleup/cpsat_cold/`, `results/latency/` | Duration noise, short-move production batches, size-mixture fleet-term ablation, CP-SAT without a warm start, deployment cost |
 | `or_solution/PPVCT/`, `results/ga/` | Archival first-generation CP-SAT and GA references, kept unchanged for provenance |
 | `test_results/PPVCT/` | Per-instance evaluation arrays for every released checkpoint |
 | `model/`, `fjsp_env_same_op_nums.py`, `ortools_solver.py`, `common_utils.py`, `data_utils.py`, `params.py` | Base flexible job-shop scaffolding adapted from prior work (see `NOTICE`) |

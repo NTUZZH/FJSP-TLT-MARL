@@ -39,9 +39,9 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
                              strengthen=False, energy_cut=True, fleet=True,
                              op_release=None, mch_ready=None, fixed_ops=None,
                              veh_ready=None, veh_cells=None,
-                             delivered_ops=None):
+                             delivered_ops=None, fixed_mch=None):
     """RESIDUAL ARGUMENTS (all default None, and every one of them only ever
-    ADDS constraints, so with all six absent the model, the parameters and the
+    ADDS constraints, so with all seven absent the model, the parameters and the
     search are exactly what they were before they existed):
       op_release   [N]  earliest start time of each operation.
       mch_ready    [M]  earliest time each machine is available; a machine
@@ -56,6 +56,8 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
       delivered_ops     operations whose incoming move already happened; no
                         move variable is created for them even though their
                         cell differs from their predecessor's.
+      fixed_mch    {op: machine} operations whose machine is committed but
+                        whose start, and the move into them, are still open.
 
     warmstart: optional schedule_record dict (sim/env format: assigned_mch,
     op_start, op_ct, transports) hinted via AddHint (proposal §8 warm-started
@@ -168,6 +170,8 @@ def solve_transport_instance(job_length, op_pt, meta, time_limit=300.0,
         if o in fixed:
             model.Add(mch_of[o] == fixed[o][0])
             model.Add(start[o] == fixed[o][1])
+        if fixed_mch is not None and o in fixed_mch:
+            model.Add(mch_of[o] == int(fixed_mch[o]))
     for m in range(n_m):
         if per_mch_intervals[m]:
             model.AddNoOverlap(per_mch_intervals[m])

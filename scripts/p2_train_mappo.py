@@ -21,6 +21,12 @@ cli.add_argument('--seed', type=int, default=301)
 cli.add_argument('--model_suffix', type=str, default='joint-v1')
 cli.add_argument('--vali_subset', type=int, default=20)
 cli.add_argument('--reward', type=str, default='full', choices=['full', 'chain'])
+cli.add_argument('--bound_veh', type=int, default=1, choices=[0, 1],
+                 help='1 (default): the attached bound includes the fleet-capacity '
+                      'term B_veh. 0: B = max(B_chain, B_mch), the fleet-term '
+                      'ablation; it removes B_veh from the reward, the action '
+                      'prices and the credit alike, because all three read the '
+                      'same attached bound. Requires --reward full.')
 cli.add_argument('--credit', type=str, default='shared',
                  choices=['shared', 'm1', 'm2'])
 cli.add_argument('--algo', type=str, default='mappo',
@@ -65,6 +71,12 @@ cli.add_argument('--vali_size_mix', type=str, default='',
                       'mean over (size, cell) of makespan / B(s_0), so no '
                       'single size dominates.')
 cli.add_argument('--vali_every', type=int, default=20)
+cli.add_argument('--dry_run', type=str, default='',
+                 help='pre-launch check: resolve the configuration exactly as a '
+                      'real run would, build the policy, write {config, cli, '
+                      'n_params, state_shapes, torch_threads} to this path and '
+                      'exit. Nothing under train_log/ or trained_network/ is '
+                      'written. Empty (default) = normal training.')
 args_cli = cli.parse_args()
 sys.argv = [sys.argv[0]]
 
@@ -107,7 +119,8 @@ def make_env(instances, n_veh, ratio):
                            guide_price_scale=args_cli.guide_price_scale)
     env.set_initial_data(jls, pts, lags, opt, mct, lay)
     if args_cli.reward == 'full':
-        env.attach_bound(TransportBound(env, use_mch=True, use_veh=True))
+        env.attach_bound(TransportBound(env, use_mch=True,
+                                        use_veh=bool(args_cli.bound_veh)))
     return env
 
 
@@ -178,6 +191,9 @@ def main():
             'JSSPT generator carries its own problem size (--link_jobs / '
             '--link_machines) and never calls ppvc_instance_generator. '
             'Drop --size_mix, or drop --dist link.')
+    if args_cli.bound_veh == 0 and args_cli.reward != 'full':
+        raise SystemExit('--bound_veh 0 requires --reward full: with --reward chain '
+                         'no bound is attached and the flag would do nothing.')
     if args_cli.guide_price != 'certified' and not args_cli.guide:
         raise SystemExit(
             f"--guide_price {args_cli.guide_price} requires --guide: without "
@@ -225,8 +241,33 @@ def main():
                      guide=args_cli.guide, dist=args_cli.dist,
                      guide_price=args_cli.guide_price,
                      guide_price_scale=args_cli.guide_price_scale,
+                     bound_veh=args_cli.bound_veh,
                      link_jobs=args_cli.link_jobs,
                      link_machines=args_cli.link_machines))
+    if args_cli.dry_run:
+        # same snapshot the real run writes below, plus the network it would
+        # train; returns before any file of the run itself is created
+        if args_cli.algo == 'coma':
+            from transport_marl.coma_baseline import COMAPPO
+            ppo_dry = COMAPPO(configs)
+        elif args_cli.algo == 'single':
+            from transport_marl.single_agent import SinglePPO
+            ppo_dry = SinglePPO(configs)
+        else:
+            ppo_dry = TransportPPO(configs)
+        pol = ppo_dry.policy
+        rec = dict(config=snap, cli=vars(args_cli),
+                   n_params=int(sum(p.numel() for p in pol.parameters())),
+                   state_shapes={k: list(v.shape)
+                                 for k, v in pol.state_dict().items()},
+                   torch_threads=torch.get_num_threads(),
+                   cuda_visible_devices=os.environ.get('CUDA_VISIBLE_DEVICES'))
+        with open(args_cli.dry_run, 'w') as f:
+            json.dump(rec, f, indent=1, default=str)
+        print(f'[dry_run] {model_name}: params={rec["n_params"]} '
+              f'device={configs.device} torch_threads={rec["torch_threads"]} '
+              f'-> {args_cli.dry_run}', flush=True)
+        return
     with open(f'train_log/PPVCT/config_{model_name}.json', 'w') as f:
         json.dump(snap, f, indent=1, default=str)
 

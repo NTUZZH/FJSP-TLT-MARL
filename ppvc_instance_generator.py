@@ -61,6 +61,8 @@ Output contract (mirrors SD2_instance_generator + PPVC metadata):
 Self-test:  python ppvc_instance_generator.py
 """
 import json
+import os
+import tempfile
 import numpy as np
 
 # ---------------------------------------------------------------------------
@@ -306,8 +308,9 @@ if __name__ == '__main__':
           f'(lag/processing ratio={lag_total / pt_proxy:.2f})')
 
     # 1) .fjs round-trip
-    save_instance('/tmp/ppvc_test', job_length, op_pt, meta)
-    jl2, pt2, meta2 = load_instance('/tmp/ppvc_test')
+    tmp = os.path.join(tempfile.mkdtemp(), 'ppvc_test')
+    save_instance(tmp, job_length, op_pt, meta)
+    jl2, pt2, meta2 = load_instance(tmp)
     assert np.array_equal(job_length, jl2), 'job_length round-trip mismatch'
     assert np.array_equal(op_pt, pt2), 'op_pt round-trip mismatch'
     assert np.array_equal(meta['time_lag'], meta2['time_lag'])

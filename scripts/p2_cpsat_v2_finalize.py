@@ -1,4 +1,4 @@
-"""Write notes/cpsat_v2_full.md from the strengthened CP-SAT references.
+"""Write reports/cpsat_v2_full.md from the strengthened CP-SAT references.
 
 Three clearly separated parts, per the coordinator's instruction:
   1. the uniform strengthened reference table (the numbers the manuscript
@@ -23,7 +23,7 @@ ORDER = ['v1+t0.1', 'v1+t0.3', 'v1+t0.6', 'v1+t1.0',
          'v4+t0.6', 'v4+t1.0',
          '15x25+ppvct-mixed+v2+t0.6', '15x25+ppvct-mixed+v2+t1.0']
 
-# adjudicated pilot values, to prove the pilot cell did not move
+# accepted pilot values, to prove the pilot cell did not move
 PILOT_REF = dict(nub=394.164, nlb=301.530, ngap=30.72, new_win=0, old_win=100)
 
 CONFIG = ('300 s per instance, `num_search_workers=4`, best-of-9-PDR warm '
@@ -96,8 +96,8 @@ A('# Strengthened CP-SAT references (v2) — all cells')
 A('')
 A(f'Generated {datetime.now():%Y-%m-%d %H:%M} by '
   '`scripts/p2_cpsat_v2_finalize.py`. Data: `results/cpsat_v2/*.json`. '
-  'Method and the reasoning behind each strengthening: '
-  '`notes/cpsat_v2_pilot.md`. The v1 references in `or_solution/PPVCT/` '
+  'The strengthenings are implemented in `transport_marl/cpsat_transport.py`. '
+  'The v1 references in `or_solution/PPVCT/` '
   'were never modified.')
 A('')
 A(f'Cells complete: **{len(done)}/16**'
@@ -356,15 +356,15 @@ else:
     A(f'v1+t0.6 was **not rerun**. Its stored numbers still read UB '
       f'{p["nub"].mean():.3f}, LB {p["nlb"].mean():.3f}, gap '
       f'{p["ngap"]:.2f}%, B(s0)>LB on {p["new_win"]}/{p["n"]} — '
-      + ('identical to the adjudicated pilot values '
+      + ('identical to the accepted pilot values '
          f'(UB {PILOT_REF["nub"]:.3f}, LB {PILOT_REF["nlb"]:.3f}, gap '
          f'{PILOT_REF["ngap"]:.2f}%, {PILOT_REF["new_win"]}/100).'
          if same else
-         '**DIFFERENT from the adjudicated pilot values — investigate.**'))
+         '**DIFFERENT from the accepted pilot values — investigate.**'))
 A('')
 
-os.makedirs('notes', exist_ok=True)
-with open('notes/cpsat_v2_full.md', 'w') as f:
+os.makedirs('reports', exist_ok=True)
+with open('reports/cpsat_v2_full.md', 'w') as f:
     f.write('\n'.join(L) + '\n')
-print(f'wrote notes/cpsat_v2_full.md ({len(done)}/16 complete, '
+print(f'wrote reports/cpsat_v2_full.md ({len(done)}/16 complete, '
       f'{len(flips)} flips, {len(abl_rows)} ablation rows)')

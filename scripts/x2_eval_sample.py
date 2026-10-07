@@ -15,7 +15,7 @@ analysis or fill_macros regex can sweep these in silently.
 
 Usage:
   python -u scripts/x2_eval_sample.py --model_name 10x25+ppvct-mixed+m1-bcb-guide-s301 \
-      --cells v1+t0.6,v1+t1.0 --n_samples 64 [--limit 0] [--batch 20]
+      --cells v1+t0.6,v1+t1.0 --n_samples 64 [--limit 0] [--batch 20] [--tag +excl]
 """
 import sys, os, json, glob, time, argparse
 
@@ -26,6 +26,10 @@ cli.add_argument('--n_samples', type=int, default=64)
 cli.add_argument('--batch', type=int, default=20)
 cli.add_argument('--split', type=str, default='test')
 cli.add_argument('--limit', type=int, default=0, help='smoke: cap instances')
+cli.add_argument('--tag', type=str, default='',
+                 help='suffix for the output file, e.g. +excl for a timing rerun')
+cli.add_argument('--note', type=str,
+                 default='batched GPU, machine shared (contended); not a certified latency')
 args_cli = cli.parse_args()
 sys.argv = [sys.argv[0]]
 
@@ -165,10 +169,9 @@ def main():
                         'wall_per_instance_s': round(wall / len(stems), 2),
                         'mean_pass_s_per_chunk': round(float(np.mean(pass_times)), 2),
                         'batch': args_cli.batch,
-                        'note': 'batched GPU, machine shared (contended); '
-                                'not a certified latency'}}
+                        'note': args_cli.note}}
         path = (f'results/sample_decode/{args_cli.model_name}_{cell}'
-                f'_N{args_cli.n_samples}.json')
+                f'_N{args_cli.n_samples}{args_cli.tag}.json')
         with open(path, 'w') as f:
             json.dump(out, f, indent=1)
         vals = np.array(list(best.values()))

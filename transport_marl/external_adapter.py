@@ -39,10 +39,10 @@ confuse them):
    verbatim as tau_cells.  n_vehicles comes from the chosen dpp{k}veh folder.
 
 ===========================  SEMANTIC CAVEATS  ===============================
-Read alongside notes/external_benchmarks.md. These are NOT silently bridged:
+These are NOT silently bridged:
 
 C1 (Deroussi-Norre travel matrix is NOT shipped). The lucasberter repo ships
-   the Deroussi-Norre PROCESSING data only. The companion travel matrices are
+   the Deroussi-Norre PROCESSING data only. The accompanying travel matrices are
    the Bilge-Ulusoy (1995) layouts, published solely as tables in Oper. Res.
    43(6):1058-1070 -- no verified machine-readable copy is in the repo. We
    therefore attach a DETERMINISTIC, CLEARLY-LABELED SYNTHETIC layout (a unit

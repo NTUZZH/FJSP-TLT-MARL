@@ -1,0 +1,1398 @@
+{
+ "script": "scripts/x2_latency_memory.py",
+ "model_stem": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix",
+ "seeds": [
+  301,
+  302,
+  303
+ ],
+ "hostname": "<masked>",
+ "device": "cuda",
+ "batch": 1,
+ "cores": [
+  0
+ ],
+ "cores_pinned": true,
+ "torch_threads": 1,
+ "omp_mkl_threads": 1,
+ "n_per_cell": 3,
+ "strict": false,
+ "git": {
+  "commit": "<masked>",
+  "tree_dirty": true,
+  "script_modified_or_untracked": true
+ },
+ "started": "2026-10-06 06:18:05",
+ "loadavg_start": [
+  7.0859375,
+  7.068359375,
+  8.439453125
+ ],
+ "conventions": {
+  "fwd": "policy forward + greedy action selection (the timed region of scripts/eval_ppvct.py), plus cuda synchronize on GPU",
+  "event": "fwd + action copy to host + env.step (next state ready)",
+  "end_to_end_s": "instance file read + env and bound construction + rollout; excludes validation",
+  "rollout_s": "first forward to final env.step",
+  "memory": "ru_maxrss of a child process that ran only this cell (model load, warm-up, all seeds); vm_hwm_kb is VmHWM reset before each instance"
+ },
+ "cells": {
+  "10": {
+   "size": 10,
+   "cell": "10x25+ppvct-mixed+v1+t0.6",
+   "instances": [
+    "instance_000",
+    "instance_001",
+    "instance_002"
+   ],
+   "torch_version": "2.11.0+cu128",
+   "torch_threads": 1,
+   "torch_interop_threads": 1,
+   "affinity": [
+    0
+   ],
+   "cuda_device": "NVIDIA RTX PRO 5000 Blackwell",
+   "warmup_forwards_per_seed": 10,
+   "fwd": {
+    "n": 3003,
+    "mean_ms": 2.5491109395432563,
+    "median_ms": 2.5424729101359844,
+    "p95_ms": 2.6060957461595535,
+    "max_ms": 2.873774152249098
+   },
+   "event": {
+    "n": 3003,
+    "mean_ms": 3.512465974202493,
+    "median_ms": 3.5062110982835293,
+    "p95_ms": 3.594211023300886,
+    "max_ms": 3.9366697892546654
+   },
+   "end_to_end_s_mean": 1.178325522587531,
+   "rollout_s_mean": 1.1732833782831829,
+   "events_mean": 333.6666666666667,
+   "all_match_stored": false,
+   "n_match_stored": 5,
+   "n_rollouts": 9,
+   "rss_after_import_kb": 500444,
+   "vm_hwm_kb_max": 1258692,
+   "ru_maxrss_kb": 1258300,
+   "seeds": {
+    "301": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301",
+     "stored_source": "test_results/PPVCT/v1+t0.6/Result_greedy+mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301_v1+t0.6.npy",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 415.96875,
+       "stored_makespan": 415.96875,
+       "matches_stored": true,
+       "events": 334,
+       "stored_events": null,
+       "fwd": {
+        "n": 334,
+        "mean_ms": 2.5396111733586846,
+        "median_ms": 2.5358700659126043,
+        "p95_ms": 2.591890748590231,
+        "max_ms": 2.813519909977913
+       },
+       "event": {
+        "n": 334,
+        "mean_ms": 3.4976383715778767,
+        "median_ms": 3.4962149802595377,
+        "p95_ms": 3.568352945148945,
+        "max_ms": 3.9366697892546654
+       },
+       "rollout_s": 1.1694697528146207,
+       "end_to_end_s": 1.174846292939037,
+       "setup_s": 0.005376540124416351,
+       "rss_before_kb": 1256920,
+       "vm_hwm_kb": 1258096,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 414.5,
+       "stored_makespan": 411.5,
+       "matches_stored": false,
+       "events": 333,
+       "stored_events": null,
+       "fwd": {
+        "n": 333,
+        "mean_ms": 2.5460323019585274,
+        "median_ms": 2.542405854910612,
+        "p95_ms": 2.5881949812173843,
+        "max_ms": 2.865695860236883
+       },
+       "event": {
+        "n": 333,
+        "mean_ms": 3.5044341152338117,
+        "median_ms": 3.5012508742511272,
+        "p95_ms": 3.5694312304258347,
+        "max_ms": 3.874282818287611
+       },
+       "rollout_s": 1.1682503218762577,
+       "end_to_end_s": 1.1732505951076746,
+       "setup_s": 0.005000273231416941,
+       "rss_before_kb": 1258284,
+       "vm_hwm_kb": 1258332,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_002": {
+       "makespan": 406.140625,
+       "stored_makespan": 406.140625,
+       "matches_stored": true,
+       "events": 334,
+       "stored_events": null,
+       "fwd": {
+        "n": 334,
+        "mean_ms": 2.5429597171860006,
+        "median_ms": 2.5389038491994143,
+        "p95_ms": 2.5939624290913343,
+        "max_ms": 2.84385122358799
+       },
+       "event": {
+        "n": 334,
+        "mean_ms": 3.5033012143598343,
+        "median_ms": 3.500611986964941,
+        "p95_ms": 3.578065475448966,
+        "max_ms": 3.85917816311121
+       },
+       "rollout_s": 1.1714076134376228,
+       "end_to_end_s": 1.176395125221461,
+       "setup_s": 0.004987511783838272,
+       "rss_before_kb": 1258356,
+       "vm_hwm_kb": 1258384,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      }
+     }
+    },
+    "302": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302",
+     "stored_source": "test_results/PPVCT/v1+t0.6/Result_greedy+mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302_v1+t0.6.npy",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 426.375,
+       "stored_makespan": 426.375,
+       "matches_stored": true,
+       "events": 334,
+       "stored_events": null,
+       "fwd": {
+        "n": 334,
+        "mean_ms": 2.5418498358148303,
+        "median_ms": 2.534793457016349,
+        "p95_ms": 2.593098534271121,
+        "max_ms": 2.8664241544902325
+       },
+       "event": {
+        "n": 334,
+        "mean_ms": 3.503083731019925,
+        "median_ms": 3.4958734177052975,
+        "p95_ms": 3.5794631810858846,
+        "max_ms": 3.864895086735487
+       },
+       "rollout_s": 1.1713317139074206,
+       "end_to_end_s": 1.1763163837604225,
+       "setup_s": 0.004984669853001833,
+       "rss_before_kb": 1258404,
+       "vm_hwm_kb": 1258452,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 419.8984375,
+       "stored_makespan": 415.5703125,
+       "matches_stored": false,
+       "events": 333,
+       "stored_events": null,
+       "fwd": {
+        "n": 333,
+        "mean_ms": 2.532237490454504,
+        "median_ms": 2.5284900330007076,
+        "p95_ms": 2.5763907469809055,
+        "max_ms": 2.814158797264099
+       },
+       "event": {
+        "n": 333,
+        "mean_ms": 3.4902026672643407,
+        "median_ms": 3.484322689473629,
+        "p95_ms": 3.5495957359671593,
+        "max_ms": 3.828869666904211
+       },
+       "rollout_s": 1.1635291408747435,
+       "end_to_end_s": 1.1685157669708133,
+       "setup_s": 0.004986626096069813,
+       "rss_before_kb": 1258480,
+       "vm_hwm_kb": 1258528,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_002": {
+       "makespan": 403.421875,
+       "stored_makespan": 403.421875,
+       "matches_stored": true,
+       "events": 334,
+       "stored_events": null,
+       "fwd": {
+        "n": 334,
+        "mean_ms": 2.5411887292354227,
+        "median_ms": 2.5385438930243254,
+        "p95_ms": 2.5784876197576523,
+        "max_ms": 2.8213802725076675
+       },
+       "event": {
+        "n": 334,
+        "mean_ms": 3.5025046770265718,
+        "median_ms": 3.500107442960143,
+        "p95_ms": 3.569707227870822,
+        "max_ms": 3.8342331536114216
+       },
+       "rollout_s": 1.171132386662066,
+       "end_to_end_s": 1.1760752038098872,
+       "setup_s": 0.004942817147821188,
+       "rss_before_kb": 1258548,
+       "vm_hwm_kb": 1258560,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      }
+     }
+    },
+    "303": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303",
+     "stored_source": "test_results/PPVCT/v1+t0.6/Result_greedy+mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303_v1+t0.6.npy",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 445.015625,
+       "stored_makespan": 445.015625,
+       "matches_stored": true,
+       "events": 334,
+       "stored_events": null,
+       "fwd": {
+        "n": 334,
+        "mean_ms": 2.5612217315589776,
+        "median_ms": 2.557157538831234,
+        "p95_ms": 2.6132718892768025,
+        "max_ms": 2.844778820872307
+       },
+       "event": {
+        "n": 334,
+        "mean_ms": 3.527175569572224,
+        "median_ms": 3.52363009005785,
+        "p95_ms": 3.592940280213952,
+        "max_ms": 3.8533038459718227
+       },
+       "rollout_s": 1.1793663282878697,
+       "end_to_end_s": 1.1844450859352946,
+       "setup_s": 0.005078757647424936,
+       "rss_before_kb": 1258584,
+       "vm_hwm_kb": 1258588,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 418.5390625,
+       "stored_makespan": 417.6171875,
+       "matches_stored": false,
+       "events": 333,
+       "stored_events": null,
+       "fwd": {
+        "n": 333,
+        "mean_ms": 2.5514686136162497,
+        "median_ms": 2.5466852821409702,
+        "p95_ms": 2.6020750403404236,
+        "max_ms": 2.8684260323643684
+       },
+       "event": {
+        "n": 333,
+        "mean_ms": 3.5167093187369205,
+        "median_ms": 3.514308948069811,
+        "p95_ms": 3.5880237817764282,
+        "max_ms": 3.8868170231580734
+       },
+       "rollout_s": 1.172351679764688,
+       "end_to_end_s": 1.1772975926287472,
+       "setup_s": 0.00494591286405921,
+       "rss_before_kb": 1258612,
+       "vm_hwm_kb": 1258660,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_002": {
+       "makespan": 418.28125,
+       "stored_makespan": 417.40625,
+       "matches_stored": false,
+       "events": 334,
+       "stored_events": null,
+       "fwd": {
+        "n": 334,
+        "mean_ms": 2.5853761848240735,
+        "median_ms": 2.5814289692789316,
+        "p95_ms": 2.6356008602306247,
+        "max_ms": 2.873774152249098
+       },
+       "event": {
+        "n": 334,
+        "mean_ms": 3.5670661035657463,
+        "median_ms": 3.562373574823141,
+        "p95_ms": 3.6571072647348046,
+        "max_ms": 3.9094099774956703
+       },
+       "rollout_s": 1.192711466923356,
+       "end_to_end_s": 1.1977876569144428,
+       "setup_s": 0.005076189991086721,
+       "rss_before_kb": 1258692,
+       "vm_hwm_kb": 1258692,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10479616,
+       "cuda_max_reserved_bytes": 25165824
+      }
+     }
+    }
+   },
+   "cuda_max_allocated_bytes": 10479616,
+   "cuda_max_reserved_bytes": 25165824
+  },
+  "20": {
+   "size": 20,
+   "cell": "20x25+ppvct-mixed+v1+t0.6",
+   "instances": [
+    "instance_000",
+    "instance_001",
+    "instance_002"
+   ],
+   "torch_version": "2.11.0+cu128",
+   "torch_threads": 1,
+   "torch_interop_threads": 1,
+   "affinity": [
+    0
+   ],
+   "cuda_device": "NVIDIA RTX PRO 5000 Blackwell",
+   "warmup_forwards_per_seed": 10,
+   "fwd": {
+    "n": 6009,
+    "mean_ms": 2.5981851876058513,
+    "median_ms": 2.5878259912133217,
+    "p95_ms": 2.679046895354986,
+    "max_ms": 3.0485973693430424
+   },
+   "event": {
+    "n": 6009,
+    "mean_ms": 3.71914145713872,
+    "median_ms": 3.704346250742674,
+    "p95_ms": 3.8550004363059998,
+    "max_ms": 4.427744075655937
+   },
+   "end_to_end_s_mean": 2.492802473871658,
+   "rollout_s_mean": 2.4858164781083665,
+   "events_mean": 667.6666666666666,
+   "all_match_stored": false,
+   "n_match_stored": 4,
+   "n_rollouts": 9,
+   "rss_after_import_kb": 500392,
+   "vm_hwm_kb_max": 1254080,
+   "ru_maxrss_kb": 1253700,
+   "seeds": {
+    "301": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301_20x25+ppvct-mixed+v1+t0.6.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 820.5,
+       "stored_makespan": 818.375,
+       "matches_stored": false,
+       "events": 669,
+       "stored_events": 669,
+       "fwd": {
+        "n": 669,
+        "mean_ms": 2.6612378648511497,
+        "median_ms": 2.6630577631294727,
+        "p95_ms": 2.7155918069183826,
+        "max_ms": 2.941492013633251
+       },
+       "event": {
+        "n": 669,
+        "mean_ms": 3.8224765307009667,
+        "median_ms": 3.8271439261734486,
+        "p95_ms": 3.911172691732645,
+        "max_ms": 4.268299788236618
+       },
+       "rollout_s": 2.559946326073259,
+       "end_to_end_s": 2.567516826093197,
+       "setup_s": 0.007570500019937754,
+       "rss_before_kb": 1251008,
+       "vm_hwm_kb": 1253116,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 846.921875,
+       "stored_makespan": 860.984375,
+       "matches_stored": false,
+       "events": 666,
+       "stored_events": 666,
+       "fwd": {
+        "n": 666,
+        "mean_ms": 2.6261976734083428,
+        "median_ms": 2.6209685020148754,
+        "p95_ms": 2.6842111255973577,
+        "max_ms": 2.881542779505253
+       },
+       "event": {
+        "n": 666,
+        "mean_ms": 3.7681349355995923,
+        "median_ms": 3.7618144415318966,
+        "p95_ms": 3.866698360070586,
+        "max_ms": 4.091227892786264
+       },
+       "rollout_s": 2.5122941406443715,
+       "end_to_end_s": 2.5192242758348584,
+       "setup_s": 0.006930135190486908,
+       "rss_before_kb": 1253328,
+       "vm_hwm_kb": 1253508,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_002": {
+       "makespan": 773.6953125,
+       "stored_makespan": 784.9375,
+       "matches_stored": false,
+       "events": 668,
+       "stored_events": 668,
+       "fwd": {
+        "n": 668,
+        "mean_ms": 2.580673944812915,
+        "median_ms": 2.577349077910185,
+        "p95_ms": 2.6282617822289467,
+        "max_ms": 2.8998167254030704
+       },
+       "event": {
+        "n": 668,
+        "mean_ms": 3.6920199915209038,
+        "median_ms": 3.689282340928912,
+        "p95_ms": 3.7660751724615693,
+        "max_ms": 4.139499738812447
+       },
+       "rollout_s": 2.4689107057638466,
+       "end_to_end_s": 2.475793480873108,
+       "setup_s": 0.006882775109261274,
+       "rss_before_kb": 1253532,
+       "vm_hwm_kb": 1253588,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      }
+     }
+    },
+    "302": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302_20x25+ppvct-mixed+v1+t0.6.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 776.0,
+       "stored_makespan": 776.0,
+       "matches_stored": true,
+       "events": 669,
+       "stored_events": 669,
+       "fwd": {
+        "n": 669,
+        "mean_ms": 2.5941629891293556,
+        "median_ms": 2.589019015431404,
+        "p95_ms": 2.639315277338028,
+        "max_ms": 2.8738309629261494
+       },
+       "event": {
+        "n": 669,
+        "mean_ms": 3.707315062098929,
+        "median_ms": 3.6998288705945015,
+        "p95_ms": 3.776775114238262,
+        "max_ms": 4.144775215536356
+       },
+       "rollout_s": 2.48286171304062,
+       "end_to_end_s": 2.4897695099934936,
+       "setup_s": 0.006907796952873468,
+       "rss_before_kb": 1253688,
+       "vm_hwm_kb": 1253688,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 761.8125,
+       "stored_makespan": 753.796875,
+       "matches_stored": false,
+       "events": 666,
+       "stored_events": 666,
+       "fwd": {
+        "n": 666,
+        "mean_ms": 2.5878685418874383,
+        "median_ms": 2.5847405195236206,
+        "p95_ms": 2.634736825712025,
+        "max_ms": 2.8735161758959293
+       },
+       "event": {
+        "n": 666,
+        "mean_ms": 3.7063916120118834,
+        "median_ms": 3.7059879396110773,
+        "p95_ms": 3.7749905604869127,
+        "max_ms": 4.062519408762455
+       },
+       "rollout_s": 2.471105500124395,
+       "end_to_end_s": 2.4780266052111983,
+       "setup_s": 0.006921105086803436,
+       "rss_before_kb": 1253716,
+       "vm_hwm_kb": 1253768,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_002": {
+       "makespan": 796.625,
+       "stored_makespan": 796.625,
+       "matches_stored": true,
+       "events": 668,
+       "stored_events": 668,
+       "fwd": {
+        "n": 668,
+        "mean_ms": 2.5830989533444186,
+        "median_ms": 2.5790203362703323,
+        "p95_ms": 2.627594885416329,
+        "max_ms": 3.0485973693430424
+       },
+       "event": {
+        "n": 668,
+        "mean_ms": 3.692319922004185,
+        "median_ms": 3.6873226054012775,
+        "p95_ms": 3.757095616310835,
+        "max_ms": 4.427744075655937
+       },
+       "rollout_s": 2.469112037681043,
+       "end_to_end_s": 2.4759537116624415,
+       "setup_s": 0.006841673981398344,
+       "rss_before_kb": 1253804,
+       "vm_hwm_kb": 1253812,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      }
+     }
+    },
+    "303": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303_20x25+ppvct-mixed+v1+t0.6.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 731.8125,
+       "stored_makespan": 786.1875,
+       "matches_stored": false,
+       "events": 669,
+       "stored_events": 669,
+       "fwd": {
+        "n": 669,
+        "mean_ms": 2.586118337490856,
+        "median_ms": 2.5832680985331535,
+        "p95_ms": 2.625712286680937,
+        "max_ms": 2.9194820672273636
+       },
+       "event": {
+        "n": 669,
+        "mean_ms": 3.6978732184778416,
+        "median_ms": 3.6951862275600433,
+        "p95_ms": 3.7644206546247005,
+        "max_ms": 4.102296195924282
+       },
+       "rollout_s": 2.476549687795341,
+       "end_to_end_s": 2.4834995749406517,
+       "setup_s": 0.00694988714531064,
+       "rss_before_kb": 1253868,
+       "vm_hwm_kb": 1253908,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 765.828125,
+       "stored_makespan": 765.828125,
+       "matches_stored": true,
+       "events": 666,
+       "stored_events": 666,
+       "fwd": {
+        "n": 666,
+        "mean_ms": 2.573599109661069,
+        "median_ms": 2.570998389273882,
+        "p95_ms": 2.61464377399534,
+        "max_ms": 2.9007787816226482
+       },
+       "event": {
+        "n": 666,
+        "mean_ms": 3.681080272510737,
+        "median_ms": 3.679044544696808,
+        "p95_ms": 3.7427800707519054,
+        "max_ms": 4.0710787288844585
+       },
+       "rollout_s": 2.454262346960604,
+       "end_to_end_s": 2.4611513409763575,
+       "setup_s": 0.006888994015753269,
+       "rss_before_kb": 1253944,
+       "vm_hwm_kb": 1253956,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_002": {
+       "makespan": 742.015625,
+       "stored_makespan": 742.015625,
+       "matches_stored": true,
+       "events": 668,
+       "stored_events": 668,
+       "fwd": {
+        "n": 668,
+        "mean_ms": 2.5906183395791285,
+        "median_ms": 2.58405739441514,
+        "p95_ms": 2.6470784097909927,
+        "max_ms": 2.912730909883976
+       },
+       "event": {
+        "n": 668,
+        "mean_ms": 3.7045509771940237,
+        "median_ms": 3.6951687652617693,
+        "p95_ms": 3.7906691897660494,
+        "max_ms": 4.16196696460247
+       },
+       "rollout_s": 2.4773058448918164,
+       "end_to_end_s": 2.4842869392596185,
+       "setup_s": 0.006981094367802143,
+       "rss_before_kb": 1253996,
+       "vm_hwm_kb": 1254080,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 10826752,
+       "cuda_max_reserved_bytes": 25165824
+      }
+     }
+    }
+   },
+   "cuda_max_allocated_bytes": 10826752,
+   "cuda_max_reserved_bytes": 25165824
+  },
+  "50": {
+   "size": 50,
+   "cell": "50x25+ppvct-mixed+v2+t1.0",
+   "instances": [
+    "instance_000",
+    "instance_001",
+    "instance_002"
+   ],
+   "torch_version": "2.11.0+cu128",
+   "torch_threads": 1,
+   "torch_interop_threads": 1,
+   "affinity": [
+    0
+   ],
+   "cuda_device": "NVIDIA RTX PRO 5000 Blackwell",
+   "warmup_forwards_per_seed": 10,
+   "fwd": {
+    "n": 15096,
+    "mean_ms": 2.56704116633994,
+    "median_ms": 2.560849767178297,
+    "p95_ms": 2.62048386503011,
+    "max_ms": 10.033871978521347
+   },
+   "event": {
+    "n": 15096,
+    "mean_ms": 4.071345848714164,
+    "median_ms": 4.062511958181858,
+    "p95_ms": 4.1727571515366435,
+    "max_ms": 12.35260022804141
+   },
+   "end_to_end_s_mean": 6.8490206389687955,
+   "rollout_s_mean": 6.836249764749987,
+   "events_mean": 1677.3333333333333,
+   "all_match_stored": false,
+   "n_match_stored": 1,
+   "n_rollouts": 9,
+   "rss_after_import_kb": 500372,
+   "vm_hwm_kb_max": 1265376,
+   "ru_maxrss_kb": 1265152,
+   "seeds": {
+    "301": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301_50x25+ppvct-mixed+v2+t1.0.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 1675.484375,
+       "stored_makespan": 1675.484375,
+       "matches_stored": true,
+       "events": 1677,
+       "stored_events": 1677,
+       "fwd": {
+        "n": 1677,
+        "mean_ms": 2.584135312293798,
+        "median_ms": 2.581241074949503,
+        "p95_ms": 2.6332953013479705,
+        "max_ms": 2.87403492256999
+       },
+       "event": {
+        "n": 1677,
+        "mean_ms": 4.117385381816058,
+        "median_ms": 4.112775903195143,
+        "p95_ms": 4.209134355187416,
+        "max_ms": 4.596038721501827
+       },
+       "rollout_s": 6.912283889949322,
+       "end_to_end_s": 6.926223871298134,
+       "setup_s": 0.01393998134881258,
+       "rss_before_kb": 1258432,
+       "vm_hwm_kb": 1263460,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 25165824
+      },
+      "instance_001": {
+       "makespan": 1630.875,
+       "stored_makespan": 1775.125,
+       "matches_stored": false,
+       "events": 1679,
+       "stored_events": 1679,
+       "fwd": {
+        "n": 1679,
+        "mean_ms": 2.5522952753453647,
+        "median_ms": 2.5366898626089096,
+        "p95_ms": 2.606849931180477,
+        "max_ms": 9.652548935264349
+       },
+       "event": {
+        "n": 1679,
+        "mean_ms": 4.056324171398264,
+        "median_ms": 4.035215824842453,
+        "p95_ms": 4.1760862339288,
+        "max_ms": 11.402064003050327
+       },
+       "rollout_s": 6.8179713361896574,
+       "end_to_end_s": 6.830639428924769,
+       "setup_s": 0.012668092735111713,
+       "rss_before_kb": 1263756,
+       "vm_hwm_kb": 1264000,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      },
+      "instance_002": {
+       "makespan": 1655.625,
+       "stored_makespan": 1689.6875,
+       "matches_stored": false,
+       "events": 1676,
+       "stored_events": 1676,
+       "fwd": {
+        "n": 1676,
+        "mean_ms": 2.5425146437785755,
+        "median_ms": 2.540386514738202,
+        "p95_ms": 2.581807435490191,
+        "max_ms": 2.887231297791004
+       },
+       "event": {
+        "n": 1676,
+        "mean_ms": 4.029425195038212,
+        "median_ms": 4.0248355362564325,
+        "p95_ms": 4.105850122869015,
+        "max_ms": 4.530331119894981
+       },
+       "rollout_s": 6.760495333001018,
+       "end_to_end_s": 6.773012016899884,
+       "setup_s": 0.012516683898866177,
+       "rss_before_kb": 1264136,
+       "vm_hwm_kb": 1264280,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      }
+     }
+    },
+    "302": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302_50x25+ppvct-mixed+v2+t1.0.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 1830.609375,
+       "stored_makespan": 1729.53125,
+       "matches_stored": false,
+       "events": 1677,
+       "stored_events": 1677,
+       "fwd": {
+        "n": 1677,
+        "mean_ms": 2.5601677760952772,
+        "median_ms": 2.554682083427906,
+        "p95_ms": 2.618862222880125,
+        "max_ms": 2.9171588830649853
+       },
+       "event": {
+        "n": 1677,
+        "mean_ms": 4.059620224634718,
+        "median_ms": 4.0521943010389805,
+        "p95_ms": 4.163466393947601,
+        "max_ms": 4.638382233679295
+       },
+       "rollout_s": 6.815200282726437,
+       "end_to_end_s": 6.827784596011043,
+       "setup_s": 0.012584313284605742,
+       "rss_before_kb": 1264596,
+       "vm_hwm_kb": 1264596,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      },
+      "instance_001": {
+       "makespan": 1673.6875,
+       "stored_makespan": 1630.9375,
+       "matches_stored": false,
+       "events": 1679,
+       "stored_events": 1679,
+       "fwd": {
+        "n": 1679,
+        "mean_ms": 2.57107384609388,
+        "median_ms": 2.5663981214165688,
+        "p95_ms": 2.6150341611355543,
+        "max_ms": 2.926877699792385
+       },
+       "event": {
+        "n": 1679,
+        "mean_ms": 4.069143375121124,
+        "median_ms": 4.064220003783703,
+        "p95_ms": 4.155049379914999,
+        "max_ms": 4.586836788803339
+       },
+       "rollout_s": 6.839244771748781,
+       "end_to_end_s": 6.851897371001542,
+       "setup_s": 0.01265259925276041,
+       "rss_before_kb": 1264692,
+       "vm_hwm_kb": 1264696,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      },
+      "instance_002": {
+       "makespan": 1632.625,
+       "stored_makespan": 1616.234375,
+       "matches_stored": false,
+       "events": 1676,
+       "stored_events": 1676,
+       "fwd": {
+        "n": 1676,
+        "mean_ms": 2.587929031553818,
+        "median_ms": 2.5745294988155365,
+        "p95_ms": 2.6370841078460217,
+        "max_ms": 9.621687233448029
+       },
+       "event": {
+        "n": 1676,
+        "mean_ms": 4.092538250034546,
+        "median_ms": 4.07820288091898,
+        "p95_ms": 4.1877939365804195,
+        "max_ms": 11.3910511136055
+       },
+       "rollout_s": 6.8662959900684655,
+       "end_to_end_s": 6.878795625176281,
+       "setup_s": 0.012499635107815266,
+       "rss_before_kb": 1264820,
+       "vm_hwm_kb": 1264828,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      }
+     }
+    },
+    "303": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303_50x25+ppvct-mixed+v2+t1.0.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 1576.7109375,
+       "stored_makespan": 1592.3984375,
+       "matches_stored": false,
+       "events": 1677,
+       "stored_events": 1677,
+       "fwd": {
+        "n": 1677,
+        "mean_ms": 2.571043530373557,
+        "median_ms": 2.5643142871558666,
+        "p95_ms": 2.627455163747072,
+        "max_ms": 2.9187011532485485
+       },
+       "event": {
+        "n": 1677,
+        "mean_ms": 4.078842399916215,
+        "median_ms": 4.073648247867823,
+        "p95_ms": 4.1825007647275925,
+        "max_ms": 4.579856991767883
+       },
+       "rollout_s": 6.847367106005549,
+       "end_to_end_s": 6.860088089946657,
+       "setup_s": 0.012720983941107988,
+       "rss_before_kb": 1265036,
+       "vm_hwm_kb": 1265036,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      },
+      "instance_001": {
+       "makespan": 1539.09375,
+       "stored_makespan": 1536.21875,
+       "matches_stored": false,
+       "events": 1679,
+       "stored_events": 1679,
+       "fwd": {
+        "n": 1679,
+        "mean_ms": 2.5594342897128604,
+        "median_ms": 2.5564776733517647,
+        "p95_ms": 2.5989952962845564,
+        "max_ms": 2.9322956688702106
+       },
+       "event": {
+        "n": 1679,
+        "mean_ms": 4.055916823717439,
+        "median_ms": 4.053713288158178,
+        "p95_ms": 4.131236067041755,
+        "max_ms": 4.600310698151588
+       },
+       "rollout_s": 6.817131910007447,
+       "end_to_end_s": 6.829885628074408,
+       "setup_s": 0.012753718066960573,
+       "rss_before_kb": 1265132,
+       "vm_hwm_kb": 1265252,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      },
+      "instance_002": {
+       "makespan": 1577.59375,
+       "stored_makespan": 1588.109375,
+       "matches_stored": false,
+       "events": 1676,
+       "stored_events": 1676,
+       "fwd": {
+        "n": 1676,
+        "mean_ms": 2.5748010979840856,
+        "median_ms": 2.560496563091874,
+        "p95_ms": 2.6208607014268637,
+        "max_ms": 10.033871978521347
+       },
+       "event": {
+        "n": 1676,
+        "mean_ms": 4.082950318581147,
+        "median_ms": 4.067473579198122,
+        "p95_ms": 4.172096960246563,
+        "max_ms": 12.35260022804141
+       },
+       "rollout_s": 6.850257263053209,
+       "end_to_end_s": 6.862859123386443,
+       "setup_s": 0.012601860333234072,
+       "rss_before_kb": 1265364,
+       "vm_hwm_kb": 1265376,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 12298240,
+       "cuda_max_reserved_bytes": 27262976
+      }
+     }
+    }
+   },
+   "cuda_max_allocated_bytes": 12298240,
+   "cuda_max_reserved_bytes": 27262976
+  },
+  "80": {
+   "size": 80,
+   "cell": "80x25+ppvct-mixed+v3+t1.0",
+   "instances": [
+    "instance_000",
+    "instance_001",
+    "instance_002"
+   ],
+   "torch_version": "2.11.0+cu128",
+   "torch_threads": 1,
+   "torch_interop_threads": 1,
+   "affinity": [
+    0
+   ],
+   "cuda_device": "NVIDIA RTX PRO 5000 Blackwell",
+   "warmup_forwards_per_seed": 10,
+   "fwd": {
+    "n": 24078,
+    "mean_ms": 2.46527433016405,
+    "median_ms": 2.4605351500213146,
+    "p95_ms": 2.5161224883049726,
+    "max_ms": 2.9886243864893913
+   },
+   "event": {
+    "n": 24078,
+    "mean_ms": 4.347324197918804,
+    "median_ms": 4.33914246968925,
+    "p95_ms": 4.458645568229258,
+    "max_ms": 5.280036944895983
+   },
+   "end_to_end_s_mean": 11.660993765780908,
+   "rollout_s_mean": 11.642353155494979,
+   "events_mean": 2675.3333333333335,
+   "all_match_stored": false,
+   "n_match_stored": 0,
+   "n_rollouts": 9,
+   "rss_after_import_kb": 500236,
+   "vm_hwm_kb_max": 1272828,
+   "ru_maxrss_kb": 1272716,
+   "seeds": {
+    "301": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301_80x25+ppvct-mixed+v3+t1.0.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s301.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 1999.3828125,
+       "stored_makespan": 2069.359375,
+       "matches_stored": false,
+       "events": 2676,
+       "stored_events": 2676,
+       "fwd": {
+        "n": 2676,
+        "mean_ms": 2.445896465180968,
+        "median_ms": 2.442545723170042,
+        "p95_ms": 2.4920633295550942,
+        "max_ms": 2.8203269466757774
+       },
+       "event": {
+        "n": 2676,
+        "mean_ms": 4.331992068174831,
+        "median_ms": 4.3227761052548885,
+        "p95_ms": 4.446409177035093,
+        "max_ms": 5.095808766782284
+       },
+       "rollout_s": 11.60413567814976,
+       "end_to_end_s": 11.624210082925856,
+       "setup_s": 0.020074404776096344,
+       "rss_before_kb": 1262044,
+       "vm_hwm_kb": 1269832,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 27262976
+      },
+      "instance_001": {
+       "makespan": 1897.65625,
+       "stored_makespan": 2025.859375,
+       "matches_stored": false,
+       "events": 2678,
+       "stored_events": 2678,
+       "fwd": {
+        "n": 2678,
+        "mean_ms": 2.4684026584869403,
+        "median_ms": 2.463100478053093,
+        "p95_ms": 2.523353835567832,
+        "max_ms": 2.9886243864893913
+       },
+       "event": {
+        "n": 2678,
+        "mean_ms": 4.364923056725571,
+        "median_ms": 4.3539986945688725,
+        "p95_ms": 4.4809759594500065,
+        "max_ms": 5.233046133071184
+       },
+       "rollout_s": 11.701181998010725,
+       "end_to_end_s": 11.719616832677275,
+       "setup_s": 0.01843483466655016,
+       "rss_before_kb": 1270220,
+       "vm_hwm_kb": 1270808,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      },
+      "instance_002": {
+       "makespan": 1992.0,
+       "stored_makespan": 2028.1875,
+       "matches_stored": false,
+       "events": 2672,
+       "stored_events": 2672,
+       "fwd": {
+        "n": 2672,
+        "mean_ms": 2.467574654697736,
+        "median_ms": 2.4628161918371916,
+        "p95_ms": 2.5114487623795867,
+        "max_ms": 2.847834024578333
+       },
+       "event": {
+        "n": 2672,
+        "mean_ms": 4.360250204844779,
+        "median_ms": 4.351773764938116,
+        "p95_ms": 4.4659491162747145,
+        "max_ms": 5.16519183292985
+       },
+       "rollout_s": 11.662473566830158,
+       "end_to_end_s": 11.680758956819773,
+       "setup_s": 0.018285389989614487,
+       "rss_before_kb": 1271000,
+       "vm_hwm_kb": 1271000,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      }
+     }
+    },
+    "302": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302_80x25+ppvct-mixed+v3+t1.0.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s302.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 1812.703125,
+       "stored_makespan": 1833.7109375,
+       "matches_stored": false,
+       "events": 2676,
+       "stored_events": 2676,
+       "fwd": {
+        "n": 2676,
+        "mean_ms": 2.4617919691397026,
+        "median_ms": 2.4571316316723824,
+        "p95_ms": 2.5075151352211833,
+        "max_ms": 2.7915039099752903
+       },
+       "event": {
+        "n": 2676,
+        "mean_ms": 4.339068724846214,
+        "median_ms": 4.331880947574973,
+        "p95_ms": 4.433430731296539,
+        "max_ms": 5.049488972872496
+       },
+       "rollout_s": 11.623125846032053,
+       "end_to_end_s": 11.641322186216712,
+       "setup_s": 0.018196340184658766,
+       "rss_before_kb": 1271260,
+       "vm_hwm_kb": 1271364,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      },
+      "instance_001": {
+       "makespan": 2082.703125,
+       "stored_makespan": 1779.046875,
+       "matches_stored": false,
+       "events": 2678,
+       "stored_events": 2678,
+       "fwd": {
+        "n": 2678,
+        "mean_ms": 2.465842112264498,
+        "median_ms": 2.461169846355915,
+        "p95_ms": 2.5071730837225914,
+        "max_ms": 2.9455190524458885
+       },
+       "event": {
+        "n": 2678,
+        "mean_ms": 4.3468675045804295,
+        "median_ms": 4.3428088538348675,
+        "p95_ms": 4.446269036270678,
+        "max_ms": 5.126968026161194
+       },
+       "rollout_s": 11.652722873724997,
+       "end_to_end_s": 11.671343384776264,
+       "setup_s": 0.018620511051267385,
+       "rss_before_kb": 1271572,
+       "vm_hwm_kb": 1271572,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      },
+      "instance_002": {
+       "makespan": 1841.0,
+       "stored_makespan": 1804.75,
+       "matches_stored": false,
+       "events": 2672,
+       "stored_events": 2672,
+       "fwd": {
+        "n": 2672,
+        "mean_ms": 2.471401355463543,
+        "median_ms": 2.4661461357027292,
+        "p95_ms": 2.520122565329075,
+        "max_ms": 2.9468960128724575
+       },
+       "event": {
+        "n": 2672,
+        "mean_ms": 4.3403901233655695,
+        "median_ms": 4.330554511398077,
+        "p95_ms": 4.446970927529037,
+        "max_ms": 5.099826026707888
+       },
+       "rollout_s": 11.609205052256584,
+       "end_to_end_s": 11.628541734069586,
+       "setup_s": 0.019336681813001633,
+       "rss_before_kb": 1271748,
+       "vm_hwm_kb": 1271956,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      }
+     }
+    },
+    "303": {
+     "model": "mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303",
+     "stored_source": "results/scaleup/policy/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303_80x25+ppvct-mixed+v3+t1.0.json",
+     "checkpoint": "trained_network/PPVCT/mix10-15-20x25+ppvct-mixed+m1-bcb-guide-mix-s303.pth",
+     "checkpoint_bytes": 190413,
+     "params": 40205,
+     "param_bytes": 160820,
+     "guide": true,
+     "rows": {
+      "instance_000": {
+       "makespan": 1831.65625,
+       "stored_makespan": 1872.84375,
+       "matches_stored": false,
+       "events": 2676,
+       "stored_events": 2676,
+       "fwd": {
+        "n": 2676,
+        "mean_ms": 2.463654676411908,
+        "median_ms": 2.457516035065055,
+        "p95_ms": 2.5163134559988976,
+        "max_ms": 2.878811676055193
+       },
+       "event": {
+        "n": 2676,
+        "mean_ms": 4.334459681640225,
+        "median_ms": 4.3255293276160955,
+        "p95_ms": 4.445060389116406,
+        "max_ms": 5.004835780709982
+       },
+       "rollout_s": 11.610789205878973,
+       "end_to_end_s": 11.62911327695474,
+       "setup_s": 0.01832407107576728,
+       "rss_before_kb": 1272124,
+       "vm_hwm_kb": 1272128,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      },
+      "instance_001": {
+       "makespan": 1768.1875,
+       "stored_makespan": 1844.8125,
+       "matches_stored": false,
+       "events": 2678,
+       "stored_events": 2678,
+       "fwd": {
+        "n": 2678,
+        "mean_ms": 2.4660758378889756,
+        "median_ms": 2.4599707685410976,
+        "p95_ms": 2.518116752617061,
+        "max_ms": 2.895955927670002
+       },
+       "event": {
+        "n": 2678,
+        "mean_ms": 4.339404919033813,
+        "median_ms": 4.332210402935743,
+        "p95_ms": 4.444171371869743,
+        "max_ms": 5.280036944895983
+       },
+       "rollout_s": 11.632885777857155,
+       "end_to_end_s": 11.65118825994432,
+       "setup_s": 0.018302482087165117,
+       "rss_before_kb": 1272288,
+       "vm_hwm_kb": 1272652,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      },
+      "instance_002": {
+       "makespan": 1879.75,
+       "stored_makespan": 1857.5,
+       "matches_stored": false,
+       "events": 2672,
+       "stored_events": 2672,
+       "fwd": {
+        "n": 2672,
+        "mean_ms": 2.476855789026814,
+        "median_ms": 2.4702970404177904,
+        "p95_ms": 2.5358363753184676,
+        "max_ms": 2.8286301530897617
+       },
+       "event": {
+        "n": 2672,
+        "mean_ms": 4.368595357023704,
+        "median_ms": 4.357933532446623,
+        "p95_ms": 4.482079204171896,
+        "max_ms": 5.2027530036866665
+       },
+       "rollout_s": 11.684658400714397,
+       "end_to_end_s": 11.702849177643657,
+       "setup_s": 0.0181907769292593,
+       "rss_before_kb": 1272828,
+       "vm_hwm_kb": 1272828,
+       "vm_hwm_reset": true,
+       "cuda_max_allocated_bytes": 13799424,
+       "cuda_max_reserved_bytes": 29360128
+      }
+     }
+    }
+   },
+   "cuda_max_allocated_bytes": 13799424,
+   "cuda_max_reserved_bytes": 29360128
+  }
+ },
+ "finished": "2026-10-06 06:21:31",
+ "loadavg_end": [
+  7.09521484375,
+  7.09423828125,
+  8.16748046875
+ ]
+}

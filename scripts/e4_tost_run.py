@@ -6,7 +6,7 @@ protocol is trivial; rerun after seeds 302/303 to produce the final table.
 
 Usage: python scripts/e4_tost_run.py --ours 10x25+ppvct-mixed+m1-bcb-s301 \
            --single 10x25+ppvct-mixed+single-joint-s301 [--cells all]
-Writes notes/e4_tost.md (table + JSON block).
+Writes reports/e4_tost.md (table + JSON block).
 """
 
 import argparse
@@ -63,7 +63,7 @@ summary = (f'SUMMARY: {len(rows)} cells -> EQUIVALENT {n_eq}, OURS BETTER '
            f'{n_ob}, SINGLE BETTER {n_sb}, INCONCLUSIVE {n_in}')
 print(summary, flush=True)
 lines.append(f'\n{summary}\n\n```json\n' + json.dumps(rows, indent=1) + '\n```\n')
-os.makedirs('notes', exist_ok=True)
-with open('notes/e4_tost.md', 'w') as f:
+os.makedirs('reports', exist_ok=True)
+with open('reports/e4_tost.md', 'w') as f:
     f.writelines(lines)
-print('wrote notes/e4_tost.md')
+print('wrote reports/e4_tost.md')

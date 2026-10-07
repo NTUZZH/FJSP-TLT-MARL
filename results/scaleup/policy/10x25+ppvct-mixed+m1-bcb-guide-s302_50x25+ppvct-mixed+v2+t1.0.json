@@ -1,191 +1,131 @@
 {
  "model": "10x25+ppvct-mixed+m1-bcb-guide-s302",
  "cell": "50x25+ppvct-mixed+v2+t1.0",
- "n": 30,
- "device": "cpu",
- "batch": 10,
+ "n": 20,
+ "device": "cuda",
+ "batch": 15,
  "params": 40205,
  "latency_contended": true,
  "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
  "rows": {
   "instance_000": {
-   "ms": 2002.109375,
-   "decisions": 1675,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1833.296875,
+   "decisions": 1677,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_001": {
-   "ms": 1898.375,
-   "decisions": 1670,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1883.4375,
+   "decisions": 1679,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_002": {
-   "ms": 1814.515625,
-   "decisions": 1674,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1891.0,
+   "decisions": 1676,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_003": {
-   "ms": 1896.3125,
-   "decisions": 1671,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 2010.59375,
+   "decisions": 1672,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_004": {
-   "ms": 1795.5,
-   "decisions": 1674,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1909.4453125,
+   "decisions": 1677,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_005": {
-   "ms": 1858.96875,
+   "ms": 1863.40625,
    "decisions": 1672,
-   "lat_batch_s": 0.01355181697556858,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_006": {
-   "ms": 1902.59375,
-   "decisions": 1675,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1900.4375,
+   "decisions": 1676,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_007": {
-   "ms": 1888.9375,
-   "decisions": 1676,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1914.5,
+   "decisions": 1673,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_008": {
-   "ms": 1878.9453125,
-   "decisions": 1676,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1817.84375,
+   "decisions": 1677,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_009": {
-   "ms": 1992.0078125,
-   "decisions": 1679,
-   "lat_batch_s": 0.01355181697556858,
+   "ms": 1940.7421875,
+   "decisions": 1676,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_010": {
-   "ms": 1846.25,
-   "decisions": 1675,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1871.0078125,
+   "decisions": 1674,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_011": {
-   "ms": 1997.390625,
-   "decisions": 1681,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1792.0,
+   "decisions": 1674,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_012": {
-   "ms": 1918.984375,
-   "decisions": 1680,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 2074.359375,
+   "decisions": 1679,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_013": {
-   "ms": 1926.1875,
-   "decisions": 1676,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1849.9296875,
+   "decisions": 1682,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_014": {
-   "ms": 1937.84375,
-   "decisions": 1671,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1932.75,
+   "decisions": 1680,
+   "lat_batch_s": 0.003264987836265217,
    "validated": true
   },
   "instance_015": {
-   "ms": 1822.234375,
-   "decisions": 1670,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1904.703125,
+   "decisions": 1678,
+   "lat_batch_s": 0.0035603447696692975,
    "validated": true
   },
   "instance_016": {
-   "ms": 1912.0625,
-   "decisions": 1672,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1924.1875,
+   "decisions": 1675,
+   "lat_batch_s": 0.0035603447696692975,
    "validated": true
   },
   "instance_017": {
-   "ms": 1917.7578125,
-   "decisions": 1675,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1922.8125,
+   "decisions": 1673,
+   "lat_batch_s": 0.0035603447696692975,
    "validated": true
   },
   "instance_018": {
-   "ms": 1972.75,
-   "decisions": 1673,
-   "lat_batch_s": 0.013519823031561636,
+   "ms": 1944.1875,
+   "decisions": 1676,
+   "lat_batch_s": 0.0035603447696692975,
    "validated": true
   },
   "instance_019": {
-   "ms": 1928.4375,
-   "decisions": 1676,
-   "lat_batch_s": 0.013519823031561636,
-   "validated": true
-  },
-  "instance_020": {
-   "ms": 1925.03125,
-   "decisions": 1674,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_021": {
-   "ms": 1825.46875,
-   "decisions": 1679,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_022": {
-   "ms": 1924.515625,
-   "decisions": 1678,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_023": {
-   "ms": 1920.3046875,
-   "decisions": 1674,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_024": {
-   "ms": 1967.7890625,
-   "decisions": 1673,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_025": {
-   "ms": 1926.328125,
-   "decisions": 1678,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_026": {
-   "ms": 1950.1875,
-   "decisions": 1676,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_027": {
-   "ms": 1900.625,
-   "decisions": 1684,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_028": {
-   "ms": 1874.0703125,
-   "decisions": 1679,
-   "lat_batch_s": 0.013629610847400815,
-   "validated": true
-  },
-  "instance_029": {
-   "ms": 2022.140625,
-   "decisions": 1673,
-   "lat_batch_s": 0.013629610847400815,
+   "ms": 1926.6875,
+   "decisions": 1680,
+   "lat_batch_s": 0.0035603447696692975,
    "validated": true
   }
  }

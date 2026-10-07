@@ -3,10 +3,9 @@
 Generator: clean-room port of the released `transport_random_uniform`
 distribution, CERTIFIED distribution-equivalent against the authors' own
 released heuristic results (24/24 deterministic combos pass a two-sample KS
-test when run with THEIR schedule code; see
-notes/external_link_semantics.md, gate of 2026-07-27).
+test when run with THEIR schedule code, checked on 2026-07-27).
 
-Adapter (design in the same note): J jobs x (M real ops + 1 out-buf
+Adapter: J jobs x (M real ops + 1 out-buf
 delivery op); machines = M real + J per-job pseudo-machines at the out-buf
 cell (their out-buf has no capacity limit; a dedicated pseudo-machine per
 job makes our capacity-1 constraint vacuous). Cells 0..M-1 = machines,
@@ -111,7 +110,7 @@ def write_dataset(out_dir, num_jobs, num_machines, n, seed_base, n_veh):
         json.dump(dict(generator='link transport_random_uniform (certified port)',
                        num_jobs=num_jobs, num_machines=num_machines,
                        n=n, seed_base=seed_base,
-                       gate='notes/external_link_semantics.md 2026-07-27',
+                       gate='port semantics checked 2026-07-27',
                        makespan_correction=f'-{PSEUDO_PT} (delivery pseudo-op)'),
                   f, indent=1)
     print(f'wrote {n} instances -> {out_dir}')

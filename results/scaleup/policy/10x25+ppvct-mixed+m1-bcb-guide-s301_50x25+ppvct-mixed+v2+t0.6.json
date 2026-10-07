@@ -1,191 +1,131 @@
 {
  "model": "10x25+ppvct-mixed+m1-bcb-guide-s301",
  "cell": "50x25+ppvct-mixed+v2+t0.6",
- "n": 30,
- "device": "cpu",
- "batch": 10,
+ "n": 20,
+ "device": "cuda",
+ "batch": 15,
  "params": 40205,
  "latency_contended": true,
  "latency_note": "mean wall time of ONE BATCHED forward pass; the box also ran a CP-SAT queue, so this is CONTENDED and is not a certified per-event latency",
  "rows": {
   "instance_000": {
-   "ms": 1172.46875,
-   "decisions": 1675,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1326.0703125,
+   "decisions": 1677,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_001": {
-   "ms": 1334.5703125,
-   "decisions": 1670,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1088.5390625,
+   "decisions": 1679,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_002": {
-   "ms": 1301.8671875,
-   "decisions": 1674,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1181.609375,
+   "decisions": 1676,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_003": {
-   "ms": 1126.359375,
-   "decisions": 1671,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1131.3828125,
+   "decisions": 1672,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_004": {
-   "ms": 1114.375,
-   "decisions": 1674,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1123.984375,
+   "decisions": 1677,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_005": {
-   "ms": 1383.3125,
+   "ms": 1393.4140625,
    "decisions": 1672,
-   "lat_batch_s": 0.031090088637244162,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_006": {
-   "ms": 1170.890625,
-   "decisions": 1675,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1232.046875,
+   "decisions": 1676,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_007": {
-   "ms": 1110.109375,
-   "decisions": 1676,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1291.484375,
+   "decisions": 1673,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_008": {
-   "ms": 1141.96875,
-   "decisions": 1676,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1295.8984375,
+   "decisions": 1677,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_009": {
-   "ms": 1124.09375,
-   "decisions": 1679,
-   "lat_batch_s": 0.031090088637244162,
+   "ms": 1121.9375,
+   "decisions": 1676,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_010": {
-   "ms": 1098.6328125,
-   "decisions": 1675,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1390.28125,
+   "decisions": 1674,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_011": {
-   "ms": 1103.75,
-   "decisions": 1681,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1331.171875,
+   "decisions": 1674,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_012": {
-   "ms": 1162.375,
-   "decisions": 1680,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1208.25,
+   "decisions": 1679,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_013": {
-   "ms": 1109.3125,
-   "decisions": 1676,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1114.796875,
+   "decisions": 1682,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_014": {
-   "ms": 1376.171875,
-   "decisions": 1671,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1335.3671875,
+   "decisions": 1680,
+   "lat_batch_s": 0.0038924911923210416,
    "validated": true
   },
   "instance_015": {
-   "ms": 1425.109375,
-   "decisions": 1670,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1370.0625,
+   "decisions": 1678,
+   "lat_batch_s": 0.003525133521041079,
    "validated": true
   },
   "instance_016": {
-   "ms": 1135.0546875,
-   "decisions": 1672,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1340.375,
+   "decisions": 1675,
+   "lat_batch_s": 0.003525133521041079,
    "validated": true
   },
   "instance_017": {
-   "ms": 1198.359375,
-   "decisions": 1675,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1106.1328125,
+   "decisions": 1673,
+   "lat_batch_s": 0.003525133521041079,
    "validated": true
   },
   "instance_018": {
-   "ms": 1108.4921875,
-   "decisions": 1673,
-   "lat_batch_s": 0.08896983844083098,
+   "ms": 1356.859375,
+   "decisions": 1676,
+   "lat_batch_s": 0.003525133521041079,
    "validated": true
   },
   "instance_019": {
-   "ms": 1130.15625,
-   "decisions": 1676,
-   "lat_batch_s": 0.08896983844083098,
-   "validated": true
-  },
-  "instance_020": {
-   "ms": 1338.265625,
-   "decisions": 1674,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_021": {
-   "ms": 1141.1484375,
-   "decisions": 1679,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_022": {
-   "ms": 1348.5,
-   "decisions": 1678,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_023": {
-   "ms": 1154.9375,
-   "decisions": 1674,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_024": {
-   "ms": 1185.1875,
-   "decisions": 1673,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_025": {
-   "ms": 1285.84375,
-   "decisions": 1678,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_026": {
-   "ms": 1173.25,
-   "decisions": 1676,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_027": {
-   "ms": 1136.703125,
-   "decisions": 1684,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_028": {
-   "ms": 1157.0,
-   "decisions": 1679,
-   "lat_batch_s": 0.175675329498768,
-   "validated": true
-  },
-  "instance_029": {
-   "ms": 1308.765625,
-   "decisions": 1673,
-   "lat_batch_s": 0.175675329498768,
+   "ms": 1369.0,
+   "decisions": 1680,
+   "lat_batch_s": 0.003525133521041079,
    "validated": true
   }
  }
