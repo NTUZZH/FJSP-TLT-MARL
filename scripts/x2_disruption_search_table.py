@@ -94,6 +94,7 @@ def main():
     table = {}                    # (cell, base, row index) -> (ms str, wall)
     cp_vs, ga_vs, ga_wall, pol_wall = [], [], [], {}
     cp_imp, wtl_cp, wtl_ga, pvals = [], set(), set(), []
+    cp_wall_short = []            # CP-SAT mean wall at the 1-s and 10-s budgets
     over = defaultdict(list)
     fast, fast_total = 0, 0
     for cell, word, _ in CELLS:
@@ -130,6 +131,7 @@ def main():
                     cp_imp.append(100.0 * (rs_ms.mean() - arr[k].mean())
                                   / rs_ms.mean())
                     if b in (1.0, 10.0):
+                        cp_wall_short.append(walls[k])
                         assert np.allclose(arr[k], rs_ms, atol=TOL), \
                             f'CP-SAT changed the right shift at {b} s'
                 else:
@@ -160,6 +162,9 @@ def main():
           f'{len(cp_imp)} settings improve)')
     macro('DisrCpWtl', '/'.join(sorted(wtl_cp)) if len(wtl_cp) == 1 else '?',
           'policy vs CP-SAT, every cell, plan and budget')
+    macro('DisrCpWallShortMin', f'{min(cp_wall_short):.0f}',
+          'CP-SAT mean wall s per cell and plan at the 1-s and 10-s budgets, min')
+    macro('DisrCpWallShortMax', f'{max(cp_wall_short):.0f}', 'same, max')
     macro('DisrGaVsPolMin', f'{min(ga_vs):.1f}',
           '(policy - GA)/GA in %, min over cells, plans, budgets 10/60 s')
     macro('DisrGaVsPolMax', f'{max(ga_vs):.1f}', 'same, max')

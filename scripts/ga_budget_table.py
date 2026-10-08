@@ -170,8 +170,6 @@ def main():
         out.append('')
 
     os.makedirs('reports', exist_ok=True)
-    os.makedirs('reports', exist_ok=True)
-    os.makedirs('reports', exist_ok=True)
     open(OUT, 'w').write('\n'.join(out) + '\n')
     print(f'wrote {OUT}')
     for row in summary:
